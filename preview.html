@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Preview — Descobrindo a América | Road Trip 2026</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --blue: #6BA3D4;
+      --salmon: #F4A9A8;
+      --green: #9FD4B5;
+      --yellow: #F9E4A0;
+      --purple: #C3B1D4;
+      --white: #FFFFFF;
+      --light: #F8F9FA;
+      --dark: #2C3E50;
+      --gray: #6C757D;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Lato', sans-serif;
+      background: var(--dark);
+      color: var(--white);
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    /* ─── SLIDESHOW ─── */
+    .slideshow {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transform: scale(1.05);
+      transition: opacity 1s ease, transform 6s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: scale(1);
+      z-index: 2;
+    }
+
+    .slide.prev {
+      opacity: 0;
+      z-index: 1;
+    }
+
+    .slide-bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      filter: brightness(0.45);
+    }
+
+    .slide-content {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding: 24px;
+      max-width: 700px;
+      animation: fadeUp 1.2s ease forwards;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .slide-tag {
+      display: inline-block;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      padding: 6px 18px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+
+    .slide-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: clamp(28px, 6vw, 56px);
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 16px;
+      text-shadow: 0 2px 20px rgba(0,0,0,0.5);
+    }
+
+    .slide-subtitle {
+      font-size: clamp(14px, 2.5vw, 18px);
+      font-weight: 300;
+      line-height: 1.7;
+      opacity: 0.9;
+      margin-bottom: 28px;
+      text-shadow: 0 1px 10px rgba(0,0,0,0.5);
+    }
+
+    .slide-badge {
+      display: inline-flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .badge {
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 30px;
+      padding: 8px 18px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    /* ─── PROGRESS BAR ─── */
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      background: var(--salmon);
+      transition: width 0.3s ease;
+      z-index: 100;
+    }
+
+    /* ─── NAV DOTS ─── */
+    .nav-dots {
+      position: fixed;
+      bottom: 120px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      z-index: 100;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.35);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .dot.active {
+      background: var(--salmon);
+      transform: scale(1.4);
+    }
+
+    /* ─── AUDIO PLAYER ─── */
+    .audio-player {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(20, 25, 35, 0.95);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding: 14px 20px;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .audio-cover {
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--salmon), var(--blue));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .audio-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .audio-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .audio-subtitle {
+      font-size: 11px;
+      color: rgba(255,255,255,0.5);
+      margin-top: 2px;
+    }
+
+    .audio-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-play {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--salmon);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      color: white;
+      transition: transform 0.2s, background 0.2s;
+      flex-shrink: 0;
+    }
+
+    .btn-play:hover { transform: scale(1.1); background: #e8908f; }
+
+    .audio-progress-wrap {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .audio-progress-bar {
+      flex: 1;
+      height: 4px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 2px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .audio-progress-fill {
+      height: 100%;
+      background: var(--salmon);
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.5s linear;
+    }
+
+    .audio-time {
+      font-size: 11px;
+      color: rgba(255,255,255,0.5);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* ─── SLIDE ARROWS ─── */
+    .arrow {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 50%;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 100;
+      font-size: 18px;
+      color: white;
+      transition: background 0.2s;
+    }
+
+    .arrow:hover { background: rgba(255,255,255,0.25); }
+    .arrow-left { left: 16px; }
+    .arrow-right { right: 16px; }
+
+    /* ─── BACK BUTTON ─── */
+    .btn-back {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 30px;
+      padding: 8px 16px;
+      color: white;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      z-index: 100;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s;
+    }
+
+    .btn-back:hover { background: rgba(255,255,255,0.25); }
+
+    /* ─── SLIDE COUNTER ─── */
+    .slide-counter {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.6);
+      z-index: 100;
+    }
+
+    /* ─── AUTOPLAY INDICATOR ─── */
+    .autoplay-ring {
+      position: fixed;
+      bottom: 130px;
+      right: 20px;
+      width: 36px;
+      height: 36px;
+      z-index: 100;
+      cursor: pointer;
+    }
+
+    .autoplay-ring svg {
+      transform: rotate(-90deg);
+    }
+
+    .autoplay-ring circle {
+      fill: none;
+      stroke: rgba(255,255,255,0.2);
+      stroke-width: 3;
+    }
+
+    .autoplay-ring .progress-ring {
+      stroke: var(--salmon);
+      stroke-dasharray: 100;
+      stroke-dashoffset: 100;
+      transition: stroke-dashoffset 0.1s linear;
+    }
+  </style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<a href="index.html" class="btn-back">← Voltar ao Site</a>
+<div class="slide-counter" id="slideCounter">1 / 10</div>
+
+<div class="slideshow" id="slideshow">
+
+  <!-- SLIDE 1: CAPA -->
+  <div class="slide active" id="slide-0">
+    <div class="slide-bg" style="background-image: url('img/01_capa_viagem.jpg')"></div>
+    <div class="slide-content">
+      <div class="slide-tag" style="background: rgba(244,169,168,0.3); color: #F4A9A8;">Setembro — Outubro 2026</div>
+      <h1 class="slide-title">Descobrindo<br>a América</h1>
+      <p class="slide-subtitle">Uma jornada épica de 30 dias pelos Estados Unidos.<br>De Nova York a Seattle, passando pela lendária Rota 66.</p>
+      <div class="slide-badge">
+        <span class="badge">🗽 New York</span>
+        <span class="badge">🛣️ Route 66</span>
+        <span class="badge">🌊 Big Sur</span>
+        <span class="badge">🌲 Seattle</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: NOVA YORK -->
+  <div class="slide" id="slide-1">
+    <div class="slide-bg" style="background-image: url('img/new_york_skyline.jpg')"></div>
+    <div class="slide-content">
+      <div class="slide-tag" style="background: rgba(107,163,212,0.3); color: #6BA3D4;">Dias 1 — 3 · Fase 1</div>
+      <h1 class="slide-title">New York<br>City</h1>
+      <p class="slide-subtitle">Central Park, Estátua da Liberdade, Brooklyn Bridge e a energia inigualável de Manhattan. A cidade que nunca dorme te recebe de braços abertos.</p>
+      <div class="slide-badge">
+        <span class="badge">🗽 Manhattan</span>
+        <span class="badge">🌳 Central Park</span>
+        <span class="badge">🌉 Brooklyn Bridge</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: CHICAGO -->
+  <div class="slide" id="slide-2">
+    <div class="slide-bg" style="background-image: url('img/chicago.jpg')"></div>
+    <div class="slide-content">
+      <div class="slide-tag" style="background: rgba(159,212,181,0.3); color: #9FD4B5;">Dias 7 — 9 · Fase 3</div>
+      <h1 class="slide-title">Chicago<br>The Windy City</h1>
+      <p class="slide-subtitle">Arquitetura icônica, Millennium Park, o famoso Cloud Gate e o Lago Michigan. A cidade mais fascinante do Midwest americano.</p>
+      <div class="slide-badge">
+        <span class="badge">🫘 Cloud Gate</span>
+        <span class="badge">🏙️ Skyline</span>
+        <span class="badge">🎵 Jazz & Blues</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: ROTA 66 -->
+  <div class="slide" id="slide-3">
+    <div class="slide-bg" style="background-image: url('img/route66.jpg')"></div>
+    <div class="slide-content">
+      <div class="slide-tag" style="background: rgba(249,228,160,0.3); color: #F9E4A0;">Dias 10 — 17 · Fase 4</div>
+      <h1 class="slide-title">A Lendária<br>Rota 66</h1>
+      <p class="slide-subtitle">Desde 1926, a Mãe de Todas as Estradas conecta o coração da América ao Pacífico. Cadillac Ranch, Springfield, Tulsa, Amarillo — história e liberdade em cada quilômetro.</p>
+      <div class="slide-badge">
+        <span class="badge">🚗 3.940 km</span>
+        <span class="badge">🏜️ Cadillac Ranch</span>
+        <span class="badge">⛽ Estações Vintage</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: LAS VEGAS -->
+  <div class="slide" id="slide-4">
+    <div class="slide-bg" style="background-image: url('img/las_vegas.jpg')"></div>
+    <div class="slide-content">
+      <div class="slide-tag" style="background: rgba(195,177,212,0.3); color: #C3B1D4;">Dias 18 — 20 · Fase 5</div>
+      <h1 class="slide-title">Las Vegas<br>The Strip</h1>
+      <p class="slide-subtitle">Shows, cassinos, restaurantes estrelados e a energia elétrica que só Las Vegas pode oferecer. Cirque du Soleil, Grand Canyon de helicóptero e o Strip iluminado à noite.</p>
+      <div class="slide-badge">
+        <span class="badge">🎰 The Strip</span>
+        <span class="badge">🎪 Cirque du Soleil</span>
+        <span class="badge">🚁 Grand Canyon</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: BIG SUR -->
+  <div class="slide" id="slide-5">
+    <div class="slide-bg" style="background-image: url('img/big_sur.jpg')"></div>
+    <div class="slide-content">
+      <div class="slide-tag" style="background: rgba(107,163,212,0.3); color: #6BA3D4;">Dias 22 — 24 · Fase 6</div>
+      <h1 class="slide-title">Big Sur<br>Highway 1</h1>
+      <p class="slide-subtitle">A estrada mais bonita do mundo. 200 km de falésias dramáticas sobre o Oceano Pacífico. Bixby Bridge, McWay Falls, Point Lobos — cada curva é uma obra de arte da natureza.</p>
+      <div class="slide-badge">
+        <span class="badge">🌊 Oceano Pacífico</span>
+        <span class="badge">🌉 Bixby Bridge</span>
+        <span class="badge">🏔️ Falésias</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: SAN FRANCISCO -->
+  <div class="slide" id="slide-6">
+    <div class="slide-bg" style="background-image: url('img/san_francisco.jpg')"></div>
+    <div class="slide-content">
+      <div class="slide-tag" style="background: rgba(244,169,168,0.3); color: #F4A9A8;">Dias 25 — 27 · Fase 7</div>
+      <h1 class="slide-title">San<br>Francisco</h1>
+      <p class="slide-subtitle">Golden Gate, Alcatraz, Fisherman's Wharf e os famosos bondes elétricos. Uma cidade de charme único, diversidade cultural e gastronomia extraordinária.</p>
+      <div class="slide-badge">
+        <span class="badge">🌉 Golden Gate</span>
+        <span class="badge">🏝️ Alcatraz</span>
+        <span class="badge">🚋 Cable Car</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: REDWOOD -->
+  <div class="slide" id="slide-7">
+    <div class="slide-bg" style="background-image: url('img/redwood_forest.jpg')"></div>
+    <div class="slide-content">
+      <div class="slide-tag" style="background: rgba(159,212,181,0.3); color: #9FD4B5;">Dias 28 — 29 · Fase 8</div>
+      <h1 class="slide-title">Redwood<br>Forest</h1>
+      <p class="slide-subtitle">As árvores mais altas do mundo. Caminhar entre gigantes de 100 metros de altura é uma experiência espiritual — uma conexão com a natureza que poucos têm o privilégio de vivenciar.</p>
+      <div class="slide-badge">
+        <span class="badge">🌲 100m de altura</span>
+        <span class="badge">🦌 Vida Selvagem</span>
+        <span class="badge">🌿 Trilhas</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 9: SEATTLE -->
+  <div class="slide" id="slide-8">
+    <div class="slide-bg" style="background-image: url('img/seattle.jpg')"></div>
+    <div class="slide-content">
+      <div class="slide-tag" style="background: rgba(107,163,212,0.3); color: #6BA3D4;">Dias 28 — 30 · Fase 9</div>
+      <h1 class="slide-title">Seattle<br>The Emerald City</h1>
+      <p class="slide-subtitle">Space Needle, Pike Place Market, Starbucks original e o Monte Rainier ao fundo. A cidade que combina modernidade tecnológica com natureza selvagem.</p>
+      <div class="slide-badge">
+        <span class="badge">🗼 Space Needle</span>
+        <span class="badge">☕ Starbucks Original</span>
+        <span class="badge">🐟 Pike Place</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 10: FECHAMENTO -->
+  <div class="slide" id="slide-9">
+    <div class="slide-bg" style="background-image: url('img/01_capa_viagem.jpg')"></div>
+    <div class="slide-content">
+      <div class="slide-tag" style="background: rgba(244,169,168,0.3); color: #F4A9A8;">Giovani & Silvana · 2026</div>
+      <h1 class="slide-title">30 Dias.<br>Uma Vida de<br>Memórias.</h1>
+      <p class="slide-subtitle">3.850 km · 11 cidades · USD $20.000<br>Uma jornada que vai mudar a vida de vocês para sempre.</p>
+      <div class="slide-badge">
+        <span class="badge">🚗 3.850 km</span>
+        <span class="badge">🏙️ 11 Cidades</span>
+        <span class="badge">💰 USD $20k</span>
+        <span class="badge">❤️ Para Sempre</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- NAV DOTS -->
+<div class="nav-dots" id="navDots"></div>
+
+<!-- ARROWS -->
+<button class="arrow arrow-left" onclick="changeSlide(-1)">‹</button>
+<button class="arrow arrow-right" onclick="changeSlide(1)">›</button>
+
+<!-- AUDIO PLAYER -->
+<div class="audio-player">
+  <div class="audio-cover">🎙️</div>
+  <div class="audio-info">
+    <div class="audio-title">Descobrindo a América — Narração Oficial</div>
+    <div class="audio-subtitle">Road Trip 2026 · Giovani & Silvana</div>
+  </div>
+  <div class="audio-progress-wrap">
+    <div class="audio-progress-bar" id="audioProgressBar" onclick="seekAudio(event)">
+      <div class="audio-progress-fill" id="audioProgressFill"></div>
+    </div>
+    <span class="audio-time" id="audioTime">0:00 / 4:46</span>
+  </div>
+  <div class="audio-controls">
+    <button class="btn-play" id="btnPlay" onclick="toggleAudio()">▶</button>
+  </div>
+</div>
+
+<audio id="audioPlayer" src="narracao.mp3" preload="auto"></audio>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const dotsContainer = document.getElementById('navDots');
+  const progressBar = document.getElementById('progressBar');
+  const slideCounter = document.getElementById('slideCounter');
+  const audio = document.getElementById('audioPlayer');
+  const btnPlay = document.getElementById('btnPlay');
+  const audioProgressFill = document.getElementById('audioProgressFill');
+  const audioTime = document.getElementById('audioTime');
+
+  let current = 0;
+  let autoplayTimer = null;
+  const AUTOPLAY_DELAY = 7000;
+
+  // Create dots
+  slides.forEach((_, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'dot' + (i === 0 ? ' active' : '');
+    dot.onclick = () => goToSlide(i);
+    dotsContainer.appendChild(dot);
+  });
+
+  function updateUI() {
+    slides.forEach((s, i) => {
+      s.classList.remove('active', 'prev');
+      if (i === current) s.classList.add('active');
+    });
+    document.querySelectorAll('.dot').forEach((d, i) => {
+      d.classList.toggle('active', i === current);
+    });
+    progressBar.style.width = ((current + 1) / slides.length * 100) + '%';
+    slideCounter.textContent = (current + 1) + ' / ' + slides.length;
+  }
+
+  function goToSlide(n) {
+    current = (n + slides.length) % slides.length;
+    updateUI();
+    resetAutoplay();
+  }
+
+  function changeSlide(dir) {
+    goToSlide(current + dir);
+  }
+
+  function resetAutoplay() {
+    clearTimeout(autoplayTimer);
+    autoplayTimer = setTimeout(() => changeSlide(1), AUTOPLAY_DELAY);
+  }
+
+  // Keyboard navigation
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
+    if (e.key === 'ArrowLeft') changeSlide(-1);
+  });
+
+  // Touch swipe
+  let touchStartX = 0;
+  document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+  document.addEventListener('touchend', e => {
+    const diff = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) changeSlide(diff > 0 ? 1 : -1);
+  });
+
+  // Audio controls
+  function toggleAudio() {
+    if (audio.paused) {
+      audio.play();
+      btnPlay.textContent = '⏸';
+    } else {
+      audio.pause();
+      btnPlay.textContent = '▶';
+    }
+  }
+
+  function formatTime(s) {
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60);
+    return m + ':' + (sec < 10 ? '0' : '') + sec;
+  }
+
+  audio.addEventListener('timeupdate', () => {
+    if (audio.duration) {
+      const pct = (audio.currentTime / audio.duration) * 100;
+      audioProgressFill.style.width = pct + '%';
+      audioTime.textContent = formatTime(audio.currentTime) + ' / ' + formatTime(audio.duration);
+    }
+  });
+
+  audio.addEventListener('ended', () => { btnPlay.textContent = '▶'; });
+
+  function seekAudio(e) {
+    const bar = document.getElementById('audioProgressBar');
+    const rect = bar.getBoundingClientRect();
+    const pct = (e.clientX - rect.left) / rect.width;
+    audio.currentTime = pct * audio.duration;
+  }
+
+  // Start autoplay
+  resetAutoplay();
+  updateUI();
+</script>
+</body>
+</html>
