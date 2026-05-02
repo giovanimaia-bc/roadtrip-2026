@@ -1,652 +1,825 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Preview — Descobrindo a América | Road Trip 2026</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --blue: #6BA3D4;
-      --salmon: #F4A9A8;
-      --green: #9FD4B5;
-      --yellow: #F9E4A0;
-      --purple: #C3B1D4;
-      --white: #FFFFFF;
-      --light: #F8F9FA;
-      --dark: #2C3E50;
-      --gray: #6C757D;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Preview Cinematográfico — Descobrindo a América 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0a0a0a;
+    font-family: 'Lato', sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
 
-    body {
-      font-family: 'Lato', sans-serif;
-      background: var(--dark);
-      color: var(--white);
-      overflow: hidden;
-      height: 100vh;
-    }
+  /* ===== SLIDES ===== */
+  .slideshow {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+  }
 
-    /* ─── SLIDESHOW ─── */
-    .slideshow {
-      position: relative;
-      width: 100%;
-      height: 100vh;
-      overflow: hidden;
-    }
+  .slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 1.4s ease-in-out;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 110px;
+  }
 
-    .slide {
-      position: absolute;
-      inset: 0;
-      opacity: 0;
-      transform: scale(1.05);
-      transition: opacity 1s ease, transform 6s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+  .slide.active { opacity: 1; z-index: 2; }
 
-    .slide.active {
-      opacity: 1;
-      transform: scale(1);
-      z-index: 2;
-    }
+  .slide-bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    transform: scale(1.06);
+    transition: transform 10s ease-out;
+  }
 
-    .slide.prev {
-      opacity: 0;
-      z-index: 1;
-    }
+  .slide.active .slide-bg { transform: scale(1.0); }
 
-    .slide-bg {
-      position: absolute;
-      inset: 0;
-      background-size: cover;
-      background-position: center;
-      filter: brightness(0.45);
-    }
+  .slide-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(0,0,0,0.05) 0%,
+      rgba(0,0,0,0.2) 40%,
+      rgba(0,0,0,0.82) 100%
+    );
+  }
 
-    .slide-content {
-      position: relative;
-      z-index: 10;
-      text-align: center;
-      padding: 24px;
-      max-width: 700px;
-      animation: fadeUp 1.2s ease forwards;
-    }
+  .slide-content {
+    position: relative;
+    z-index: 3;
+    text-align: center;
+    color: white;
+    padding: 0 32px 24px;
+    max-width: 860px;
+    width: 100%;
+    transform: translateY(16px);
+    opacity: 0;
+    transition: all 1s ease 0.6s;
+  }
 
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
+  .slide.active .slide-content {
+    transform: translateY(0);
+    opacity: 1;
+  }
 
-    .slide-tag {
-      display: inline-block;
-      font-family: 'Montserrat', sans-serif;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      padding: 6px 18px;
-      border-radius: 20px;
-      margin-bottom: 20px;
-    }
+  .slide-tag {
+    display: inline-block;
+    background: rgba(255,255,255,0.18);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.28);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 5px 16px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+  }
 
-    .slide-title {
-      font-family: 'Montserrat', sans-serif;
-      font-size: clamp(28px, 6vw, 56px);
-      font-weight: 900;
-      line-height: 1.1;
-      margin-bottom: 16px;
-      text-shadow: 0 2px 20px rgba(0,0,0,0.5);
-    }
+  .slide-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 6vw, 5rem);
+    font-weight: 900;
+    line-height: 1.08;
+    margin-bottom: 12px;
+    text-shadow: 0 2px 24px rgba(0,0,0,0.6);
+  }
 
-    .slide-subtitle {
-      font-size: clamp(14px, 2.5vw, 18px);
-      font-weight: 300;
-      line-height: 1.7;
-      opacity: 0.9;
-      margin-bottom: 28px;
-      text-shadow: 0 1px 10px rgba(0,0,0,0.5);
-    }
+  .slide-subtitle {
+    font-size: clamp(0.9rem, 2vw, 1.15rem);
+    font-weight: 300;
+    line-height: 1.65;
+    opacity: 0.88;
+    max-width: 680px;
+    margin: 0 auto 16px;
+    text-shadow: 0 1px 12px rgba(0,0,0,0.6);
+  }
 
-    .slide-badge {
-      display: inline-flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
+  .slide-badges {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
 
-    .badge {
-      background: rgba(255,255,255,0.15);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.25);
-      border-radius: 30px;
-      padding: 8px 18px;
-      font-size: 13px;
-      font-weight: 600;
-    }
+  .badge {
+    background: rgba(255,255,255,0.14);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.22);
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 12px;
+    font-weight: 600;
+    color: white;
+  }
 
-    /* ─── PROGRESS BAR ─── */
-    .progress-bar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 3px;
-      background: var(--salmon);
-      transition: width 0.3s ease;
-      z-index: 100;
-    }
+  /* ===== CAPA ESPECIAL ===== */
+  .slide-capa .slide-title {
+    font-size: clamp(3rem, 9vw, 7.5rem);
+    background: linear-gradient(135deg, #fff 30%, #ffd700 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 16px;
+  }
 
-    /* ─── NAV DOTS ─── */
-    .nav-dots {
-      position: fixed;
-      bottom: 120px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 8px;
-      z-index: 100;
-    }
+  .slide-capa .slide-subtitle {
+    font-size: clamp(1rem, 2.5vw, 1.35rem);
+    letter-spacing: 1px;
+  }
 
-    .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.35);
-      cursor: pointer;
-      transition: all 0.3s;
-    }
+  /* ===== PLAYER ===== */
+  .audio-player {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: rgba(8,8,12,0.94);
+    backdrop-filter: blur(24px);
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding: 10px 20px 14px;
+  }
 
-    .dot.active {
-      background: var(--salmon);
-      transform: scale(1.4);
-    }
+  .player-row1 {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    max-width: 960px;
+    margin: 0 auto;
+  }
 
-    /* ─── AUDIO PLAYER ─── */
-    .audio-player {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: rgba(20, 25, 35, 0.95);
-      backdrop-filter: blur(20px);
-      border-top: 1px solid rgba(255,255,255,0.1);
-      padding: 14px 20px;
-      z-index: 200;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
+  .play-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f97316, #ef4444);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 16px rgba(249,115,22,0.4);
+  }
 
-    .audio-cover {
-      width: 44px;
-      height: 44px;
-      border-radius: 8px;
-      background: linear-gradient(135deg, var(--salmon), var(--blue));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      flex-shrink: 0;
-    }
+  .play-btn:hover { transform: scale(1.1); }
+  .play-btn svg { width: 18px; height: 18px; fill: white; }
 
-    .audio-info {
-      flex: 1;
-      min-width: 0;
-    }
+  .player-center { flex: 1; min-width: 0; }
 
-    .audio-title {
-      font-family: 'Montserrat', sans-serif;
-      font-size: 13px;
-      font-weight: 700;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+  .player-title {
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-bottom: 7px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
-    .audio-subtitle {
-      font-size: 11px;
-      color: rgba(255,255,255,0.5);
-      margin-top: 2px;
-    }
+  .progress-track {
+    width: 100%;
+    height: 4px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 2px;
+    cursor: pointer;
+    position: relative;
+  }
 
-    .audio-controls {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #f97316, #ef4444);
+    border-radius: 2px;
+    width: 0%;
+    pointer-events: none;
+    transition: width 0.4s linear;
+  }
 
-    .btn-play {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: var(--salmon);
-      border: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      color: white;
-      transition: transform 0.2s, background 0.2s;
-      flex-shrink: 0;
-    }
+  .player-times {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 4px;
+    font-size: 10px;
+    color: rgba(255,255,255,0.4);
+  }
 
-    .btn-play:hover { transform: scale(1.1); background: #e8908f; }
+  .slide-counter {
+    font-size: 12px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.45);
+    letter-spacing: 1px;
+    flex-shrink: 0;
+  }
 
-    .audio-progress-wrap {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      min-width: 0;
-    }
+  /* ===== DOTS LATERAIS ===== */
+  .side-dots {
+    position: fixed;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
 
-    .audio-progress-bar {
-      flex: 1;
-      height: 4px;
-      background: rgba(255,255,255,0.15);
-      border-radius: 2px;
-      cursor: pointer;
-      position: relative;
-    }
+  .dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.28);
+    cursor: pointer;
+    transition: all 0.3s;
+  }
 
-    .audio-progress-fill {
-      height: 100%;
-      background: var(--salmon);
-      border-radius: 2px;
-      width: 0%;
-      transition: width 0.5s linear;
-    }
+  .dot.active {
+    background: white;
+    transform: scale(1.6);
+  }
 
-    .audio-time {
-      font-size: 11px;
-      color: rgba(255,255,255,0.5);
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
+  /* ===== SETAS ===== */
+  .arrow {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 50;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: white;
+    font-size: 20px;
+    transition: background 0.2s;
+    user-select: none;
+  }
 
-    /* ─── SLIDE ARROWS ─── */
-    .arrow {
-      position: fixed;
-      top: 50%;
-      transform: translateY(-50%);
-      background: rgba(255,255,255,0.12);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 50%;
-      width: 46px;
-      height: 46px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      z-index: 100;
-      font-size: 18px;
-      color: white;
-      transition: background 0.2s;
-    }
+  .arrow:hover { background: rgba(255,255,255,0.22); }
+  .arrow-left { left: 14px; }
+  .arrow-right { right: 14px; }
 
-    .arrow:hover { background: rgba(255,255,255,0.25); }
-    .arrow-left { left: 16px; }
-    .arrow-right { right: 16px; }
+  /* ===== BOTÃO VOLTAR ===== */
+  .btn-back {
+    position: fixed;
+    top: 14px;
+    left: 14px;
+    z-index: 50;
+    background: rgba(0,0,0,0.45);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.18);
+    color: white;
+    padding: 7px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    letter-spacing: 1px;
+    transition: background 0.2s;
+  }
 
-    /* ─── BACK BUTTON ─── */
-    .btn-back {
-      position: fixed;
-      top: 16px;
-      left: 16px;
-      background: rgba(255,255,255,0.12);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 30px;
-      padding: 8px 16px;
-      color: white;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      z-index: 100;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: background 0.2s;
-    }
+  .btn-back:hover { background: rgba(0,0,0,0.75); }
 
-    .btn-back:hover { background: rgba(255,255,255,0.25); }
+  /* ===== BARRA DE PROGRESSO TOPO ===== */
+  .top-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #f97316, #ef4444);
+    z-index: 200;
+    width: 0%;
+    transition: width 0.4s linear;
+  }
 
-    /* ─── SLIDE COUNTER ─── */
-    .slide-counter {
-      position: fixed;
-      top: 16px;
-      right: 16px;
-      font-family: 'Montserrat', sans-serif;
-      font-size: 13px;
-      font-weight: 600;
-      color: rgba(255,255,255,0.6);
-      z-index: 100;
-    }
+  /* ===== MOBILE ===== */
+  @media (max-width: 600px) {
+    .slide-content { padding: 0 20px 20px; }
+    .side-dots { display: none; }
+    .arrow { display: none; }
+  }
 
-    /* ─── AUTOPLAY INDICATOR ─── */
-    .autoplay-ring {
-      position: fixed;
-      bottom: 130px;
-      right: 20px;
-      width: 36px;
-      height: 36px;
-      z-index: 100;
-      cursor: pointer;
-    }
-
-    .autoplay-ring svg {
-      transform: rotate(-90deg);
-    }
-
-    .autoplay-ring circle {
-      fill: none;
-      stroke: rgba(255,255,255,0.2);
-      stroke-width: 3;
-    }
-
-    .autoplay-ring .progress-ring {
-      stroke: var(--salmon);
-      stroke-dasharray: 100;
-      stroke-dashoffset: 100;
-      transition: stroke-dashoffset 0.1s linear;
-    }
-  </style>
+  audio { display: none; }
+</style>
 </head>
 <body>
 
-<div class="progress-bar" id="progressBar"></div>
+<div class="top-progress" id="topProgress"></div>
+<a href="index.html" class="btn-back">← Voltar</a>
 
-<a href="index.html" class="btn-back">← Voltar ao Site</a>
-<div class="slide-counter" id="slideCounter">1 / 10</div>
+<!-- DOTS LATERAIS -->
+<div class="side-dots" id="sideDots"></div>
 
+<!-- SETAS -->
+<div class="arrow arrow-left" onclick="manualSlide(-1)">&#8249;</div>
+<div class="arrow arrow-right" onclick="manualSlide(1)">&#8250;</div>
+
+<!-- ========== SLIDESHOW ========== -->
 <div class="slideshow" id="slideshow">
 
-  <!-- SLIDE 1: CAPA -->
-  <div class="slide active" id="slide-0">
-    <div class="slide-bg" style="background-image: url('img/01_capa_viagem.jpg')"></div>
+  <!-- 0: CAPA (0s) -->
+  <div class="slide slide-capa active" data-time="0">
+    <div class="slide-bg" style="background-image:url('img/road_trip_couple.jpg')"></div>
+    <div class="slide-overlay"></div>
     <div class="slide-content">
-      <div class="slide-tag" style="background: rgba(244,169,168,0.3); color: #F4A9A8;">Setembro — Outubro 2026</div>
+      <div class="slide-tag">Setembro — Outubro 2026</div>
       <h1 class="slide-title">Descobrindo<br>a América</h1>
-      <p class="slide-subtitle">Uma jornada épica de 30 dias pelos Estados Unidos.<br>De Nova York a Seattle, passando pela lendária Rota 66.</p>
-      <div class="slide-badge">
-        <span class="badge">🗽 New York</span>
-        <span class="badge">🛣️ Route 66</span>
-        <span class="badge">🌊 Big Sur</span>
-        <span class="badge">🌲 Seattle</span>
+      <p class="slide-subtitle">Uma jornada épica de 30 dias pelos Estados Unidos — de Nova York a Seattle, passando pela lendária Rota 66.</p>
+      <div class="slide-badges">
+        <span class="badge">🗺️ 3.850 km</span>
+        <span class="badge">🏙️ 11 Cidades</span>
+        <span class="badge">🛣️ Rota 66</span>
+        <span class="badge">💰 USD $20.000</span>
       </div>
     </div>
   </div>
 
-  <!-- SLIDE 2: NOVA YORK -->
-  <div class="slide" id="slide-1">
-    <div class="slide-bg" style="background-image: url('img/new_york_skyline.jpg')"></div>
+  <!-- 1: NEW YORK (24s) -->
+  <div class="slide" data-time="24">
+    <div class="slide-bg" style="background-image:url('img/new_york_skyline.jpg')"></div>
+    <div class="slide-overlay"></div>
     <div class="slide-content">
-      <div class="slide-tag" style="background: rgba(107,163,212,0.3); color: #6BA3D4;">Dias 1 — 3 · Fase 1</div>
-      <h1 class="slide-title">New York<br>City</h1>
-      <p class="slide-subtitle">Central Park, Estátua da Liberdade, Brooklyn Bridge e a energia inigualável de Manhattan. A cidade que nunca dorme te recebe de braços abertos.</p>
-      <div class="slide-badge">
+      <div class="slide-tag">Dias 1 – 3 · Nova York</div>
+      <h1 class="slide-title">New York City</h1>
+      <p class="slide-subtitle">A cidade mais icônica do mundo. Onde tudo começa — e onde a emoção já toma conta desde o primeiro olhar para o skyline de Manhattan.</p>
+      <div class="slide-badges">
         <span class="badge">🗽 Manhattan</span>
-        <span class="badge">🌳 Central Park</span>
+        <span class="badge">🌡️ 22°C</span>
+        <span class="badge">🏨 The Standard High Line</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2: CENTRAL PARK (30s) -->
+  <div class="slide" data-time="30">
+    <div class="slide-bg" style="background-image:url('img/ny_central_park.jpg')"></div>
+    <div class="slide-overlay"></div>
+    <div class="slide-content">
+      <div class="slide-tag">Nova York · Central Park</div>
+      <h1 class="slide-title">Central Park<br>em Outono</h1>
+      <p class="slide-subtitle">Três dias explorando o Central Park dourado de setembro, a Estátua da Liberdade, o Brooklyn Bridge e a energia inigualável de Manhattan.</p>
+      <div class="slide-badges">
+        <span class="badge">🌳 843 acres</span>
+        <span class="badge">🗽 Estátua da Liberdade</span>
         <span class="badge">🌉 Brooklyn Bridge</span>
       </div>
     </div>
   </div>
 
-  <!-- SLIDE 3: CHICAGO -->
-  <div class="slide" id="slide-2">
-    <div class="slide-bg" style="background-image: url('img/chicago.jpg')"></div>
+  <!-- 3: PHILADELPHIA (44s) -->
+  <div class="slide" data-time="44">
+    <div class="slide-bg" style="background-image:url('img/philadelphia_liberty.jpg')"></div>
+    <div class="slide-overlay"></div>
     <div class="slide-content">
-      <div class="slide-tag" style="background: rgba(159,212,181,0.3); color: #9FD4B5;">Dias 7 — 9 · Fase 3</div>
-      <h1 class="slide-title">Chicago<br>The Windy City</h1>
-      <p class="slide-subtitle">Arquitetura icônica, Millennium Park, o famoso Cloud Gate e o Lago Michigan. A cidade mais fascinante do Midwest americano.</p>
-      <div class="slide-badge">
+      <div class="slide-tag">Dia 4 · Filadélfia</div>
+      <h1 class="slide-title">Philadelphia</h1>
+      <p class="slide-subtitle">A cidade da liberdade, onde a história dos Estados Unidos foi escrita. O Liberty Bell e o Independence Hall aguardam por vocês.</p>
+      <div class="slide-badges">
+        <span class="badge">🔔 Liberty Bell</span>
+        <span class="badge">🏛️ Independence Hall</span>
+        <span class="badge">🌡️ 21°C</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4: WASHINGTON DC (51s) -->
+  <div class="slide" data-time="51">
+    <div class="slide-bg" style="background-image:url('img/washington_dc_monuments.jpg')"></div>
+    <div class="slide-overlay"></div>
+    <div class="slide-content">
+      <div class="slide-tag">Dia 5 · Washington DC</div>
+      <h1 class="slide-title">Washington DC</h1>
+      <p class="slide-subtitle">A capital do poder. Monumentos grandiosos, museus de classe mundial — todos gratuitos — e a grandiosidade de uma nação.</p>
+      <div class="slide-badges">
+        <span class="badge">🏛️ Lincoln Memorial</span>
+        <span class="badge">🏛️ Smithsonian</span>
+        <span class="badge">🌡️ 23°C</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5: CHICAGO (58s) -->
+  <div class="slide" data-time="58">
+    <div class="slide-bg" style="background-image:url('img/chicago.jpg')"></div>
+    <div class="slide-overlay"></div>
+    <div class="slide-content">
+      <div class="slide-tag">Dias 6 – 8 · Chicago</div>
+      <h1 class="slide-title">Chicago</h1>
+      <p class="slide-subtitle">A cidade dos ventos. Três dias explorando a arquitetura mais impressionante do país, o Lago Michigan e a vibrante cena cultural do Midwest.</p>
+      <div class="slide-badges">
+        <span class="badge">🌬️ Windy City</span>
+        <span class="badge">🏙️ The Loop</span>
+        <span class="badge">🌡️ 18°C</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6: CLOUD GATE (64s) -->
+  <div class="slide" data-time="64">
+    <div class="slide-bg" style="background-image:url('img/chicago_millennium.jpg')"></div>
+    <div class="slide-overlay"></div>
+    <div class="slide-content">
+      <div class="slide-tag">Chicago · Millennium Park</div>
+      <h1 class="slide-title">Cloud Gate<br>"The Bean"</h1>
+      <p class="slide-subtitle">O Millennium Park, o famoso Cloud Gate, o Lago Michigan ao entardecer e a deep dish pizza que vai mudar para sempre a sua ideia de pizza.</p>
+      <div class="slide-badges">
         <span class="badge">🫘 Cloud Gate</span>
-        <span class="badge">🏙️ Skyline</span>
-        <span class="badge">🎵 Jazz & Blues</span>
+        <span class="badge">🌊 Lago Michigan</span>
+        <span class="badge">🍕 Deep Dish Pizza</span>
       </div>
     </div>
   </div>
 
-  <!-- SLIDE 4: ROTA 66 -->
-  <div class="slide" id="slide-3">
-    <div class="slide-bg" style="background-image: url('img/route66.jpg')"></div>
+  <!-- 7: ROTA 66 ABERTURA (72s) -->
+  <div class="slide" data-time="72">
+    <div class="slide-bg" style="background-image:url('img/route66.jpg')"></div>
+    <div class="slide-overlay"></div>
     <div class="slide-content">
-      <div class="slide-tag" style="background: rgba(249,228,160,0.3); color: #F9E4A0;">Dias 10 — 17 · Fase 4</div>
+      <div class="slide-tag">Dias 9 – 15 · Rota 66</div>
       <h1 class="slide-title">A Lendária<br>Rota 66</h1>
-      <p class="slide-subtitle">Desde 1926, a Mãe de Todas as Estradas conecta o coração da América ao Pacífico. Cadillac Ranch, Springfield, Tulsa, Amarillo — história e liberdade em cada quilômetro.</p>
-      <div class="slide-badge">
-        <span class="badge">🚗 3.940 km</span>
-        <span class="badge">🏜️ Cadillac Ranch</span>
-        <span class="badge">⛽ Estações Vintage</span>
+      <p class="slide-subtitle">Desde 1926, esta estrada histórica conecta o coração da América ao Oceano Pacífico. É a estrada da liberdade, dos sonhos e da alma americana.</p>
+      <div class="slide-badges">
+        <span class="badge">🛣️ 3.940 km históricos</span>
+        <span class="badge">📅 Desde 1926</span>
+        <span class="badge">🌅 Chicago → Santa Monica</span>
       </div>
     </div>
   </div>
 
-  <!-- SLIDE 5: LAS VEGAS -->
-  <div class="slide" id="slide-4">
-    <div class="slide-bg" style="background-image: url('img/las_vegas.jpg')"></div>
+  <!-- 8: ROTA 66 ESTRADA (82s) -->
+  <div class="slide" data-time="82">
+    <div class="slide-bg" style="background-image:url('img/route66_road.jpg')"></div>
+    <div class="slide-overlay"></div>
     <div class="slide-content">
-      <div class="slide-tag" style="background: rgba(195,177,212,0.3); color: #C3B1D4;">Dias 18 — 20 · Fase 5</div>
-      <h1 class="slide-title">Las Vegas<br>The Strip</h1>
-      <p class="slide-subtitle">Shows, cassinos, restaurantes estrelados e a energia elétrica que só Las Vegas pode oferecer. Cirque du Soleil, Grand Canyon de helicóptero e o Strip iluminado à noite.</p>
-      <div class="slide-badge">
+      <div class="slide-tag">Rota 66 · O Caminho</div>
+      <h1 class="slide-title">Springfield<br>Tulsa · Amarillo</h1>
+      <p class="slide-subtitle">Vocês vão percorrer os mesmos quilômetros que milhões de americanos percorreram em busca de sonhos, liberdade e um horizonte sem fim.</p>
+      <div class="slide-badges">
+        <span class="badge">🏙️ Springfield IL</span>
+        <span class="badge">🏙️ Tulsa OK</span>
+        <span class="badge">🏙️ Albuquerque NM</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9: CADILLAC RANCH (97s) -->
+  <div class="slide" data-time="97">
+    <div class="slide-bg" style="background-image:url('img/cadillac_ranch.jpg')"></div>
+    <div class="slide-overlay"></div>
+    <div class="slide-content">
+      <div class="slide-tag">Rota 66 · Amarillo, Texas</div>
+      <h1 class="slide-title">Cadillac Ranch</h1>
+      <p class="slide-subtitle">Dez Cadillacs enterrados na terra, cobertos de grafite colorido. Um dos monumentos mais surreais e fotogênicos do mundo. Parada obrigatória.</p>
+      <div class="slide-badges">
+        <span class="badge">🚗 10 Cadillacs</span>
+        <span class="badge">🎨 Arte Urbana</span>
+        <span class="badge">📸 Parada Obrigatória</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 10: LAS VEGAS (112s) -->
+  <div class="slide" data-time="112">
+    <div class="slide-bg" style="background-image:url('img/las_vegas.jpg')"></div>
+    <div class="slide-overlay"></div>
+    <div class="slide-content">
+      <div class="slide-tag">Dias 16 – 18 · Las Vegas</div>
+      <h1 class="slide-title">Las Vegas</h1>
+      <p class="slide-subtitle">A cidade que nunca dorme. Três dias de shows, cassinos, restaurantes estrelados e uma energia elétrica que só Las Vegas tem.</p>
+      <div class="slide-badges">
         <span class="badge">🎰 The Strip</span>
         <span class="badge">🎪 Cirque du Soleil</span>
-        <span class="badge">🚁 Grand Canyon</span>
+        <span class="badge">🌡️ 32°C</span>
       </div>
     </div>
   </div>
 
-  <!-- SLIDE 6: BIG SUR -->
-  <div class="slide" id="slide-5">
-    <div class="slide-bg" style="background-image: url('img/big_sur.jpg')"></div>
+  <!-- 11: LAS VEGAS NOITE (117s) -->
+  <div class="slide" data-time="117">
+    <div class="slide-bg" style="background-image:url('img/las_vegas_strip_night.jpg')"></div>
+    <div class="slide-overlay"></div>
     <div class="slide-content">
-      <div class="slide-tag" style="background: rgba(107,163,212,0.3); color: #6BA3D4;">Dias 22 — 24 · Fase 6</div>
-      <h1 class="slide-title">Big Sur<br>Highway 1</h1>
-      <p class="slide-subtitle">A estrada mais bonita do mundo. 200 km de falésias dramáticas sobre o Oceano Pacífico. Bixby Bridge, McWay Falls, Point Lobos — cada curva é uma obra de arte da natureza.</p>
-      <div class="slide-badge">
+      <div class="slide-tag">Las Vegas · The Strip</div>
+      <h1 class="slide-title">Bellagio<br>& The Strip</h1>
+      <p class="slide-subtitle">As fontes do Bellagio, o Grand Canyon de helicóptero, o Strip iluminado à meia-noite — experiências que ficam para sempre gravadas na memória.</p>
+      <div class="slide-badges">
+        <span class="badge">⛲ Bellagio Fountains</span>
+        <span class="badge">🚁 Grand Canyon Tour</span>
+        <span class="badge">🎭 Shows Noturnos</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 12: SANTA MONICA (135s) -->
+  <div class="slide" data-time="135">
+    <div class="slide-bg" style="background-image:url('img/santa_monica_pier.jpg')"></div>
+    <div class="slide-overlay"></div>
+    <div class="slide-content">
+      <div class="slide-tag">Dia 19 · Santa Mônica</div>
+      <h1 class="slide-title">Santa Monica<br>Fim da Rota 66</h1>
+      <p class="slide-subtitle">Onde a Rota 66 termina no Oceano Pacífico. O Pier histórico, as praias douradas, o sol californiano. Um momento de pura emoção e conquista.</p>
+      <div class="slide-badges">
         <span class="badge">🌊 Oceano Pacífico</span>
-        <span class="badge">🌉 Bixby Bridge</span>
-        <span class="badge">🏔️ Falésias</span>
+        <span class="badge">🎡 Santa Monica Pier</span>
+        <span class="badge">🏁 Fim da Rota 66</span>
       </div>
     </div>
   </div>
 
-  <!-- SLIDE 7: SAN FRANCISCO -->
-  <div class="slide" id="slide-6">
-    <div class="slide-bg" style="background-image: url('img/san_francisco.jpg')"></div>
+  <!-- 13: BIG SUR HIGHWAY (151s) -->
+  <div class="slide" data-time="151">
+    <div class="slide-bg" style="background-image:url('img/big_sur_highway.jpg')"></div>
+    <div class="slide-overlay"></div>
     <div class="slide-content">
-      <div class="slide-tag" style="background: rgba(244,169,168,0.3); color: #F4A9A8;">Dias 25 — 27 · Fase 7</div>
-      <h1 class="slide-title">San<br>Francisco</h1>
-      <p class="slide-subtitle">Golden Gate, Alcatraz, Fisherman's Wharf e os famosos bondes elétricos. Uma cidade de charme único, diversidade cultural e gastronomia extraordinária.</p>
-      <div class="slide-badge">
+      <div class="slide-tag">Dias 20 – 22 · Highway 1</div>
+      <h1 class="slide-title">Highway 1<br>Big Sur</h1>
+      <p class="slide-subtitle">A estrada mais bonita do mundo. 200 quilômetros de falésias dramáticas sobre o Oceano Pacífico. O pico absoluto desta viagem.</p>
+      <div class="slide-badges">
+        <span class="badge">🛣️ 200 km costeiros</span>
+        <span class="badge">🌊 Oceano Pacífico</span>
+        <span class="badge">⭐ Pico da Viagem</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 14: BIXBY BRIDGE (156s) -->
+  <div class="slide" data-time="156">
+    <div class="slide-bg" style="background-image:url('img/bixby_bridge.jpg')"></div>
+    <div class="slide-overlay"></div>
+    <div class="slide-content">
+      <div class="slide-tag">Big Sur · Bixby Bridge</div>
+      <h1 class="slide-title">Bixby Bridge</h1>
+      <p class="slide-subtitle">Cada curva revela uma paisagem mais espetacular que a anterior. Dirijam devagar. Parem em cada mirante. Respirem fundo. Este é o momento.</p>
+      <div class="slide-badges">
+        <span class="badge">🌉 Bixby Bridge</span>
+        <span class="badge">🦭 Point Lobos</span>
+        <span class="badge">📸 Mirantes Infinitos</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 15: SAN FRANCISCO (173s) -->
+  <div class="slide" data-time="173">
+    <div class="slide-bg" style="background-image:url('img/san_francisco.jpg')"></div>
+    <div class="slide-overlay"></div>
+    <div class="slide-content">
+      <div class="slide-tag">Dias 23 – 24 · San Francisco</div>
+      <h1 class="slide-title">San Francisco</h1>
+      <p class="slide-subtitle">Uma cidade de charme único, diversidade cultural, gastronomia extraordinária e uma vista que tira o fôlego a cada esquina.</p>
+      <div class="slide-badges">
         <span class="badge">🌉 Golden Gate</span>
         <span class="badge">🏝️ Alcatraz</span>
-        <span class="badge">🚋 Cable Car</span>
+        <span class="badge">🚃 Cable Cars</span>
       </div>
     </div>
   </div>
 
-  <!-- SLIDE 8: REDWOOD -->
-  <div class="slide" id="slide-7">
-    <div class="slide-bg" style="background-image: url('img/redwood_forest.jpg')"></div>
+  <!-- 16: GOLDEN GATE (177s) -->
+  <div class="slide" data-time="177">
+    <div class="slide-bg" style="background-image:url('img/golden_gate_fog.jpg')"></div>
+    <div class="slide-overlay"></div>
     <div class="slide-content">
-      <div class="slide-tag" style="background: rgba(159,212,181,0.3); color: #9FD4B5;">Dias 28 — 29 · Fase 8</div>
-      <h1 class="slide-title">Redwood<br>Forest</h1>
-      <p class="slide-subtitle">As árvores mais altas do mundo. Caminhar entre gigantes de 100 metros de altura é uma experiência espiritual — uma conexão com a natureza que poucos têm o privilégio de vivenciar.</p>
-      <div class="slide-badge">
+      <div class="slide-tag">San Francisco · Golden Gate</div>
+      <h1 class="slide-title">Golden Gate<br>na Névoa</h1>
+      <p class="slide-subtitle">O Golden Gate emergindo da névoa matinal, Alcatraz ao longe, o Fisherman's Wharf e os bondes elétricos subindo as colinas. São Francisco é inesquecível.</p>
+      <div class="slide-badges">
+        <span class="badge">🌁 Névoa Matinal</span>
+        <span class="badge">🏝️ Alcatraz Tour</span>
+        <span class="badge">🦀 Fisherman's Wharf</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 17: REDWOOD (187s) -->
+  <div class="slide" data-time="187">
+    <div class="slide-bg" style="background-image:url('img/redwood_forest_path.jpg')"></div>
+    <div class="slide-overlay"></div>
+    <div class="slide-content">
+      <div class="slide-tag">Dias 25 – 26 · Redwood Forest</div>
+      <h1 class="slide-title">Redwood<br>Forests</h1>
+      <p class="slide-subtitle">Caminhar entre gigantes de 100 metros de altura é uma experiência espiritual. Uma conexão com a natureza que pouquíssimas pessoas têm o privilégio de vivenciar.</p>
+      <div class="slide-badges">
         <span class="badge">🌲 100m de altura</span>
-        <span class="badge">🦌 Vida Selvagem</span>
-        <span class="badge">🌿 Trilhas</span>
+        <span class="badge">🌿 Trilhas Ancestrais</span>
+        <span class="badge">✨ Experiência Espiritual</span>
       </div>
     </div>
   </div>
 
-  <!-- SLIDE 9: SEATTLE -->
-  <div class="slide" id="slide-8">
-    <div class="slide-bg" style="background-image: url('img/seattle.jpg')"></div>
+  <!-- 18: PORTLAND (199s) -->
+  <div class="slide" data-time="199">
+    <div class="slide-bg" style="background-image:url('img/portland_city.jpg')"></div>
+    <div class="slide-overlay"></div>
     <div class="slide-content">
-      <div class="slide-tag" style="background: rgba(107,163,212,0.3); color: #6BA3D4;">Dias 28 — 30 · Fase 9</div>
-      <h1 class="slide-title">Seattle<br>The Emerald City</h1>
-      <p class="slide-subtitle">Space Needle, Pike Place Market, Starbucks original e o Monte Rainier ao fundo. A cidade que combina modernidade tecnológica com natureza selvagem.</p>
-      <div class="slide-badge">
-        <span class="badge">🗼 Space Needle</span>
+      <div class="slide-tag">Dia 27 · Portland</div>
+      <h1 class="slide-title">Portland</h1>
+      <p class="slide-subtitle">A cidade mais cool do noroeste americano. Food trucks extraordinários, cervejarias artesanais e uma cultura criativa que contagia qualquer um.</p>
+      <div class="slide-badges">
+        <span class="badge">🍺 Craft Beer Capital</span>
+        <span class="badge">🌮 Food Trucks</span>
+        <span class="badge">🏔️ Mount Hood</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 19: SEATTLE (207s) -->
+  <div class="slide" data-time="207">
+    <div class="slide-bg" style="background-image:url('img/seattle.jpg')"></div>
+    <div class="slide-overlay"></div>
+    <div class="slide-content">
+      <div class="slide-tag">Dias 28 – 30 · Seattle</div>
+      <h1 class="slide-title">Seattle</h1>
+      <p class="slide-subtitle">A cidade de Starbucks, da Amazon, do Space Needle e do Pike Place Market. O destino final de uma jornada que vai mudar a vida de vocês para sempre.</p>
+      <div class="slide-badges">
+        <span class="badge">🚀 Space Needle</span>
         <span class="badge">☕ Starbucks Original</span>
-        <span class="badge">🐟 Pike Place</span>
+        <span class="badge">🐟 Pike Place Market</span>
       </div>
     </div>
   </div>
 
-  <!-- SLIDE 10: FECHAMENTO -->
-  <div class="slide" id="slide-9">
-    <div class="slide-bg" style="background-image: url('img/01_capa_viagem.jpg')"></div>
+  <!-- 20: SPACE NEEDLE (213s) -->
+  <div class="slide" data-time="213">
+    <div class="slide-bg" style="background-image:url('img/seattle_space_needle.jpg')"></div>
+    <div class="slide-overlay"></div>
     <div class="slide-content">
-      <div class="slide-tag" style="background: rgba(244,169,168,0.3); color: #F4A9A8;">Giovani & Silvana · 2026</div>
-      <h1 class="slide-title">30 Dias.<br>Uma Vida de<br>Memórias.</h1>
-      <p class="slide-subtitle">3.850 km · 11 cidades · USD $20.000<br>Uma jornada que vai mudar a vida de vocês para sempre.</p>
-      <div class="slide-badge">
-        <span class="badge">🚗 3.850 km</span>
-        <span class="badge">🏙️ 11 Cidades</span>
-        <span class="badge">💰 USD $20k</span>
-        <span class="badge">❤️ Para Sempre</span>
+      <div class="slide-tag">Seattle · Space Needle</div>
+      <h1 class="slide-title">Space Needle<br>& Mount Rainier</h1>
+      <p class="slide-subtitle">A Space Needle ao entardecer com o Monte Rainier nevado ao fundo. Uma cidade que combina tecnologia de ponta com a natureza mais selvagem do país.</p>
+      <div class="slide-badges">
+        <span class="badge">🏔️ Mount Rainier</span>
+        <span class="badge">🌲 Olympic Peninsula</span>
+        <span class="badge">🎵 Grunge Capital</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 21: ENCERRAMENTO (224s) -->
+  <div class="slide" data-time="224">
+    <div class="slide-bg" style="background-image:url('img/road_trip_couple.jpg')"></div>
+    <div class="slide-overlay" style="background:linear-gradient(to bottom,rgba(0,0,0,0.3),rgba(0,0,0,0.88))"></div>
+    <div class="slide-content">
+      <div class="slide-tag">Giovani & Silvana · 2026</div>
+      <h1 class="slide-title" style="font-size:clamp(2.5rem,7vw,6rem)">30 Dias.<br>Uma Vida de<br>Memórias.</h1>
+      <p class="slide-subtitle">3.850 quilômetros · 11 cidades · Uma jornada que vai mudar a vida de vocês para sempre. A América espera por Giovani e Silvana.</p>
+      <div class="slide-badges">
+        <span class="badge">🗽 New York</span>
+        <span class="badge">🛣️ Rota 66</span>
+        <span class="badge">🌊 Big Sur</span>
+        <span class="badge">🚀 Seattle</span>
       </div>
     </div>
   </div>
 
 </div>
 
-<!-- NAV DOTS -->
-<div class="nav-dots" id="navDots"></div>
-
-<!-- ARROWS -->
-<button class="arrow arrow-left" onclick="changeSlide(-1)">‹</button>
-<button class="arrow arrow-right" onclick="changeSlide(1)">›</button>
-
-<!-- AUDIO PLAYER -->
+<!-- ===== PLAYER ===== -->
 <div class="audio-player">
-  <div class="audio-cover">🎙️</div>
-  <div class="audio-info">
-    <div class="audio-title">Descobrindo a América — Narração Oficial</div>
-    <div class="audio-subtitle">Road Trip 2026 · Giovani & Silvana</div>
-  </div>
-  <div class="audio-progress-wrap">
-    <div class="audio-progress-bar" id="audioProgressBar" onclick="seekAudio(event)">
-      <div class="audio-progress-fill" id="audioProgressFill"></div>
+  <div class="player-row1">
+    <button class="play-btn" id="playBtn" onclick="togglePlay()">
+      <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+    </button>
+    <div class="player-center">
+      <div class="player-title">🎙️ Descobrindo a América — Narração Completa (4m 46s)</div>
+      <div class="progress-track" id="progressTrack" onclick="seekAudio(event)">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <div class="player-times">
+        <span id="currentTime">0:00</span>
+        <span id="totalTime">4:46</span>
+      </div>
     </div>
-    <span class="audio-time" id="audioTime">0:00 / 4:46</span>
-  </div>
-  <div class="audio-controls">
-    <button class="btn-play" id="btnPlay" onclick="toggleAudio()">▶</button>
+    <div class="slide-counter" id="slideCounter">01 / 22</div>
   </div>
 </div>
 
-<audio id="audioPlayer" src="narracao.mp3" preload="auto"></audio>
+<audio id="audio" src="narracao.mp3" preload="auto"></audio>
 
 <script>
-  const slides = document.querySelectorAll('.slide');
-  const dotsContainer = document.getElementById('navDots');
-  const progressBar = document.getElementById('progressBar');
-  const slideCounter = document.getElementById('slideCounter');
-  const audio = document.getElementById('audioPlayer');
-  const btnPlay = document.getElementById('btnPlay');
-  const audioProgressFill = document.getElementById('audioProgressFill');
-  const audioTime = document.getElementById('audioTime');
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const audio  = document.getElementById('audio');
+  const fill   = document.getElementById('progressFill');
+  const topPrg = document.getElementById('topProgress');
+  const curEl  = document.getElementById('currentTime');
+  const cntEl  = document.getElementById('slideCounter');
+  const dotsEl = document.getElementById('sideDots');
 
-  let current = 0;
-  let autoplayTimer = null;
-  const AUTOPLAY_DELAY = 7000;
+  let cur = 0, playing = false;
+  const times = slides.map(s => parseFloat(s.dataset.time) || 0);
+  const TOTAL = 286.6;
 
-  // Create dots
+  // Criar dots
   slides.forEach((_, i) => {
-    const dot = document.createElement('div');
-    dot.className = 'dot' + (i === 0 ? ' active' : '');
-    dot.onclick = () => goToSlide(i);
-    dotsContainer.appendChild(dot);
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.onclick = () => jumpToSlide(i);
+    dotsEl.appendChild(d);
   });
 
-  function updateUI() {
-    slides.forEach((s, i) => {
-      s.classList.remove('active', 'prev');
-      if (i === current) s.classList.add('active');
-    });
-    document.querySelectorAll('.dot').forEach((d, i) => {
-      d.classList.toggle('active', i === current);
-    });
-    progressBar.style.width = ((current + 1) / slides.length * 100) + '%';
-    slideCounter.textContent = (current + 1) + ' / ' + slides.length;
+  function goTo(idx) {
+    if (idx === cur) return;
+    slides[cur].classList.remove('active');
+    dotsEl.children[cur].classList.remove('active');
+    cur = idx;
+    slides[cur].classList.add('active');
+    dotsEl.children[cur].classList.add('active');
+    cntEl.textContent = String(cur + 1).padStart(2,'0') + ' / ' + String(slides.length).padStart(2,'0');
   }
 
-  function goToSlide(n) {
-    current = (n + slides.length) % slides.length;
-    updateUI();
-    resetAutoplay();
+  function jumpToSlide(idx) {
+    audio.currentTime = times[idx];
+    if (!playing) goTo(idx);
   }
 
-  function changeSlide(dir) {
-    goToSlide(current + dir);
-  }
-
-  function resetAutoplay() {
-    clearTimeout(autoplayTimer);
-    autoplayTimer = setTimeout(() => changeSlide(1), AUTOPLAY_DELAY);
-  }
-
-  // Keyboard navigation
-  document.addEventListener('keydown', e => {
-    if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
-    if (e.key === 'ArrowLeft') changeSlide(-1);
-  });
-
-  // Touch swipe
-  let touchStartX = 0;
-  document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
-  document.addEventListener('touchend', e => {
-    const diff = touchStartX - e.changedTouches[0].clientX;
-    if (Math.abs(diff) > 50) changeSlide(diff > 0 ? 1 : -1);
-  });
-
-  // Audio controls
-  function toggleAudio() {
-    if (audio.paused) {
-      audio.play();
-      btnPlay.textContent = '⏸';
-    } else {
-      audio.pause();
-      btnPlay.textContent = '▶';
-    }
-  }
-
-  function formatTime(s) {
-    const m = Math.floor(s / 60);
-    const sec = Math.floor(s % 60);
-    return m + ':' + (sec < 10 ? '0' : '') + sec;
+  function manualSlide(dir) {
+    const next = Math.max(0, Math.min(slides.length - 1, cur + dir));
+    audio.currentTime = times[next];
+    if (!playing) goTo(next);
   }
 
   audio.addEventListener('timeupdate', () => {
-    if (audio.duration) {
-      const pct = (audio.currentTime / audio.duration) * 100;
-      audioProgressFill.style.width = pct + '%';
-      audioTime.textContent = formatTime(audio.currentTime) + ' / ' + formatTime(audio.duration);
+    const t = audio.currentTime;
+    const pct = (t / TOTAL) * 100;
+    fill.style.width = pct + '%';
+    topPrg.style.width = pct + '%';
+    curEl.textContent = fmt(t);
+
+    // Sincronizar slide
+    let nxt = 0;
+    for (let i = times.length - 1; i >= 0; i--) {
+      if (t >= times[i]) { nxt = i; break; }
     }
+    goTo(nxt);
   });
 
-  audio.addEventListener('ended', () => { btnPlay.textContent = '▶'; });
+  audio.addEventListener('ended', () => {
+    playing = false;
+    updateBtn();
+    goTo(slides.length - 1);
+  });
 
-  function seekAudio(e) {
-    const bar = document.getElementById('audioProgressBar');
-    const rect = bar.getBoundingClientRect();
-    const pct = (e.clientX - rect.left) / rect.width;
-    audio.currentTime = pct * audio.duration;
+  function togglePlay() {
+    if (playing) {
+      audio.pause();
+      playing = false;
+    } else {
+      audio.play().then(() => { playing = true; }).catch(() => { playing = false; });
+    }
+    updateBtn();
   }
 
-  // Start autoplay
-  resetAutoplay();
-  updateUI();
+  function updateBtn() {
+    document.getElementById('playIcon').innerHTML = playing
+      ? '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>'
+      : '<path d="M8 5v14l11-7z"/>';
+  }
+
+  function seekAudio(e) {
+    const r = document.getElementById('progressTrack').getBoundingClientRect();
+    audio.currentTime = ((e.clientX - r.left) / r.width) * TOTAL;
+  }
+
+  function fmt(s) {
+    return Math.floor(s/60) + ':' + String(Math.floor(s%60)).padStart(2,'0');
+  }
+
+  // Teclado
+  document.addEventListener('keydown', e => {
+    if (e.key === ' ') { e.preventDefault(); togglePlay(); }
+    else if (e.key === 'ArrowRight') manualSlide(1);
+    else if (e.key === 'ArrowLeft')  manualSlide(-1);
+  });
+
+  // Swipe
+  let tx = 0;
+  document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; });
+  document.addEventListener('touchend',   e => {
+    const d = tx - e.changedTouches[0].clientX;
+    if (Math.abs(d) > 50) manualSlide(d > 0 ? 1 : -1);
+  });
 </script>
 </body>
 </html>
