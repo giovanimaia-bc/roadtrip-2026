@@ -226,6 +226,35 @@
       .dashboard-grid { padding: 0 16px 24px; }
       .links-grid { grid-template-columns: 1fr; }
     }
+    /* ── CONSULTOR ── */
+    #consultor { background: #0a0a1a; }
+    .consultor-container { padding: 0 40px 60px; max-width: 1400px; margin: 0 auto; }
+    .consultor-card { background: var(--gray); border-radius: 12px; padding: 32px; margin-bottom: 24px; border-top: 4px solid var(--gold); }
+    .consultor-header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+    .consultor-icon { font-size: 36px; }
+    .consultor-header h3 { font-family: 'Montserrat', sans-serif; font-size: 22px; font-weight: 700; color: var(--gold); }
+    .consultor-content { line-height: 1.8; }
+    .consultor-content p { margin-bottom: 16px; color: rgba(255,255,255,0.85); }
+    .consultor-content h4 { font-family: 'Montserrat', sans-serif; font-size: 16px; font-weight: 700; color: #fff; margin: 20px 0 12px; }
+    .consultor-content ul { margin-left: 24px; margin-bottom: 16px; }
+    .consultor-content li { margin-bottom: 8px; color: rgba(255,255,255,0.8); }
+    .opt-item { background: rgba(255,255,255,0.05); border-radius: 8px; padding: 20px; margin-bottom: 16px; border-left: 3px solid var(--red); }
+    .cidade-item { background: rgba(255,255,255,0.05); border-radius: 8px; padding: 20px; margin-bottom: 16px; border-left: 3px solid var(--blue); }
+    .roteiro-item { background: rgba(255,255,255,0.05); border-radius: 8px; padding: 20px; margin-bottom: 16px; border-left: 3px solid var(--gold); }
+    .dica-final { background: rgba(255,255,255,0.05); border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+    .link-consultor { display: inline-block; margin-right: 12px; margin-top: 12px; padding: 8px 16px; background: var(--red); color: #fff; text-decoration: none; border-radius: 4px; font-size: 13px; font-weight: 600; transition: all 0.2s; }
+    .link-consultor:hover { background: #b71c1c; transform: translateY(-2px); }
+    .consultor-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+    .consultor-table th { background: rgba(255,255,255,0.1); padding: 12px; text-align: left; font-weight: 700; border-bottom: 2px solid var(--gold); }
+    .consultor-table td { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .consultor-table tr:hover { background: rgba(255,255,255,0.05); }
+    
+    @media (max-width: 900px) {
+      .consultor-card { padding: 20px; }
+      .consultor-header { flex-direction: column; align-items: flex-start; }
+      .consultor-table { font-size: 12px; }
+    }
+
   </style>
 </head>
 <body>
@@ -241,6 +270,7 @@
     <a href="#dias">Dias</a>
     <a href="#financeiro">Custos</a>
     <a href="#dicas">Dicas</a>
+    <a href="#consultor">Consultor</a>
   </div>
 </nav>
 
@@ -849,6 +879,201 @@
     </div>
   </div>
 </section>
+
+<!-- CONSULTOR -->
+<section id="consultor">
+  <div class="section-header">
+    <div class="section-tag">Consultoria Especializada</div>
+    <h2 class="section-title">Consultor de <span>Viagem</span></h2>
+    <div class="section-line"></div>
+  </div>
+  
+  <div class="consultor-container">
+    <!-- CARD 1: OTIMIZAÇÕES -->
+    <div class="consultor-card">
+      <div class="consultor-header">
+        <div class="consultor-icon">⚡</div>
+        <h3>Otimizações Recomendadas</h3>
+      </div>
+      <div class="consultor-content">
+        <p><strong>Análise Atual:</strong> Seu roteiro está bem equilibrado, mas identifiquei 3 oportunidades de melhoria:</p>
+        
+        <div class="opt-item">
+          <h4>1. Estender para 35-40 Dias (Recomendado)</h4>
+          <p>Adicionar 5-10 dias permitiria:</p>
+          <ul>
+            <li>✅ Visitar <strong>Sedona, Arizona</strong> (Red Rocks espetaculares)</li>
+            <li>✅ Passar 2 dias em <strong>Monument Valley</strong> (Navajo Nation)</li>
+            <li>✅ Explorar <strong>Antelope Canyon</strong> (slot canyon mais famosa do mundo)</li>
+            <li>✅ Reduzir ritmo em Big Sur (3 para 4 dias)</li>
+            <li>✅ Adicionar dia em Portland (Powell's Books + Voodoo Doughnuts)</li>
+          </ul>
+          <p><strong>Custo adicional:</strong> USD $3.000-4.000 (hospedagem + atividades)</p>
+          <p><strong>Meu parecer:</strong> Vale MUITO a pena. Sedona e Monument Valley são imperdíveis.</p>
+          <a href="https://www.visitarizona.com/sedona" target="_blank" class="link-consultor">🔗 Visite Sedona Official</a>
+          <a href="https://www.navajonationparks.org/" target="_blank" class="link-consultor">🔗 Navajo Nation Parks</a>
+        </div>
+        
+        <div class="opt-item">
+          <h4>2. Otimizar Orçamento (Economizar USD $2.000-3.000)</h4>
+          <p>Sem comprometer qualidade:</p>
+          <ul>
+            <li>✅ Trocar 3 hotéis 5⭐ por 4⭐ (economiza USD $1.000)</li>
+            <li>✅ Usar Airbnb em Portland e Seattle (USD $800)</li>
+            <li>✅ Happy hour em vez de restaurantes premium (USD $400)</li>
+            <li>✅ Comprar America the Beautiful Pass (USD $80 para todos os parques)</li>
+          </ul>
+          <p><strong>Resultado:</strong> USD $20k → USD $17k (com mesma qualidade)</p>
+          <p><strong>Meu parecer:</strong> Recomendo manter o orçamento e usar a economia para upgrades em experiências.</p>
+        </div>
+        
+        <div class="opt-item">
+          <h4>3. Adicionar Experiências Premium (USD $2.000-3.000)</h4>
+          <p>Que transformam a viagem:</p>
+          <ul>
+            <li>✅ Helicóptero sobre Grand Canyon (USD $300)</li>
+            <li>✅ Sunset Dinner Cruise em San Francisco (USD $150)</li>
+            <li>✅ Spa day em Sedona (USD $200)</li>
+            <li>✅ Upgrade para suíte em Big Sur (USD $500 extra)</li>
+            <li>✅ Private tour em Alcatraz (USD $200)</li>
+          </ul>
+          <p><strong>Meu parecer:</strong> Essas experiências criam memórias inesquecíveis. Recomendo investir.</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- CARD 2: CIDADES ALTERNATIVAS -->
+    <div class="consultor-card">
+      <div class="consultor-header">
+        <div class="consultor-icon">🗺️</div>
+        <h3>Cidades que Vocês Estão Perdendo</h3>
+      </div>
+      <div class="consultor-content">
+        <p><strong>Análise:</strong> Seu roteiro cobre as principais cidades, mas há 4 joias que poderiam ser incluídas:</p>
+        
+        <div class="cidade-item">
+          <h4>🌄 Sedona, Arizona (IMPRESCINDÍVEL)</h4>
+          <p><strong>Por que:</strong> Red Rocks, Cathedral Rock, Vortex sites — paisagem única no mundo</p>
+          <p><strong>Quando:</strong> Substituir 1 dia em Las Vegas por 2 dias em Sedona (detour de 3h)</p>
+          <p><strong>O que fazer:</strong> Cathedral Rock hike, Sunset at Airport Mesa, Spa Jewell</p>
+          <p><strong>Custo:</strong> USD $250-300/noite (hotel 4⭐)</p>
+          <a href="https://www.visitsedona.com/" target="_blank" class="link-consultor">🔗 Visit Sedona</a>
+          <a href="https://www.alltrails.com/explore/trail/arizona/sedona/cathedral-rock" target="_blank" class="link-consultor">🔗 Cathedral Rock Trail</a>
+        </div>
+        
+        <div class="cidade-item">
+          <h4>🏜️ Monument Valley (Navajo Nation)</h4>
+          <p><strong>Por que:</strong> Paisagem mais icônica do Oeste Americano — cenário de filmes de Western</p>
+          <p><strong>Quando:</strong> Adicionar 2 dias entre Albuquerque e Las Vegas</p>
+          <p><strong>O que fazer:</strong> Scenic Drive, Sunrise/Sunset tours, Navajo cultural experience</p>
+          <p><strong>Custo:</strong> USD $200-250/noite + USD $20 entrada</p>
+          <a href="https://www.navajonationparks.org/" target="_blank" class="link-consultor">🔗 Navajo Nation Parks</a>
+          <a href="https://www.monumentvalleynavajotribalpark.com/" target="_blank" class="link-consultor">🔗 Monument Valley Official</a>
+        </div>
+        
+        <div class="cidade-item">
+          <h4>🏜️ Antelope Canyon (Arizona)</h4>
+          <p><strong>Por que:</strong> Slot canyon mais fotografada do mundo — luz divina filtrando pela rocha</p>
+          <p><strong>Quando:</strong> Bate-volta de Monument Valley (1h de carro)</p>
+          <p><strong>O que fazer:</strong> Upper Antelope Canyon tour (45 min), Lower Antelope Canyon (mais aventureiro)</p>
+          <p><strong>Custo:</strong> USD $25-40 por pessoa</p>
+          <a href="https://www.antelopecanyonnavajo.com/" target="_blank" class="link-consultor">🔗 Antelope Canyon Tours</a>
+        </div>
+        
+        <div class="cidade-item">
+          <h4>🌲 Crater Lake, Oregon</h4>
+          <p><strong>Por que:</strong> Lago de água mais pura dos EUA — paisagem de conto de fadas</p>
+          <p><strong>Quando:</strong> Detour entre Portland e Seattle (4h de carro)</p>
+          <p><strong>O que fazer:</strong> Rim Drive (33 milhas), Phantom Ship tour, hiking</p>
+          <p><strong>Custo:</strong> USD $30 entrada + USD $150-200/noite (hotel próximo)</p>
+          <p><strong>Nota:</strong> Aberto apenas Junho-Outubro (vocês estão no período perfeito!)</p>
+          <a href="https://www.nps.gov/crla/" target="_blank" class="link-consultor">🔗 Crater Lake National Park</a>
+        </div>
+      </div>
+    </div>
+    
+    <!-- CARD 3: ROTEIROS ALTERNATIVOS -->
+    <div class="consultor-card">
+      <div class="consultor-header">
+        <div class="consultor-icon">🛣️</div>
+        <h3>Roteiros Alternativos Sugeridos</h3>
+      </div>
+      <div class="consultor-content">
+        <p><strong>Seu roteiro atual é excelente!</strong> Mas aqui estão 2 variações para considerar:</p>
+        
+        <div class="roteiro-item">
+          <h4>📍 ROTEIRO A: Adicionar Sudoeste (35 dias)</h4>
+          <p><strong>Modificação:</strong> Inserir Sedona + Monument Valley + Antelope Canyon</p>
+          <p><strong>Novo trajeto:</strong></p>
+          <ul>
+            <li>Dias 1-5: NY → DC (igual)</li>
+            <li>Dias 6-12: Route 66 até Albuquerque (igual)</li>
+            <li><strong>Dias 13-15: NOVO - Sedona + Red Rocks (2 dias)</strong></li>
+            <li><strong>Dias 16-17: NOVO - Monument Valley + Antelope Canyon (1 dia)</strong></li>
+            <li>Dias 18-19: Las Vegas (reduzir de 2 para 1 dia)</li>
+            <li>Dias 20-22: Big Sur (igual)</li>
+            <li>Dias 23-24: San Francisco (igual)</li>
+            <li><strong>Dias 25-26: NOVO - Crater Lake (1 dia extra)</strong></li>
+            <li>Dias 27-29: Portland + Seattle (igual)</li>
+            <li>Dia 30: Seattle (igual)</li>
+          </ul>
+          <p><strong>Custo adicional:</strong> USD $2.500-3.500</p>
+          <p><strong>Meu parecer:</strong> ⭐⭐⭐⭐⭐ ALTAMENTE RECOMENDADO</p>
+        </div>
+        
+        <div class="roteiro-item">
+          <h4>📍 ROTEIRO B: Focar em Natureza (30 dias - mantendo orçamento)</h4>
+          <p><strong>Modificação:</strong> Reduzir cidades, aumentar parques nacionais</p>
+          <p><strong>Foco:</strong> Grand Canyon, Zion, Bryce Canyon, Redwood, Crater Lake</p>
+          <p><strong>Meu parecer:</strong> Se vocês amam natureza selvagem, este é melhor</p>
+          <a href="https://www.nps.gov/" target="_blank" class="link-consultor">🔗 National Parks Service</a>
+        </div>
+      </div>
+    </div>
+    
+    <!-- CARD 4: DICAS FINAIS -->
+    <div class="consultor-card">
+      <div class="consultor-header">
+        <div class="consultor-icon">💎</div>
+        <h3>Dicas Finais do Especialista</h3>
+      </div>
+      <div class="consultor-content">
+        <div class="dica-final">
+          <h4>✨ Experiência Transformadora</h4>
+          <p>Vocês estão prestes a fazer uma viagem que mudará suas vidas. Aqui estão meus conselhos finais:</p>
+          
+          <p><strong>1. Flexibilidade é Ouro</strong><br>
+          Seu roteiro está ótimo, mas deixem espaço para surpresas. Se encontrarem um lugar incrível, fiquem mais tempo. Se uma estrada estiver bonita, façam o detour.</p>
+          
+          <p><strong>2. Qualidade > Quantidade</strong><br>
+          Melhor passar 3 dias em um lugar incrível do que 1 dia em 3 lugares. Vocês têm 30 dias — usem bem.</p>
+          
+          <p><strong>3. Invistam em Experiências</strong><br>
+          Não economizem em shows, tours guiados, restaurantes especiais. Essas são as memórias que levarão para a vida toda.</p>
+          
+          <p><strong>4. Big Sur é o Pico</strong><br>
+          Não se apressem em Big Sur. Dirija devagar, pare em cada mirante, tire muitas fotos. É a joia da coroa.</p>
+          
+          <p><strong>5. Documentem Tudo</strong><br>
+          Tirem muitas fotos, façam vídeos, escrevam no diário. Vocês vão querer reviver cada momento.</p>
+        </div>
+        
+        <div class="dica-final">
+          <h4>📞 Próximos Passos</h4>
+          <p>1. Revise as recomendações com Silvana</p>
+          <p>2. Decida se quer estender para 35-40 dias</p>
+          <p>3. Faça as reservas críticas (Big Sur, Sedona, Monument Valley)</p>
+          <p>4. Confirme seguro de viagem internacional</p>
+          <p>5. Prepare documentação (passaporte, vistos se necessário)</p>
+          <p>6. Ative eSIM para os EUA</p>
+          <p>7. Baixe Google Maps offline para cada estado</p>
+          <p>8. Aproveite cada momento! 🚗🗽🌊</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 
 <!-- FOOTER -->
 <footer>
