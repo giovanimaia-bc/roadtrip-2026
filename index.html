@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Descobrindo a América — Giovani & Silvana 2026</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --red: #D32F2F;
+      --blue: #1565C0;
+      --gold: #F9A825;
+      --dark: #1A1A2E;
+      --gray: #2D2D44;
+      --light: #F5F5F5;
+      --white: #FFFFFF;
+      --text: #212121;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Lato', sans-serif; background: var(--dark); color: var(--white); overflow-x: hidden; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      background: rgba(26,26,46,0.96); backdrop-filter: blur(10px);
+      border-bottom: 2px solid var(--gold);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px; height: 64px;
+    }
+    .nav-brand { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 18px; color: var(--gold); letter-spacing: 1px; }
+    .nav-links { display: flex; gap: 6px; }
+    .nav-links a {
+      color: rgba(255,255,255,0.8); text-decoration: none; font-size: 13px; font-weight: 600;
+      padding: 6px 14px; border-radius: 20px; transition: all 0.2s;
+      letter-spacing: 0.5px; text-transform: uppercase;
+    }
+    .nav-links a:hover, .nav-links a.active { background: var(--red); color: #fff; }
+
+    /* ── SECTIONS ── */
+    section { min-height: 100vh; padding-top: 64px; }
+
+    /* ── HERO ── */
+    #hero {
+      position: relative; display: flex; align-items: center; justify-content: center;
+      background: url('img/01_capa_viagem.jpg') center/cover no-repeat;
+      min-height: 100vh;
+    }
+    #hero::before { content:''; position:absolute; inset:0; background: linear-gradient(135deg, rgba(26,26,46,0.85) 0%, rgba(211,47,47,0.3) 100%); }
+    .hero-content { position: relative; z-index: 2; text-align: center; max-width: 900px; padding: 40px; }
+    .hero-tag { display: inline-block; background: var(--red); color: #fff; font-size: 12px; font-weight: 700; letter-spacing: 3px; padding: 6px 20px; border-radius: 2px; margin-bottom: 24px; text-transform: uppercase; }
+    .hero-title { font-family: 'Montserrat', sans-serif; font-size: clamp(48px, 7vw, 96px); font-weight: 800; line-height: 1.0; color: #fff; text-transform: uppercase; letter-spacing: -2px; margin-bottom: 16px; }
+    .hero-title span { color: var(--gold); }
+    .hero-sub { font-size: 22px; font-weight: 300; color: rgba(255,255,255,0.9); margin-bottom: 40px; letter-spacing: 2px; }
+    .hero-divider { width: 80px; height: 3px; background: var(--gold); margin: 0 auto 32px; }
+    .hero-stats { display: flex; gap: 40px; justify-content: center; flex-wrap: wrap; }
+    .hero-stat { text-align: center; }
+    .hero-stat .num { font-family: 'Montserrat', sans-serif; font-size: 36px; font-weight: 800; color: var(--gold); }
+    .hero-stat .lbl { font-size: 12px; color: rgba(255,255,255,0.7); letter-spacing: 1px; text-transform: uppercase; }
+    .hero-cta { margin-top: 48px; display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; border-radius: 4px; font-weight: 700; font-size: 14px; text-decoration: none; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; border: none; transition: all 0.2s; }
+    .btn-red { background: var(--red); color: #fff; }
+    .btn-red:hover { background: #b71c1c; transform: translateY(-2px); }
+    .btn-outline { background: transparent; color: #fff; border: 2px solid var(--gold); }
+    .btn-outline:hover { background: var(--gold); color: var(--dark); transform: translateY(-2px); }
+
+    /* ── SECTION HEADER ── */
+    .section-header { text-align: center; padding: 60px 40px 40px; }
+    .section-tag { display: inline-block; background: var(--red); color: #fff; font-size: 11px; font-weight: 700; letter-spacing: 3px; padding: 5px 16px; border-radius: 2px; margin-bottom: 16px; text-transform: uppercase; }
+    .section-title { font-family: 'Montserrat', sans-serif; font-size: clamp(28px, 4vw, 48px); font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: -1px; }
+    .section-title span { color: var(--gold); }
+    .section-line { width: 60px; height: 3px; background: var(--gold); margin: 16px auto 0; }
+
+    /* ── DASHBOARD ── */
+    #dashboard { background: #0f0f1e; }
+    .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; padding: 0 40px 40px; max-width: 1400px; margin: 0 auto; }
+    .kpi-card { background: var(--gray); border-radius: 8px; padding: 28px 24px; border-left: 4px solid var(--gold); text-align: center; }
+    .kpi-icon { font-size: 28px; color: var(--gold); margin-bottom: 12px; }
+    .kpi-value { font-family: 'Montserrat', sans-serif; font-size: 36px; font-weight: 800; color: #fff; line-height: 1; }
+    .kpi-label { font-size: 12px; color: rgba(255,255,255,0.6); letter-spacing: 1px; text-transform: uppercase; margin-top: 6px; }
+    .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; padding: 0 40px 40px; max-width: 1400px; margin: 0 auto; }
+    .chart-card { background: var(--gray); border-radius: 8px; padding: 28px; }
+    .chart-title { font-family: 'Montserrat', sans-serif; font-size: 16px; font-weight: 700; color: var(--gold); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }
+    .chart-wrap { position: relative; height: 280px; }
+
+    /* Simulador câmbio */
+    .cambio-box { background: var(--gray); border-radius: 8px; padding: 32px; margin: 0 40px 40px; max-width: 1400px; margin-left: auto; margin-right: auto; }
+    .cambio-title { font-family: 'Montserrat', sans-serif; font-size: 18px; font-weight: 700; color: var(--gold); margin-bottom: 24px; text-transform: uppercase; }
+    .cambio-controls { display: flex; gap: 32px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 24px; }
+    .cambio-field label { display: block; font-size: 12px; color: rgba(255,255,255,0.6); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+    .cambio-field input { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; color: #fff; padding: 10px 16px; font-size: 18px; font-weight: 700; width: 160px; }
+    .cambio-field input:focus { outline: none; border-color: var(--gold); }
+    .cambio-results { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+    .cambio-result { background: rgba(255,255,255,0.05); border-radius: 6px; padding: 20px; text-align: center; }
+    .cambio-result .val { font-family: 'Montserrat', sans-serif; font-size: 28px; font-weight: 800; color: var(--gold); }
+    .cambio-result .lbl { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 4px; text-transform: uppercase; letter-spacing: 1px; }
+
+    /* ── MAPA ── */
+    #mapa { background: #0a0a1a; }
+    .mapa-container { padding: 0 40px 60px; max-width: 1400px; margin: 0 auto; }
+    .mapa-embed { border-radius: 12px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+    .mapa-embed iframe { width: 100%; height: 600px; border: none; display: block; }
+    .rota-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-top: 24px; }
+    .rota-trecho { background: var(--gray); border-radius: 8px; padding: 16px; border-top: 3px solid var(--red); }
+    .rota-trecho .trecho-nome { font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 700; color: var(--gold); margin-bottom: 6px; }
+    .rota-trecho .trecho-estrada { font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 4px; }
+    .rota-trecho .trecho-km { font-size: 11px; color: rgba(255,255,255,0.5); }
+    .rota-trecho a { color: var(--gold); text-decoration: none; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; margin-top: 8px; }
+    .rota-trecho a:hover { color: #fff; }
+
+    /* ── FASES ── */
+    #roteiro { background: #0f0f1e; }
+    .fases-container { padding: 0 40px 60px; max-width: 1400px; margin: 0 auto; }
+    .fase-card {
+      display: grid; grid-template-columns: 400px 1fr; min-height: 420px;
+      border-radius: 12px; overflow: hidden; margin-bottom: 32px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+    }
+    .fase-card:nth-child(even) { direction: rtl; }
+    .fase-card:nth-child(even) > * { direction: ltr; }
+    .fase-img { position: relative; overflow: hidden; }
+    .fase-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .fase-img-overlay { position: absolute; inset: 0; background: linear-gradient(to right, transparent 60%, rgba(15,15,30,0.8)); }
+    .fase-card:nth-child(even) .fase-img-overlay { background: linear-gradient(to left, transparent 60%, rgba(15,15,30,0.8)); }
+    .fase-content { background: var(--gray); padding: 40px; display: flex; flex-direction: column; justify-content: space-between; }
+    .fase-header { margin-bottom: 20px; }
+    .fase-num { font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 700; color: var(--red); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 8px; }
+    .fase-titulo { font-family: 'Montserrat', sans-serif; font-size: 28px; font-weight: 800; color: #fff; line-height: 1.2; margin-bottom: 8px; }
+    .fase-periodo { font-size: 13px; color: var(--gold); font-weight: 600; }
+    .fase-meta { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+    .fase-meta-item { display: flex; align-items: center; gap: 6px; font-size: 13px; color: rgba(255,255,255,0.7); }
+    .fase-meta-item i { color: var(--gold); width: 16px; }
+    .fase-desc { font-size: 14px; color: rgba(255,255,255,0.8); line-height: 1.7; margin-bottom: 20px; }
+    .fase-dica { background: rgba(211,47,47,0.15); border-left: 3px solid var(--red); padding: 12px 16px; border-radius: 0 6px 6px 0; font-size: 13px; color: rgba(255,255,255,0.85); line-height: 1.6; margin-bottom: 20px; }
+    .fase-dica strong { color: var(--red); }
+
+    /* Links */
+    .links-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .link-item { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: rgba(255,255,255,0.06); border-radius: 6px; text-decoration: none; color: rgba(255,255,255,0.85); font-size: 12px; font-weight: 600; transition: all 0.2s; border: 1px solid rgba(255,255,255,0.08); }
+    .link-item:hover { background: rgba(249,168,37,0.15); border-color: var(--gold); color: var(--gold); }
+    .link-item i { font-size: 14px; color: var(--gold); width: 16px; flex-shrink: 0; }
+    .link-item.maps { border-color: rgba(66,133,244,0.3); }
+    .link-item.maps:hover { background: rgba(66,133,244,0.15); border-color: #4285f4; color: #4285f4; }
+    .link-item.maps i { color: #4285f4; }
+    .link-item.hotel { border-color: rgba(249,168,37,0.2); }
+    .link-item.attracao { border-color: rgba(76,175,80,0.2); }
+    .link-item.attracao:hover { background: rgba(76,175,80,0.15); border-color: #4caf50; color: #4caf50; }
+    .link-item.attracao i { color: #4caf50; }
+    .link-item.car { border-color: rgba(156,39,176,0.2); }
+    .link-item.car:hover { background: rgba(156,39,176,0.15); border-color: #9c27b0; color: #9c27b0; }
+    .link-item.car i { color: #9c27b0; }
+
+    /* ── DIAS ── */
+    #dias { background: #0a0a1a; }
+    .dias-container { padding: 0 40px 60px; max-width: 1400px; margin: 0 auto; }
+    .dias-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+    .dia-card { background: var(--gray); border-radius: 8px; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; }
+    .dia-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.4); }
+    .dia-header { padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; }
+    .dia-num { font-family: 'Montserrat', sans-serif; font-size: 28px; font-weight: 800; color: var(--gold); line-height: 1; }
+    .dia-date { font-size: 12px; color: rgba(255,255,255,0.5); text-align: right; }
+    .dia-body { padding: 0 20px 20px; }
+    .dia-cidade { font-family: 'Montserrat', sans-serif; font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+    .dia-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+    .tag { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 12px; letter-spacing: 0.5px; text-transform: uppercase; }
+    .tag-clima { background: rgba(33,150,243,0.2); color: #64b5f6; }
+    .tag-km { background: rgba(249,168,37,0.2); color: var(--gold); }
+    .tag-fase { background: rgba(211,47,47,0.2); color: #ef9a9a; }
+    .dia-atividade { font-size: 13px; color: rgba(255,255,255,0.7); line-height: 1.5; }
+    .dia-footer { padding: 12px 20px; background: rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: space-between; }
+    .dia-hotel { font-size: 11px; color: rgba(255,255,255,0.5); display: flex; align-items: center; gap: 4px; }
+    .dia-hotel i { color: var(--gold); }
+    .dia-custo { font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 700; color: var(--gold); }
+
+    /* ── FINANCEIRO ── */
+    #financeiro { background: #0f0f1e; }
+    .fin-container { padding: 0 40px 60px; max-width: 1400px; margin: 0 auto; }
+    .fin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 32px; }
+    .fin-card { background: var(--gray); border-radius: 8px; padding: 28px; }
+    .fin-card-title { font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; }
+    .fin-table { width: 100%; border-collapse: collapse; }
+    .fin-table th { text-align: left; font-size: 11px; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 1px; padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .fin-table td { padding: 12px; font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .fin-table tr:last-child td { border-bottom: none; font-weight: 700; color: var(--gold); font-size: 16px; }
+    .fin-table .usd { color: #fff; font-weight: 600; }
+    .fin-table .brl { color: rgba(255,255,255,0.7); }
+
+    /* ── DICAS ── */
+    #dicas { background: #0a0a1a; }
+    .dicas-container { padding: 0 40px 60px; max-width: 1400px; margin: 0 auto; }
+    .dicas-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+    .dica-card { background: var(--gray); border-radius: 8px; padding: 28px; border-top: 3px solid var(--gold); }
+    .dica-icon { font-size: 32px; margin-bottom: 16px; }
+    .dica-titulo { font-family: 'Montserrat', sans-serif; font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 12px; text-transform: uppercase; }
+    .dica-lista { list-style: none; }
+    .dica-lista li { font-size: 13px; color: rgba(255,255,255,0.8); padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; align-items: flex-start; gap: 8px; line-height: 1.5; }
+    .dica-lista li::before { content: '→'; color: var(--gold); flex-shrink: 0; margin-top: 1px; }
+    .dica-lista li:last-child { border-bottom: none; }
+
+    /* ── ALUGUEL CARRO ── */
+    .car-section { background: var(--gray); border-radius: 8px; padding: 32px; margin: 0 40px 40px; max-width: 1400px; margin-left: auto; margin-right: auto; }
+    .car-title { font-family: 'Montserrat', sans-serif; font-size: 18px; font-weight: 700; color: var(--gold); margin-bottom: 24px; text-transform: uppercase; }
+    .car-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .car-item { background: rgba(255,255,255,0.05); border-radius: 8px; padding: 20px; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
+    .car-item img { width: 60px; height: 40px; object-fit: contain; margin-bottom: 12px; filter: brightness(0) invert(1); opacity: 0.8; }
+    .car-item .car-name { font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+    .car-item .car-price { font-size: 12px; color: var(--gold); margin-bottom: 12px; }
+    .car-item a { display: inline-block; background: var(--red); color: #fff; text-decoration: none; font-size: 11px; font-weight: 700; padding: 6px 16px; border-radius: 4px; text-transform: uppercase; letter-spacing: 1px; }
+    .car-item a:hover { background: #b71c1c; }
+
+    /* ── FOOTER ── */
+    footer { background: #050510; padding: 40px; text-align: center; border-top: 2px solid var(--gold); }
+    footer .footer-title { font-family: 'Montserrat', sans-serif; font-size: 24px; font-weight: 800; color: var(--gold); margin-bottom: 8px; }
+    footer p { font-size: 14px; color: rgba(255,255,255,0.5); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .fase-card { grid-template-columns: 1fr; }
+      .fase-card:nth-child(even) { direction: ltr; }
+      .fase-img { height: 220px; }
+      .charts-row, .fin-grid { grid-template-columns: 1fr; }
+      nav { padding: 0 16px; }
+      .nav-links a { font-size: 11px; padding: 5px 10px; }
+      .fases-container, .mapa-container, .dias-container, .fin-container, .dicas-container { padding: 0 16px 40px; }
+      .dashboard-grid { padding: 0 16px 24px; }
+      .links-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">🇺🇸 ROAD TRIP 2026</div>
+  <div class="nav-links">
+    <a href="#hero" class="active">Início</a>
+    <a href="#dashboard">Dashboard</a>
+    <a href="#mapa">Mapa</a>
+    <a href="#roteiro">Roteiro</a>
+    <a href="#dias">Dias</a>
+    <a href="#financeiro">Custos</a>
+    <a href="#dicas">Dicas</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-content">
+    <div class="hero-tag">Setembro — Outubro 2026</div>
+    <h1 class="hero-title">Descobrindo<br><span>a América</span></h1>
+    <p class="hero-sub">A Jornada de Giovani & Silvana</p>
+    <div class="hero-divider"></div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="num">30</div><div class="lbl">Dias</div></div>
+      <div class="hero-stat"><div class="num">3.850</div><div class="lbl">Km</div></div>
+      <div class="hero-stat"><div class="num">8</div><div class="lbl">Fases</div></div>
+      <div class="hero-stat"><div class="num">$20k</div><div class="lbl">Orçamento</div></div>
+      <div class="hero-stat"><div class="num">20+</div><div class="lbl">Cidades</div></div>
+    </div>
+    <div class="hero-cta">
+      <a href="#roteiro" class="btn btn-red"><i class="fas fa-route"></i> Ver Roteiro</a>
+      <a href="#mapa" class="btn btn-outline"><i class="fas fa-map-marked-alt"></i> Ver no Mapa</a>
+    </div>
+  </div>
+</section>
+
+<!-- DASHBOARD -->
+<section id="dashboard">
+  <div class="section-header">
+    <div class="section-tag">Visão Geral</div>
+    <h2 class="section-title">Dashboard da <span>Viagem</span></h2>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="dashboard-grid">
+    <div class="kpi-card"><div class="kpi-icon"><i class="fas fa-calendar-alt"></i></div><div class="kpi-value">30</div><div class="kpi-label">Dias de Viagem</div></div>
+    <div class="kpi-card"><div class="kpi-icon"><i class="fas fa-road"></i></div><div class="kpi-value">3.850</div><div class="kpi-label">Km Percorridos</div></div>
+    <div class="kpi-card"><div class="kpi-icon"><i class="fas fa-clock"></i></div><div class="kpi-value">58h</div><div class="kpi-label">Horas de Direção</div></div>
+    <div class="kpi-card"><div class="kpi-icon"><i class="fas fa-hotel"></i></div><div class="kpi-value">25</div><div class="kpi-label">Noites em Hotéis</div></div>
+    <div class="kpi-card"><div class="kpi-icon"><i class="fas fa-dollar-sign"></i></div><div class="kpi-value">$20k</div><div class="kpi-label">Orçamento Base</div></div>
+    <div class="kpi-card"><div class="kpi-icon"><i class="fas fa-shield-alt"></i></div><div class="kpi-value">$22k</div><div class="kpi-label">Com Margem 10%</div></div>
+  </div>
+
+  <div class="charts-row">
+    <div class="chart-card">
+      <div class="chart-title"><i class="fas fa-chart-pie" style="color:var(--gold);margin-right:8px"></i>Distribuição de Custos</div>
+      <div class="chart-wrap"><canvas id="chartCustos"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title"><i class="fas fa-chart-bar" style="color:var(--gold);margin-right:8px"></i>Dias por Fase</div>
+      <div class="chart-wrap"><canvas id="chartFases"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Simulador de Câmbio -->
+  <div class="cambio-box">
+    <div class="cambio-title"><i class="fas fa-exchange-alt" style="margin-right:10px"></i>Simulador de Câmbio em Tempo Real</div>
+    <div class="cambio-controls">
+      <div class="cambio-field">
+        <label>Taxa USD → BRL</label>
+        <input type="number" id="taxaCambio" value="5.20" step="0.05" min="4" max="8" oninput="calcCambio()" />
+      </div>
+      <div class="cambio-field">
+        <label>Orçamento Base (USD)</label>
+        <input type="number" id="orcBase" value="20000" step="500" min="10000" max="50000" oninput="calcCambio()" />
+      </div>
+      <div class="cambio-field">
+        <label>Margem de Segurança (%)</label>
+        <input type="number" id="margem" value="10" step="1" min="0" max="30" oninput="calcCambio()" />
+      </div>
+    </div>
+    <div class="cambio-results">
+      <div class="cambio-result"><div class="val" id="resSemMargem">R$ 104.000</div><div class="lbl">Sem Margem</div></div>
+      <div class="cambio-result"><div class="val" id="resMargem">R$ 10.400</div><div class="lbl">Margem de Segurança</div></div>
+      <div class="cambio-result" style="background:rgba(211,47,47,0.15);border:1px solid rgba(211,47,47,0.3)"><div class="val" id="resTotal" style="color:#ef5350">R$ 114.400</div><div class="lbl">Total com Margem</div></div>
+      <div class="cambio-result"><div class="val" id="resDiario">R$ 3.813</div><div class="lbl">Custo Médio por Dia</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- MAPA -->
+<section id="mapa">
+  <div class="section-header">
+    <div class="section-tag">Navegação</div>
+    <h2 class="section-title">Mapa <span>Interativo</span></h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="mapa-container">
+    <div class="mapa-embed">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m76!1m12!1m3!1d24263272.80826!2d-105.5!3d39.5!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m61!3e0!4m5!1s0x89c24fa5d33f083b%3A0xc80b8f06e177fe62!2sNew%20York%2C%20NY!3m2!1d40.7127753!2d-74.0059731!4m5!1s0x880e2c3cd0f4cbed%3A0xafe0a6ad09c0c000!2sPhiladelphia%2C%20PA!3m2!1d39.9525839!2d-75.1652215!4m5!1s0x89b7c6de5af6e45b%3A0xc2524522d4885d2a!2sWashington%2C%20DC!3m2!1d38.9071923!2d-77.0368707!4m5!1s0x880e2c3cd0f4cbed%3A0xafe0a6ad09c0c000!2sChicago%2C%20IL!3m2!1d41.8781136!2d-87.6297982!4m5!1s0x87d8b4a9faed8ef9%3A0xbe39eaca22bbe6b5!2sSt.%20Louis%2C%20MO!3m2!1d38.6270025!2d-90.1994042!4m5!1s0x87b6e3a3b3b3b3b3%3A0x1234567890abcdef!2sAlbuquerque%2C%20NM!3m2!1d35.0843859!2d-106.6511367!4m5!1s0x80beb782a4f57dd1%3A0x3accd5e6d5b379a3!2sLas%20Vegas%2C%20NV!3m2!1d36.1699412!2d-115.1398296!4m5!1s0x808f7e44b947a753%3A0xc37b6c4b3c3b3c3b!2sBig%20Sur%2C%20CA!3m2!1d36.2704!2d-121.8081!4m5!1s0x80859a6d00690021%3A0x4a501367f076adff!2sSan%20Francisco%2C%20CA!3m2!1d37.7749295!2d-122.4194155!4m5!1s0x54905bf4b3b3b3b3%3A0x1234567890abcdef!2sPortland%2C%20OR!3m2!1d45.5051064!2d-122.6750261!4m5!1s0x5490102c93e83355%3A0x102565466944d59a!2sSeattle%2C%20WA!3m2!1d47.6062095!2d-122.3320708!5e0!3m2!1spt-BR!2sbr!4v1700000000000!5m2!1spt-BR!2sbr"
+        allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
+    </div>
+
+    <div class="rota-info">
+      <div class="rota-trecho">
+        <div class="trecho-nome">NY → Philadelphia</div>
+        <div class="trecho-estrada">I-95 South</div>
+        <div class="trecho-km">150 km · 2h</div>
+        <a href="https://maps.google.com/maps/dir/New+York,NY/Philadelphia,PA" target="_blank"><i class="fas fa-directions"></i> Abrir no Maps</a>
+      </div>
+      <div class="rota-trecho">
+        <div class="trecho-nome">Philadelphia → Washington DC</div>
+        <div class="trecho-estrada">I-95 South</div>
+        <div class="trecho-km">225 km · 3h</div>
+        <a href="https://maps.google.com/maps/dir/Philadelphia,PA/Washington,DC" target="_blank"><i class="fas fa-directions"></i> Abrir no Maps</a>
+      </div>
+      <div class="rota-trecho">
+        <div class="trecho-nome">Washington DC → Chicago</div>
+        <div class="trecho-estrada">I-70 West / I-65 North</div>
+        <div class="trecho-km">1.100 km · 11h</div>
+        <a href="https://maps.google.com/maps/dir/Washington,DC/Chicago,IL" target="_blank"><i class="fas fa-directions"></i> Abrir no Maps</a>
+      </div>
+      <div class="rota-trecho">
+        <div class="trecho-nome">Chicago → St. Louis (Route 66)</div>
+        <div class="trecho-estrada">Historic Route 66 / I-55 S</div>
+        <div class="trecho-km">480 km · 5h</div>
+        <a href="https://maps.google.com/maps/dir/Chicago,IL/St+Louis,MO" target="_blank"><i class="fas fa-directions"></i> Abrir no Maps</a>
+      </div>
+      <div class="rota-trecho">
+        <div class="trecho-nome">St. Louis → Albuquerque</div>
+        <div class="trecho-estrada">Route 66 / I-40 West</div>
+        <div class="trecho-km">1.600 km · 15h</div>
+        <a href="https://maps.google.com/maps/dir/St+Louis,MO/Albuquerque,NM" target="_blank"><i class="fas fa-directions"></i> Abrir no Maps</a>
+      </div>
+      <div class="rota-trecho">
+        <div class="trecho-nome">Albuquerque → Las Vegas</div>
+        <div class="trecho-estrada">I-40 W → US-93 N</div>
+        <div class="trecho-km">870 km · 9h</div>
+        <a href="https://maps.google.com/maps/dir/Albuquerque,NM/Las+Vegas,NV" target="_blank"><i class="fas fa-directions"></i> Abrir no Maps</a>
+      </div>
+      <div class="rota-trecho">
+        <div class="trecho-nome">Las Vegas → Big Sur</div>
+        <div class="trecho-estrada">I-15 S → I-10 W → CA-1</div>
+        <div class="trecho-km">630 km · 7h</div>
+        <a href="https://maps.google.com/maps/dir/Las+Vegas,NV/Big+Sur,CA" target="_blank"><i class="fas fa-directions"></i> Abrir no Maps</a>
+      </div>
+      <div class="rota-trecho">
+        <div class="trecho-nome">Big Sur → San Francisco</div>
+        <div class="trecho-estrada">CA-1 North (Highway 1)</div>
+        <div class="trecho-km">250 km · 4h</div>
+        <a href="https://maps.google.com/maps/dir/Big+Sur,CA/San+Francisco,CA" target="_blank"><i class="fas fa-directions"></i> Abrir no Maps</a>
+      </div>
+      <div class="rota-trecho">
+        <div class="trecho-nome">San Francisco → Portland</div>
+        <div class="trecho-estrada">US-101 N / I-5 North</div>
+        <div class="trecho-km">1.040 km · 10h</div>
+        <a href="https://maps.google.com/maps/dir/San+Francisco,CA/Portland,OR" target="_blank"><i class="fas fa-directions"></i> Abrir no Maps</a>
+      </div>
+      <div class="rota-trecho">
+        <div class="trecho-nome">Portland → Seattle</div>
+        <div class="trecho-estrada">I-5 North</div>
+        <div class="trecho-km">280 km · 3h</div>
+        <a href="https://maps.google.com/maps/dir/Portland,OR/Seattle,WA" target="_blank"><i class="fas fa-directions"></i> Abrir no Maps</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROTEIRO POR FASES -->
+<section id="roteiro">
+  <div class="section-header">
+    <div class="section-tag">Itinerário</div>
+    <h2 class="section-title">Roteiro por <span>Fases</span></h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="fases-container">
+
+    <!-- FASE 1: NEW YORK -->
+    <div class="fase-card">
+      <div class="fase-img">
+        <img src="img/new_york_skyline.jpg" alt="New York" />
+        <div class="fase-img-overlay"></div>
+      </div>
+      <div class="fase-content">
+        <div>
+          <div class="fase-header">
+            <div class="fase-num">Fase 1 · Dias 1–2</div>
+            <div class="fase-titulo">New York City</div>
+            <div class="fase-periodo">04–05 de Setembro · 2 dias</div>
+          </div>
+          <div class="fase-meta">
+            <div class="fase-meta-item"><i class="fas fa-thermometer-half"></i> 18–27°C</div>
+            <div class="fase-meta-item"><i class="fas fa-cloud-sun"></i> Ameno, ensolarado</div>
+            <div class="fase-meta-item"><i class="fas fa-dollar-sign"></i> ~$360 hospedagem</div>
+          </div>
+          <p class="fase-desc">A porta de entrada para a América. New York recebe Giovani e Silvana com toda a sua energia inigualável. Dois dias para absorver a grandiosidade de Manhattan, passear pelo Central Park ao amanhecer e sentir o pulso da cidade mais icônica do mundo.</p>
+          <div class="fase-dica"><strong>💡 Dica:</strong> Chegue no domingo para adaptar o fuso. Retire o carro apenas ao sair de NY — dirigir em Manhattan é desnecessário e estressante. Use o metrô.</div>
+        </div>
+        <div class="links-grid">
+          <a href="https://www.booking.com/searchresults.html?ss=New+York+City&checkin=2026-09-04&checkout=2026-09-06" target="_blank" class="link-item hotel"><i class="fas fa-hotel"></i> Hotéis em NY</a>
+          <a href="https://maps.google.com/maps/place/Central+Park,New+York" target="_blank" class="link-item maps"><i class="fab fa-google"></i> Central Park</a>
+          <a href="https://www.moma.org" target="_blank" class="link-item attracao"><i class="fas fa-ticket-alt"></i> MoMA</a>
+          <a href="https://www.topoftherock.com" target="_blank" class="link-item attracao"><i class="fas fa-ticket-alt"></i> Top of the Rock</a>
+          <a href="https://maps.google.com/maps/place/Times+Square,New+York" target="_blank" class="link-item maps"><i class="fab fa-google"></i> Times Square</a>
+          <a href="https://www.broadway.com" target="_blank" class="link-item attracao"><i class="fas fa-ticket-alt"></i> Broadway Shows</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- FASE 2: PHILLY + DC -->
+    <div class="fase-card">
+      <div class="fase-img">
+        <img src="img/washington_dc_night.jpg" alt="Washington DC" />
+        <div class="fase-img-overlay"></div>
+      </div>
+      <div class="fase-content">
+        <div>
+          <div class="fase-header">
+            <div class="fase-num">Fase 2 · Dias 3–5</div>
+            <div class="fase-titulo">Philadelphia & Washington DC</div>
+            <div class="fase-periodo">06–08 de Setembro · 3 dias</div>
+          </div>
+          <div class="fase-meta">
+            <div class="fase-meta-item"><i class="fas fa-thermometer-half"></i> 16–26°C</div>
+            <div class="fase-meta-item"><i class="fas fa-road"></i> 375 km</div>
+            <div class="fase-meta-item"><i class="fas fa-dollar-sign"></i> ~$600 hospedagem</div>
+          </div>
+          <p class="fase-desc">A história americana em três dias intensos. Philadelphia guarda a Declaração de Independência e a Liberty Bell. Washington DC impressiona com seus monumentos grandiosos e museus Smithsonian — todos gratuitos. Uma imersão no coração da nação.</p>
+          <div class="fase-dica"><strong>💡 Dica:</strong> Os museus Smithsonian são gratuitos — reserve um dia inteiro. O Lincoln Memorial ao amanhecer é uma experiência transformadora. Estacione e caminhe.</div>
+        </div>
+        <div class="links-grid">
+          <a href="https://www.booking.com/searchresults.html?ss=Philadelphia&checkin=2026-09-06&checkout=2026-09-07" target="_blank" class="link-item hotel"><i class="fas fa-hotel"></i> Hotéis Philly</a>
+          <a href="https://www.booking.com/searchresults.html?ss=Washington+DC&checkin=2026-09-07&checkout=2026-09-09" target="_blank" class="link-item hotel"><i class="fas fa-hotel"></i> Hotéis DC</a>
+          <a href="https://www.nps.gov/inde/index.htm" target="_blank" class="link-item attracao"><i class="fas fa-ticket-alt"></i> Independence Hall</a>
+          <a href="https://www.si.edu" target="_blank" class="link-item attracao"><i class="fas fa-ticket-alt"></i> Smithsonian</a>
+          <a href="https://maps.google.com/maps/place/Lincoln+Memorial" target="_blank" class="link-item maps"><i class="fab fa-google"></i> Lincoln Memorial</a>
+          <a href="https://maps.google.com/maps/dir/Philadelphia,PA/Washington,DC" target="_blank" class="link-item maps"><i class="fas fa-directions"></i> Rota I-95 S</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- FASE 3: ROUTE 66 -->
+    <div class="fase-card">
+      <div class="fase-img">
+        <img src="img/route66.jpg" alt="Route 66" />
+        <div class="fase-img-overlay"></div>
+      </div>
+      <div class="fase-content">
+        <div>
+          <div class="fase-header">
+            <div class="fase-num">Fase 3 · Dias 6–12 · ⭐ DESTAQUE</div>
+            <div class="fase-titulo">Route 66 Clássica</div>
+            <div class="fase-periodo">09–15 de Setembro · 7 dias</div>
+          </div>
+          <div class="fase-meta">
+            <div class="fase-meta-item"><i class="fas fa-thermometer-half"></i> 18–35°C</div>
+            <div class="fase-meta-item"><i class="fas fa-road"></i> 1.200 km</div>
+            <div class="fase-meta-item"><i class="fas fa-map-signs"></i> Chicago → Albuquerque</div>
+          </div>
+          <p class="fase-desc">A estrada mais famosa do mundo. Sete dias percorrendo a lendária Route 66 de Chicago até Albuquerque, passando por St. Louis com seu Gateway Arch, o Cadillac Ranch no Texas, e a cultura fascinante do Novo México. Uma jornada no tempo.</p>
+          <div class="fase-dica"><strong>💡 Dica CRÍTICA:</strong> Dirija devagar — a Route 66 é a jornada, não o destino. Pare em cada sinal histórico para fotografar. Experimente diners locais em vez de fast food. Cadillac Ranch é imperdível.</div>
+        </div>
+        <div class="links-grid">
+          <a href="https://www.booking.com/searchresults.html?ss=Chicago&checkin=2026-09-09&checkout=2026-09-10" target="_blank" class="link-item hotel"><i class="fas fa-hotel"></i> Hotéis Chicago</a>
+          <a href="https://www.gatewayarch.com" target="_blank" class="link-item attracao"><i class="fas fa-ticket-alt"></i> Gateway Arch</a>
+          <a href="https://maps.google.com/maps/place/Cadillac+Ranch,+Amarillo,+TX" target="_blank" class="link-item maps"><i class="fab fa-google"></i> Cadillac Ranch</a>
+          <a href="https://www.route66.com" target="_blank" class="link-item attracao"><i class="fas fa-route"></i> Route 66 Guide</a>
+          <a href="https://maps.google.com/maps/dir/Chicago,IL/St+Louis,MO/Albuquerque,NM" target="_blank" class="link-item maps"><i class="fas fa-directions"></i> Rota Completa</a>
+          <a href="https://www.booking.com/searchresults.html?ss=Albuquerque&checkin=2026-09-14&checkout=2026-09-16" target="_blank" class="link-item hotel"><i class="fas fa-hotel"></i> Hotéis Albuquerque</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- FASE 4: LAS VEGAS -->
+    <div class="fase-card">
+      <div class="fase-img">
+        <img src="img/las_vegas.jpg" alt="Las Vegas" />
+        <div class="fase-img-overlay"></div>
+      </div>
+      <div class="fase-content">
+        <div>
+          <div class="fase-header">
+            <div class="fase-num">Fase 4 · Dias 13–14</div>
+            <div class="fase-titulo">Las Vegas & Deserto</div>
+            <div class="fase-periodo">16–17 de Setembro · 2 dias</div>
+          </div>
+          <div class="fase-meta">
+            <div class="fase-meta-item"><i class="fas fa-thermometer-half"></i> 25–38°C</div>
+            <div class="fase-meta-item"><i class="fas fa-road"></i> 450 km</div>
+            <div class="fase-meta-item"><i class="fas fa-dollar-sign"></i> ~$240 hospedagem</div>
+          </div>
+          <p class="fase-desc">O espetáculo do deserto americano. Las Vegas oferece dois dias de entretenimento absoluto — shows de classe mundial, piscinas, gastronomia premium e a energia única do Strip. Uma pausa estratégica no meio da jornada para recarregar as energias.</p>
+          <div class="fase-dica"><strong>💡 Dica:</strong> Reserve show com antecedência (Cirque du Soleil, Blue Man Group). Hotéis de casino são baratos — foque o orçamento em shows e restaurantes. Evite jogar muito.</div>
+        </div>
+        <div class="links-grid">
+          <a href="https://www.booking.com/searchresults.html?ss=Las+Vegas&checkin=2026-09-16&checkout=2026-09-18" target="_blank" class="link-item hotel"><i class="fas fa-hotel"></i> Hotéis Las Vegas</a>
+          <a href="https://www.cirquedusoleil.com/las-vegas" target="_blank" class="link-item attracao"><i class="fas fa-ticket-alt"></i> Cirque du Soleil</a>
+          <a href="https://www.neonmuseum.org" target="_blank" class="link-item attracao"><i class="fas fa-ticket-alt"></i> Neon Museum</a>
+          <a href="https://maps.google.com/maps/place/Las+Vegas+Strip" target="_blank" class="link-item maps"><i class="fab fa-google"></i> The Strip</a>
+          <a href="https://maps.google.com/maps/dir/Albuquerque,NM/Las+Vegas,NV" target="_blank" class="link-item maps"><i class="fas fa-directions"></i> Rota I-40 W</a>
+          <a href="https://www.bellagio.com/en/entertainment/fountains-of-bellagio.html" target="_blank" class="link-item attracao"><i class="fas fa-ticket-alt"></i> Bellagio Fountains</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- FASE 5: BIG SUR -->
+    <div class="fase-card">
+      <div class="fase-img">
+        <img src="img/big_sur.jpg" alt="Big Sur" />
+        <div class="fase-img-overlay"></div>
+      </div>
+      <div class="fase-content">
+        <div>
+          <div class="fase-header">
+            <div class="fase-num">Fase 5 · Dias 15–17 · 🔥 PICO DA VIAGEM</div>
+            <div class="fase-titulo">Big Sur — Highway 1</div>
+            <div class="fase-periodo">18–20 de Setembro · 3 dias</div>
+          </div>
+          <div class="fase-meta">
+            <div class="fase-meta-item"><i class="fas fa-thermometer-half"></i> 15–24°C</div>
+            <div class="fase-meta-item"><i class="fas fa-road"></i> 350 km</div>
+            <div class="fase-meta-item"><i class="fas fa-star"></i> Paisagem mais cênica do mundo</div>
+          </div>
+          <p class="fase-desc">O pico absoluto da viagem. A Highway 1 em Big Sur oferece a paisagem mais dramática e cênica do planeta — penhascos sobre o Pacífico, cachoeiras que caem direto no oceano, e uma beleza que tira o fôlego a cada curva. Três dias para absorver cada detalhe.</p>
+          <div class="fase-dica"><strong>💡 Dica CRÍTICA:</strong> Dirija DEVAGAR. Cada mirante merece uma parada. McWay Falls e Pfeiffer Beach ao pôr do sol são experiências únicas. Não dirija à noite. Reserve hotel com 3+ meses de antecedência.</div>
+        </div>
+        <div class="links-grid">
+          <a href="https://www.booking.com/searchresults.html?ss=Big+Sur&checkin=2026-09-18&checkout=2026-09-21" target="_blank" class="link-item hotel"><i class="fas fa-hotel"></i> Hotéis Big Sur</a>
+          <a href="https://www.nps.gov/pfis/index.htm" target="_blank" class="link-item attracao"><i class="fas fa-ticket-alt"></i> Pfeiffer Big Sur SP</a>
+          <a href="https://maps.google.com/maps/place/McWay+Falls" target="_blank" class="link-item maps"><i class="fab fa-google"></i> McWay Falls</a>
+          <a href="https://maps.google.com/maps/place/Pfeiffer+Beach" target="_blank" class="link-item maps"><i class="fab fa-google"></i> Pfeiffer Beach</a>
+          <a href="https://maps.google.com/maps/dir/Las+Vegas,NV/Big+Sur,CA" target="_blank" class="link-item maps"><i class="fas fa-directions"></i> Rota até Big Sur</a>
+          <a href="https://maps.google.com/maps/place/Bixby+Creek+Bridge" target="_blank" class="link-item maps"><i class="fab fa-google"></i> Bixby Bridge</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- FASE 6: SAN FRANCISCO -->
+    <div class="fase-card">
+      <div class="fase-img">
+        <img src="img/san_francisco.jpg" alt="San Francisco" />
+        <div class="fase-img-overlay"></div>
+      </div>
+      <div class="fase-content">
+        <div>
+          <div class="fase-header">
+            <div class="fase-num">Fase 6 · Dias 18–19</div>
+            <div class="fase-titulo">San Francisco</div>
+            <div class="fase-periodo">21–22 de Setembro · 2 dias</div>
+          </div>
+          <div class="fase-meta">
+            <div class="fase-meta-item"><i class="fas fa-thermometer-half"></i> 14–22°C</div>
+            <div class="fase-meta-item"><i class="fas fa-road"></i> 200 km de Big Sur</div>
+            <div class="fase-meta-item"><i class="fas fa-dollar-sign"></i> ~$400 hospedagem</div>
+          </div>
+          <p class="fase-desc">A cidade mais icônica da Costa Oeste. San Francisco encanta com o Golden Gate ao amanhecer, os famosos Cable Cars subindo as colinas, o bairro histórico de Chinatown e a ilha-prisão de Alcatraz. Uma cidade que fica para sempre na memória.</p>
+          <div class="fase-dica"><strong>💡 Dica:</strong> Reserve Alcatraz com antecedência — esgota rápido. O Sunrise no Golden Gate é espetacular. Fisherman's Wharf para frutos do mar frescos. Leve casaco — a cidade é fria mesmo no verão.</div>
+        </div>
+        <div class="links-grid">
+          <a href="https://www.booking.com/searchresults.html?ss=San+Francisco&checkin=2026-09-21&checkout=2026-09-23" target="_blank" class="link-item hotel"><i class="fas fa-hotel"></i> Hotéis SF</a>
+          <a href="https://www.alcatrazcruises.com" target="_blank" class="link-item attracao"><i class="fas fa-ticket-alt"></i> Alcatraz (Reserve!)</a>
+          <a href="https://maps.google.com/maps/place/Golden+Gate+Bridge" target="_blank" class="link-item maps"><i class="fab fa-google"></i> Golden Gate Bridge</a>
+          <a href="https://maps.google.com/maps/place/Fisherman%27s+Wharf,+San+Francisco" target="_blank" class="link-item maps"><i class="fab fa-google"></i> Fisherman's Wharf</a>
+          <a href="https://maps.google.com/maps/place/Chinatown,+San+Francisco" target="_blank" class="link-item maps"><i class="fab fa-google"></i> Chinatown</a>
+          <a href="https://maps.google.com/maps/dir/Big+Sur,CA/San+Francisco,CA" target="_blank" class="link-item maps"><i class="fas fa-directions"></i> Rota CA-1 North</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- FASE 7: REDWOOD & PORTLAND -->
+    <div class="fase-card">
+      <div class="fase-img">
+        <img src="img/redwood_forest.jpg" alt="Redwood Forest" />
+        <div class="fase-img-overlay"></div>
+      </div>
+      <div class="fase-content">
+        <div>
+          <div class="fase-header">
+            <div class="fase-num">Fase 7 · Dias 20–26</div>
+            <div class="fase-titulo">Redwood & Portland</div>
+            <div class="fase-periodo">23–29 de Setembro · 7 dias</div>
+          </div>
+          <div class="fase-meta">
+            <div class="fase-meta-item"><i class="fas fa-thermometer-half"></i> 12–24°C</div>
+            <div class="fase-meta-item"><i class="fas fa-road"></i> 800 km</div>
+            <div class="fase-meta-item"><i class="fas fa-tree"></i> Sequoias milenares</div>
+          </div>
+          <p class="fase-desc">A natureza em sua forma mais majestosa. Sete dias entre as sequoias gigantes do Redwood National Park — árvores com mais de 2.000 anos — e a vibrante Portland, com seu bairro Pearl District, a maior livraria independente do mundo e gastronomia inovadora.</p>
+          <div class="fase-dica"><strong>💡 Dica:</strong> Trilhas entre sequoias são únicas no mundo — reserve pelo menos um dia inteiro. Leve casaco impermeável. Portland: Powell's Books é obrigatório. Considere bate-volta a Cannon Beach.</div>
+        </div>
+        <div class="links-grid">
+          <a href="https://www.nps.gov/redw/index.htm" target="_blank" class="link-item attracao"><i class="fas fa-ticket-alt"></i> Redwood National Park</a>
+          <a href="https://maps.google.com/maps/place/Avenue+of+the+Giants" target="_blank" class="link-item maps"><i class="fab fa-google"></i> Avenue of the Giants</a>
+          <a href="https://www.powells.com" target="_blank" class="link-item attracao"><i class="fas fa-ticket-alt"></i> Powell's Books</a>
+          <a href="https://www.booking.com/searchresults.html?ss=Portland+OR&checkin=2026-09-26&checkout=2026-09-29" target="_blank" class="link-item hotel"><i class="fas fa-hotel"></i> Hotéis Portland</a>
+          <a href="https://maps.google.com/maps/place/Cannon+Beach,+OR" target="_blank" class="link-item maps"><i class="fab fa-google"></i> Cannon Beach</a>
+          <a href="https://maps.google.com/maps/dir/San+Francisco,CA/Portland,OR" target="_blank" class="link-item maps"><i class="fas fa-directions"></i> Rota US-101 N</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- FASE 8: SEATTLE -->
+    <div class="fase-card">
+      <div class="fase-img">
+        <img src="img/seattle.jpg" alt="Seattle" />
+        <div class="fase-img-overlay"></div>
+      </div>
+      <div class="fase-content">
+        <div>
+          <div class="fase-header">
+            <div class="fase-num">Fase 8 · Dias 27–30 · 🏁 FECHAMENTO</div>
+            <div class="fase-titulo">Seattle</div>
+            <div class="fase-periodo">30 de Setembro — 03 de Outubro · 4 dias</div>
+          </div>
+          <div class="fase-meta">
+            <div class="fase-meta-item"><i class="fas fa-thermometer-half"></i> 12–22°C</div>
+            <div class="fase-meta-item"><i class="fas fa-road"></i> 280 km de Portland</div>
+            <div class="fase-meta-item"><i class="fas fa-flag-checkered"></i> Fechamento épico</div>
+          </div>
+          <p class="fase-desc">O fechamento épico de uma jornada inesquecível. Seattle encanta com o Pike Place Market — o mais antigo mercado de rua dos EUA —, a Space Needle com vista para o Monte Rainier, e o Chihuly Garden com suas esculturas de vidro deslumbrantes. Quatro dias para saborear cada momento.</p>
+          <div class="fase-dica"><strong>💡 Dica:</strong> Pike Place Market é imprescindível — chegue cedo para ver os peixeiros. Space Needle: compre ingresso online. Devolva o carro no último dia e celebre com um jantar especial no Waterfront.</div>
+        </div>
+        <div class="links-grid">
+          <a href="https://www.booking.com/searchresults.html?ss=Seattle&checkin=2026-09-30&checkout=2026-10-04" target="_blank" class="link-item hotel"><i class="fas fa-hotel"></i> Hotéis Seattle</a>
+          <a href="https://www.spaceneedle.com" target="_blank" class="link-item attracao"><i class="fas fa-ticket-alt"></i> Space Needle</a>
+          <a href="https://www.pikeplacemarket.org" target="_blank" class="link-item attracao"><i class="fas fa-ticket-alt"></i> Pike Place Market</a>
+          <a href="https://www.chihulygardenandglass.com" target="_blank" class="link-item attracao"><i class="fas fa-ticket-alt"></i> Chihuly Garden</a>
+          <a href="https://maps.google.com/maps/dir/Portland,OR/Seattle,WA" target="_blank" class="link-item maps"><i class="fas fa-directions"></i> Rota I-5 North</a>
+          <a href="https://maps.google.com/maps/place/Seattle+Waterfront" target="_blank" class="link-item maps"><i class="fab fa-google"></i> Seattle Waterfront</a>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /fases-container -->
+</section>
+
+<!-- DIAS -->
+<section id="dias">
+  <div class="section-header">
+    <div class="section-tag">Itinerário Detalhado</div>
+    <h2 class="section-title">Dia a <span>Dia</span></h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="dias-container">
+    <div class="dias-grid" id="diasGrid"></div>
+  </div>
+</section>
+
+<!-- ALUGUEL DE CARRO -->
+<section id="financeiro" style="padding-top:64px;background:#0f0f1e;">
+  <div class="section-header">
+    <div class="section-tag">Logística</div>
+    <h2 class="section-title">Aluguel de <span>Carro</span></h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="car-section">
+    <div class="car-title"><i class="fas fa-car" style="margin-right:10px"></i>Compare e Reserve seu Carro</div>
+    <div class="car-grid">
+      <div class="car-item">
+        <div class="car-name">Hertz</div>
+        <div class="car-price">A partir de $95/dia · SUV disponível</div>
+        <a href="https://www.hertz.com/rentacar/reservation/?from=NY&to=Seattle&pickupDate=2026-09-06&returnDate=2026-10-03" target="_blank">Reservar Agora</a>
+      </div>
+      <div class="car-item">
+        <div class="car-name">Avis</div>
+        <div class="car-price">A partir de $89/dia · Sedan médio</div>
+        <a href="https://www.avis.com/en/reservation" target="_blank">Reservar Agora</a>
+      </div>
+      <div class="car-item">
+        <div class="car-name">Enterprise</div>
+        <div class="car-price">A partir de $85/dia · Ampla frota</div>
+        <a href="https://www.enterprise.com/en/car-rental/locations/us/ny/new-york-city.html" target="_blank">Reservar Agora</a>
+      </div>
+      <div class="car-item">
+        <div class="car-name">Budget</div>
+        <div class="car-price">A partir de $79/dia · Econômico</div>
+        <a href="https://www.budget.com/en/reservation" target="_blank">Reservar Agora</a>
+      </div>
+      <div class="car-item">
+        <div class="car-name">Kayak (Comparador)</div>
+        <div class="car-price">Compara todas as agências</div>
+        <a href="https://www.kayak.com/cars/New-York,NY-c19867/2026-09-06/Seattle,WA-c19971/2026-10-03" target="_blank">Comparar Preços</a>
+      </div>
+      <div class="car-item">
+        <div class="car-name">Rentalcars.com</div>
+        <div class="car-price">Melhores tarifas garantidas</div>
+        <a href="https://www.rentalcars.com/en/country/us/" target="_blank">Ver Ofertas</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabela Financeira -->
+  <div class="fin-container">
+    <div class="section-header" style="padding-top:20px">
+      <div class="section-tag">Orçamento</div>
+      <h2 class="section-title">Análise <span>Financeira</span></h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="fin-grid">
+      <div class="fin-card">
+        <div class="fin-card-title"><i class="fas fa-table" style="margin-right:8px"></i>Custos por Categoria</div>
+        <table class="fin-table">
+          <tr><th>Categoria</th><th>USD</th><th>BRL (5,20)</th></tr>
+          <tr><td>Hospedagem (25 noites)</td><td class="usd">$4.000</td><td class="brl">R$ 20.800</td></tr>
+          <tr><td>Combustível (3.850 km)</td><td class="usd">$1.300</td><td class="brl">R$ 6.760</td></tr>
+          <tr><td>Alimentação (30 dias)</td><td class="usd">$2.400</td><td class="brl">R$ 12.480</td></tr>
+          <tr><td>Atividades & Ingressos</td><td class="usd">$1.200</td><td class="brl">R$ 6.240</td></tr>
+          <tr><td>Aluguel + Seguro (25d)</td><td class="usd">$3.500</td><td class="brl">R$ 18.200</td></tr>
+          <tr><td>TOTAL BASE</td><td class="usd">$12.400</td><td class="brl">R$ 64.480</td></tr>
+        </table>
+      </div>
+      <div class="fin-card">
+        <div class="fin-card-title"><i class="fas fa-shield-alt" style="margin-right:8px"></i>Orçamento com Margem</div>
+        <table class="fin-table">
+          <tr><th>Item</th><th>USD</th><th>BRL (5,20)</th></tr>
+          <tr><td>Total Base</td><td class="usd">$12.400</td><td class="brl">R$ 64.480</td></tr>
+          <tr><td>Margem 10%</td><td class="usd">$1.240</td><td class="brl">R$ 6.448</td></tr>
+          <tr><td>Total com Margem</td><td class="usd">$13.640</td><td class="brl">R$ 70.928</td></tr>
+          <tr><td>Orçamento Disponível</td><td class="usd">$20.000</td><td class="brl">R$ 104.000</td></tr>
+          <tr><td style="color:#4caf50">💰 Folga para Upgrades</td><td class="usd" style="color:#4caf50">$6.360</td><td class="brl" style="color:#4caf50">R$ 33.072</td></tr>
+        </table>
+        <div style="margin-top:16px;padding:12px;background:rgba(76,175,80,0.1);border-radius:6px;border:1px solid rgba(76,175,80,0.3);font-size:13px;color:rgba(255,255,255,0.8)">
+          <strong style="color:#4caf50">✅ Ótima notícia!</strong> Você tem USD $6.360 de folga no orçamento — suficiente para upgrades de hotel, restaurantes especiais ou experiências extras.
+        </div>
+      </div>
+    </div>
+    <div class="charts-row">
+      <div class="chart-card">
+        <div class="chart-title">Custo Acumulado por Dia</div>
+        <div class="chart-wrap"><canvas id="chartAcumulado"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Custo Diário por Fase</div>
+        <div class="chart-wrap"><canvas id="chartDiario"></canvas></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DICAS -->
+<section id="dicas">
+  <div class="section-header">
+    <div class="section-tag">Especialista</div>
+    <h2 class="section-title">Dicas <span>Essenciais</span></h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="dicas-container">
+    <div class="dicas-grid">
+      <div class="dica-card">
+        <div class="dica-icon">📋</div>
+        <div class="dica-titulo">3 Meses Antes</div>
+        <ul class="dica-lista">
+          <li>Reserve Big Sur com 3+ meses de antecedência</li>
+          <li>Compre seguro de viagem internacional</li>
+          <li>Notifique seu banco sobre a viagem</li>
+          <li>Verifique validade do passaporte (6+ meses)</li>
+          <li>Reserve shows em Las Vegas</li>
+          <li>Reserve Alcatraz em San Francisco</li>
+        </ul>
+      </div>
+      <div class="dica-card">
+        <div class="dica-icon">📱</div>
+        <div class="dica-titulo">1 Mês Antes</div>
+        <ul class="dica-lista">
+          <li>Ative eSIM para os EUA (T-Mobile ou AT&T)</li>
+          <li>Baixe Google Maps offline para cada estado</li>
+          <li>Reserve restaurantes especiais</li>
+          <li>Confirme todas as reservas de hotel</li>
+          <li>Prepare lista de contatos de emergência</li>
+          <li>Baixe app do aluguel de carro</li>
+        </ul>
+      </div>
+      <div class="dica-card">
+        <div class="dica-icon">🚗</div>
+        <div class="dica-titulo">Na Estrada</div>
+        <ul class="dica-lista">
+          <li>Mantenha tanque acima de 1/4 (desertos!)</li>
+          <li>Respeite limites de velocidade (multas caras)</li>
+          <li>Dirija somente durante o dia em Big Sur</li>
+          <li>Fotografe documentos do carro diariamente</li>
+          <li>Confirme reservas 24h antes de cada parada</li>
+          <li>Leve água abundante no deserto</li>
+        </ul>
+      </div>
+      <div class="dica-card">
+        <div class="dica-icon">💰</div>
+        <div class="dica-titulo">Economia Inteligente</div>
+        <ul class="dica-lista">
+          <li>Smithsonian DC: todos os museus são gratuitos</li>
+          <li>Parques Nacionais: America the Beautiful Pass ($80)</li>
+          <li>Supermercados para café da manhã e lanches</li>
+          <li>Happy hour em restaurantes (17h-19h)</li>
+          <li>Hotéis de casino em LV são muito baratos</li>
+          <li>Gorjeta: 18-20% em restaurantes (obrigatório)</li>
+        </ul>
+      </div>
+      <div class="dica-card">
+        <div class="dica-icon">📸</div>
+        <div class="dica-titulo">Fotografia</div>
+        <ul class="dica-lista">
+          <li>Golden Gate: melhor luz ao amanhecer (6h-8h)</li>
+          <li>Big Sur: pôr do sol em Pfeiffer Beach</li>
+          <li>Las Vegas: Strip à noite (22h-24h)</li>
+          <li>Route 66: luz dourada ao entardecer</li>
+          <li>Redwood: luz filtrada pela manhã</li>
+          <li>Seattle: Space Needle ao pôr do sol</li>
+        </ul>
+      </div>
+      <div class="dica-card">
+        <div class="dica-icon">🌡️</div>
+        <div class="dica-titulo">Clima & Roupas</div>
+        <ul class="dica-lista">
+          <li>NY/DC: 18-27°C — blazer leve, calças</li>
+          <li>Route 66/Deserto: 20-38°C — roupas leves, chapéu</li>
+          <li>Las Vegas: 25-38°C — roupas leves, óculos de sol</li>
+          <li>Big Sur/SF: 14-22°C — casaco obrigatório</li>
+          <li>Redwood/Portland: 12-22°C — jaqueta impermeável</li>
+          <li>Seattle: 12-20°C — camadas, guarda-chuva</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-title">Giovani & Silvana — Descobrindo a América</div>
+  <p>Setembro — Outubro 2026 · 30 Dias · 3.850 km · Uma Jornada Inesquecível</p>
+  <p style="margin-top:8px;font-size:12px;color:rgba(255,255,255,0.3)">"Não é sobre o destino — é sobre a jornada."</p>
+</footer>
+
+<script>
+// ── DADOS ──
+const diasData = [
+  {dia:1, data:"04/09", cidade:"New York", fase:"Fase 1", km:0, clima:"22°C ☀️", hotel:"Pod 39 Hotel", custo:180, ativ:"Chegada, Central Park, Times Square"},
+  {dia:2, data:"05/09", cidade:"New York", fase:"Fase 1", km:0, clima:"22°C ☀️", hotel:"Pod 39 Hotel", custo:180, ativ:"MoMA, Museu de Hist. Natural, Broadway"},
+  {dia:3, data:"06/09", cidade:"Philadelphia", fase:"Fase 2", km:150, clima:"21°C 🌤", hotel:"The Independent Hotel", custo:200, ativ:"Independence Hall, Liberty Bell, Reading Market"},
+  {dia:4, data:"07/09", cidade:"Washington DC", fase:"Fase 2", km:225, clima:"20°C ☀️", hotel:"Kimpton Hotel Madera", custo:220, ativ:"Lincoln Memorial, Smithsonian, Casa Branca"},
+  {dia:5, data:"08/09", cidade:"Washington DC", fase:"Fase 2", km:0, clima:"19°C ☀️", hotel:"Kimpton Hotel Madera", custo:220, ativ:"National Mall, Arlington Cemetery, Georgetown"},
+  {dia:6, data:"09/09", cidade:"Chicago", fase:"Fase 3 — Route 66", km:1100, clima:"22°C ⛅", hotel:"Freehand Chicago", custo:160, ativ:"Chegada Chicago, Millennium Park, The Bean"},
+  {dia:7, data:"10/09", cidade:"Chicago", fase:"Fase 3 — Route 66", km:0, clima:"21°C ☀️", hotel:"Freehand Chicago", custo:160, ativ:"Art Institute, Navy Pier, Willis Tower"},
+  {dia:8, data:"11/09", cidade:"St. Louis, MO", fase:"Fase 3 — Route 66", km:480, clima:"25°C ☀️", hotel:"Moonrise Hotel", custo:140, ativ:"Gateway Arch, City Museum, Riverfront"},
+  {dia:9, data:"12/09", cidade:"Tulsa, OK", fase:"Fase 3 — Route 66", km:480, clima:"28°C ☀️", hotel:"Campbell Hotel", custo:120, ativ:"Route 66 Museum, Blue Dome District, Philbrook"},
+  {dia:10, data:"13/09", cidade:"Amarillo, TX", fase:"Fase 3 — Route 66", km:420, clima:"30°C ☀️", hotel:"Big Texan Steak Ranch", custo:130, ativ:"Cadillac Ranch, Palo Duro Canyon, Route 66 Sign"},
+  {dia:11, data:"14/09", cidade:"Albuquerque, NM", fase:"Fase 3 — Route 66", km:420, clima:"27°C ☀️", hotel:"Hotel Albuquerque", custo:140, ativ:"Old Town, Sandia Peak, Pueblos Indígenas"},
+  {dia:12, data:"15/09", cidade:"Albuquerque, NM", fase:"Fase 3 — Route 66", km:0, clima:"26°C ☀️", hotel:"Hotel Albuquerque", custo:140, ativ:"Museu de Antropologia, Balloon Fiesta Prep"},
+  {dia:13, data:"16/09", cidade:"Las Vegas, NV", fase:"Fase 4", km:870, clima:"34°C ☀️", hotel:"Circus Circus Hotel", custo:120, ativ:"Chegada, The Strip, Neon Museum"},
+  {dia:14, data:"17/09", cidade:"Las Vegas, NV", fase:"Fase 4", km:0, clima:"35°C ☀️", hotel:"Circus Circus Hotel", custo:120, ativ:"Show Cirque du Soleil, Bellagio Fountains, Fremont St"},
+  {dia:15, data:"18/09", cidade:"Big Sur, CA", fase:"Fase 5 🔥 PICO", km:630, clima:"20°C 🌤", hotel:"Fernwood Resort", custo:220, ativ:"Chegada, Bixby Bridge, primeiro pôr do sol"},
+  {dia:16, data:"19/09", cidade:"Big Sur, CA", fase:"Fase 5 🔥 PICO", km:50, clima:"19°C ☀️", hotel:"Fernwood Resort", custo:220, ativ:"McWay Falls, Pfeiffer Beach (areia roxa!), trilhas"},
+  {dia:17, data:"20/09", cidade:"Big Sur, CA", fase:"Fase 5 🔥 PICO", km:50, clima:"18°C ☀️", hotel:"Fernwood Resort", custo:220, ativ:"Mirantes, Carmel-by-the-Sea, sunset épico"},
+  {dia:18, data:"21/09", cidade:"San Francisco, CA", fase:"Fase 6", km:200, clima:"17°C 🌫", hotel:"Hotel Zephyr", custo:200, ativ:"Golden Gate ao amanhecer, Fisherman's Wharf"},
+  {dia:19, data:"22/09", cidade:"San Francisco, CA", fase:"Fase 6", km:0, clima:"16°C 🌫", hotel:"Hotel Zephyr", custo:200, ativ:"Alcatraz, Cable Cars, Chinatown, Haight-Ashbury"},
+  {dia:20, data:"23/09", cidade:"Eureka, CA", fase:"Fase 7", km:450, clima:"16°C 🌤", hotel:"Carter House Inns", custo:130, ativ:"Redwood National Park, Avenue of the Giants"},
+  {dia:21, data:"24/09", cidade:"Eureka, CA", fase:"Fase 7", km:0, clima:"15°C 🌤", hotel:"Carter House Inns", custo:130, ativ:"Trilhas entre sequoias, Humboldt Redwoods SP"},
+  {dia:22, data:"25/09", cidade:"Crescent City, CA", fase:"Fase 7", km:150, clima:"15°C ⛅", hotel:"Motel Crescent City", custo:100, ativ:"Del Norte Redwoods, Jedediah Smith SP"},
+  {dia:23, data:"26/09", cidade:"Ashland, OR", fase:"Fase 7", km:280, clima:"18°C ☀️", hotel:"Ashland Springs Hotel", custo:130, ativ:"Oregon Shakespeare Festival, centro histórico"},
+  {dia:24, data:"27/09", cidade:"Portland, OR", fase:"Fase 7", km:285, clima:"17°C ⛅", hotel:"The Nines Portland", custo:150, ativ:"Pearl District, Powell's Books, food trucks"},
+  {dia:25, data:"28/09", cidade:"Portland, OR", fase:"Fase 7", km:0, clima:"16°C ⛅", hotel:"The Nines Portland", custo:150, ativ:"Columbia River Gorge, Multnomah Falls, Cannon Beach"},
+  {dia:26, data:"29/09", cidade:"Portland, OR", fase:"Fase 7", km:0, clima:"15°C 🌧", hotel:"The Nines Portland", custo:150, ativ:"Museus, gastronomia local, mercados"},
+  {dia:27, data:"30/09", cidade:"Seattle, WA", fase:"Fase 8 🏁", km:280, clima:"15°C ⛅", hotel:"Hotel Ändra", custo:150, ativ:"Chegada, Pike Place Market, Waterfront"},
+  {dia:28, data:"01/10", cidade:"Seattle, WA", fase:"Fase 8 🏁", km:0, clima:"14°C 🌤", hotel:"Hotel Ändra", custo:150, ativ:"Space Needle, Chihuly Garden, Seattle Center"},
+  {dia:29, data:"02/10", cidade:"Seattle, WA", fase:"Fase 8 🏁", km:0, clima:"13°C ⛅", hotel:"Hotel Ändra", custo:150, ativ:"Museum of Pop Culture, Capitol Hill, frutos do mar"},
+  {dia:30, data:"03/10", cidade:"Seattle, WA", fase:"Fase 8 🏁", km:0, clima:"13°C 🌧", hotel:"Hotel Ändra", custo:150, ativ:"Último dia — Mercado, Alki Beach, voo de volta"},
+];
+
+// ── GERAR CARDS DOS DIAS ──
+const grid = document.getElementById('diasGrid');
+diasData.forEach(d => {
+  grid.innerHTML += `
+    <div class="dia-card">
+      <div class="dia-header" style="background:${d.fase.includes('PICO') ? 'rgba(211,47,47,0.2)' : d.fase.includes('Fechamento') || d.fase.includes('🏁') ? 'rgba(76,175,80,0.15)' : 'rgba(255,255,255,0.04)'}">
+        <div class="dia-num">${String(d.dia).padStart(2,'0')}</div>
+        <div class="dia-date">${d.data}/2026</div>
+      </div>
+      <div class="dia-body">
+        <div class="dia-cidade">${d.cidade}</div>
+        <div class="dia-tags">
+          <span class="tag tag-clima">${d.clima}</span>
+          ${d.km > 0 ? `<span class="tag tag-km">${d.km} km</span>` : ''}
+          <span class="tag tag-fase">${d.fase}</span>
+        </div>
+        <div class="dia-atividade">${d.ativ}</div>
+      </div>
+      <div class="dia-footer">
+        <div class="dia-hotel"><i class="fas fa-bed"></i> ${d.hotel}</div>
+        <div class="dia-custo">$${d.custo}</div>
+      </div>
+    </div>`;
+});
+
+// ── CHARTS ──
+const chartColors = ['#D32F2F','#1565C0','#F9A825','#4CAF50','#9C27B0','#00BCD4'];
+
+// Gráfico de custos
+new Chart(document.getElementById('chartCustos'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Hospedagem','Combustível','Alimentação','Atividades','Aluguel+Seguro'],
+    datasets: [{
+      data: [4000, 1300, 2400, 1200, 3500],
+      backgroundColor: chartColors,
+      borderWidth: 2,
+      borderColor: '#2D2D44'
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'right', labels: { color: '#fff', font: { size: 12 }, padding: 12 } },
+      tooltip: { callbacks: { label: ctx => ` $${ctx.parsed.toLocaleString()}` } }
+    }
+  }
+});
+
+// Gráfico de fases
+new Chart(document.getElementById('chartFases'), {
+  type: 'bar',
+  data: {
+    labels: ['New York','Philly+DC','Route 66','Las Vegas','Big Sur','San Francisco','Redwood+Portland','Seattle'],
+    datasets: [{
+      label: 'Dias',
+      data: [2, 3, 7, 2, 3, 2, 7, 4],
+      backgroundColor: chartColors,
+      borderRadius: 4
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { color: 'rgba(255,255,255,0.7)', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } },
+      y: { ticks: { color: 'rgba(255,255,255,0.7)' }, grid: { color: 'rgba(255,255,255,0.05)' }, beginAtZero: true }
+    }
+  }
+});
+
+// Custo acumulado
+const custosAcumulados = [];
+let acc = 0;
+diasData.forEach(d => { acc += d.custo + 80 + (d.km > 0 ? d.km * 0.34 : 0); custosAcumulados.push(Math.round(acc)); });
+new Chart(document.getElementById('chartAcumulado'), {
+  type: 'line',
+  data: {
+    labels: diasData.map(d => `Dia ${d.dia}`),
+    datasets: [{
+      label: 'Custo Acumulado (USD)',
+      data: custosAcumulados,
+      borderColor: '#F9A825',
+      backgroundColor: 'rgba(249,168,37,0.1)',
+      fill: true, tension: 0.4, pointRadius: 2
+    }, {
+      label: 'Orçamento ($20k)',
+      data: Array(30).fill(20000),
+      borderColor: 'rgba(211,47,47,0.5)',
+      borderDash: [5,5], pointRadius: 0
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { labels: { color: '#fff', font: { size: 11 } } } },
+    scales: {
+      x: { ticks: { color: 'rgba(255,255,255,0.5)', font: { size: 9 }, maxTicksLimit: 10 }, grid: { color: 'rgba(255,255,255,0.05)' } },
+      y: { ticks: { color: 'rgba(255,255,255,0.7)', callback: v => '$'+v.toLocaleString() }, grid: { color: 'rgba(255,255,255,0.05)' } }
+    }
+  }
+});
+
+// Custo diário por fase
+new Chart(document.getElementById('chartDiario'), {
+  type: 'bar',
+  data: {
+    labels: ['New York','Philly+DC','Route 66','Las Vegas','Big Sur','San Francisco','Redwood+Portland','Seattle'],
+    datasets: [{
+      label: 'Custo Médio Diário (USD)',
+      data: [260, 300, 220, 200, 350, 310, 200, 230],
+      backgroundColor: chartColors,
+      borderRadius: 4
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { color: 'rgba(255,255,255,0.7)', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } },
+      y: { ticks: { color: 'rgba(255,255,255,0.7)', callback: v => '$'+v }, grid: { color: 'rgba(255,255,255,0.05)' }, beginAtZero: true }
+    }
+  }
+});
+
+// ── SIMULADOR DE CÂMBIO ──
+function calcCambio() {
+  const taxa = parseFloat(document.getElementById('taxaCambio').value) || 5.20;
+  const base = parseFloat(document.getElementById('orcBase').value) || 20000;
+  const marg = parseFloat(document.getElementById('margem').value) || 10;
+  const semMargem = base * taxa;
+  const margemVal = semMargem * (marg / 100);
+  const total = semMargem + margemVal;
+  const diario = total / 30;
+  const fmt = v => 'R$ ' + Math.round(v).toLocaleString('pt-BR');
+  document.getElementById('resSemMargem').textContent = fmt(semMargem);
+  document.getElementById('resMargem').textContent = fmt(margemVal);
+  document.getElementById('resTotal').textContent = fmt(total);
+  document.getElementById('resDiario').textContent = fmt(diario);
+}
+
+// ── NAV ACTIVE ──
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+window.addEventListener('scroll', () => {
+  let cur = '';
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 100) cur = s.id; });
+  navLinks.forEach(a => { a.classList.toggle('active', a.getAttribute('href') === '#'+cur); });
+});
+</script>
+</body>
+</html>
