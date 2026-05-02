@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Dashboard da Viagem — Giovani & Silvana 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --blue:#6BA3D4;--salmon:#F4A9A8;--green:#9FD4B5;--yellow:#FFE5B4;--purple:#D4A5D4;
+  --dark:#2C3E50;--mid:#5A6C7D;--light:#F8F9FA;--border:#E8EAED;--white:#fff;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Lato',sans-serif;background:var(--light);color:var(--dark);}
+
+/* TOPBAR */
+.topbar{
+  position:sticky;top:0;z-index:100;background:#fff;
+  border-bottom:1px solid var(--border);padding:0 20px;
+  display:flex;align-items:center;gap:14px;height:54px;
+  box-shadow:0 1px 8px rgba(0,0,0,.06);
+}
+.topbar a{color:var(--mid);text-decoration:none;font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px;}
+.topbar a:hover{color:var(--dark);}
+.topbar-title{font-family:'Montserrat',sans-serif;font-size:14px;font-weight:800;color:var(--dark);}
+.topbar-badge{margin-left:auto;background:var(--blue);color:#fff;font-size:10px;font-weight:700;padding:4px 12px;border-radius:12px;letter-spacing:.5px;}
+
+/* TABS NAV */
+.tabs-nav{
+  display:flex;gap:0;background:#fff;border-bottom:2px solid var(--border);
+  overflow-x:auto;padding:0 20px;position:sticky;top:54px;z-index:90;
+}
+.tabs-nav::-webkit-scrollbar{height:3px;}
+.tabs-nav::-webkit-scrollbar-thumb{background:var(--border);}
+.tab-btn{
+  padding:13px 18px;font-size:12px;font-weight:700;color:var(--mid);
+  border:none;background:none;cursor:pointer;white-space:nowrap;
+  border-bottom:3px solid transparent;margin-bottom:-2px;
+  font-family:'Montserrat',sans-serif;letter-spacing:.3px;transition:all .2s;
+}
+.tab-btn:hover{color:var(--dark);}
+.tab-btn.active{color:var(--blue);border-bottom-color:var(--blue);}
+
+/* PAGES */
+.page{display:none;padding:24px 20px 60px;}
+.page.active{display:block;}
+
+/* SECTION TITLE */
+.sec{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;
+  color:var(--mid);text-transform:uppercase;letter-spacing:1px;
+  margin:24px 0 14px;display:flex;align-items:center;gap:8px;}
+.sec i{color:var(--blue);}
+
+/* KPI GRID */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;margin-bottom:20px;}
+.kpi{
+  background:#fff;border-radius:12px;padding:14px 12px;text-align:center;
+  border-top:3px solid var(--blue);box-shadow:0 2px 8px rgba(0,0,0,.05);
+  position:relative;cursor:default;transition:box-shadow .2s;
+}
+.kpi:hover{box-shadow:0 4px 16px rgba(0,0,0,.12);}
+.kpi.s{border-top-color:var(--salmon);}
+.kpi.g{border-top-color:var(--green);}
+.kpi.y{border-top-color:var(--yellow);}
+.kpi.p{border-top-color:var(--purple);}
+.kpi-val{font-family:'Montserrat',sans-serif;font-size:22px;font-weight:800;color:var(--dark);}
+.kpi-lbl{font-size:10px;color:var(--mid);text-transform:uppercase;letter-spacing:.8px;margin-top:3px;}
+.kpi[data-tip]:hover::after{
+  content:attr(data-tip);position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);
+  background:var(--dark);color:#fff;font-size:11px;line-height:1.5;padding:8px 12px;border-radius:8px;
+  white-space:pre-line;text-align:left;min-width:180px;max-width:260px;z-index:9999;
+  box-shadow:0 4px 16px rgba(0,0,0,.25);pointer-events:none;
+}
+.kpi[data-tip]:hover::before{
+  content:'';position:absolute;bottom:calc(100% + 2px);left:50%;transform:translateX(-50%);
+  border:6px solid transparent;border-top-color:var(--dark);z-index:9999;
+}
+
+/* CHART WRAP */
+.chart-wrap{background:#fff;border-radius:12px;padding:18px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.05);}
+.chart-wrap h3{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--mid);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;}
+.chart-2col{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:600px){.chart-2col{grid-template-columns:1fr;}}
+
+/* TABLE */
+.tbl-wrap{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.05);margin-bottom:16px;}
+.tbl-header{padding:14px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);}
+.tbl-header h3{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;color:var(--dark);}
+.tbl-search{border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:12px;color:var(--dark);outline:none;width:160px;}
+.tbl-search:focus{border-color:var(--blue);}
+table{width:100%;border-collapse:collapse;font-size:12px;}
+th{background:var(--light);padding:10px 12px;text-align:left;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;color:var(--mid);text-transform:uppercase;letter-spacing:.8px;border-bottom:1px solid var(--border);}
+td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--dark);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(107,163,212,.04);}
+.badge-fase{display:inline-block;padding:3px 10px;border-radius:10px;font-size:10px;font-weight:700;letter-spacing:.3px;}
+
+/* CUSTO ROW */
+.cost-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
+.cost-row:last-child{border-bottom:none;}
+.cost-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.cost-name{font-weight:700;font-size:13px;flex:1;}
+.cost-bar-wrap{flex:2;min-width:80px;}
+.cost-bar-bg{height:6px;background:var(--border);border-radius:3px;}
+.cost-bar-fill{height:100%;border-radius:3px;transition:width 1.2s ease;}
+.cost-usd{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:800;color:var(--dark);min-width:60px;text-align:right;}
+.cost-pct{font-size:10px;color:var(--mid);min-width:36px;text-align:right;}
+
+/* CÂMBIO */
+.cambio-box{background:#fff;border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.05);margin-bottom:16px;}
+.cambio-box h3{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;color:var(--mid);text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;}
+.slider-row{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+.slider-row label{font-size:12px;font-weight:600;color:var(--mid);white-space:nowrap;}
+input[type=range]{flex:1;accent-color:var(--blue);}
+.taxa-val{font-family:'Montserrat',sans-serif;font-size:16px;font-weight:800;color:var(--dark);min-width:60px;}
+
+/* FADIGA */
+.fadiga-bar{height:8px;border-radius:4px;margin-top:4px;}
+.fadiga-low{background:var(--green);}
+.fadiga-med{background:var(--yellow);}
+.fadiga-high{background:var(--salmon);}
+.fadiga-xhigh{background:#e74c3c;}
+
+/* ALERT */
+.alert{background:rgba(244,169,168,.1);border-left:3px solid var(--salmon);border-radius:8px;padding:12px 14px;margin-bottom:10px;font-size:12px;line-height:1.6;}
+.alert strong{color:#c0392b;}
+
+/* RESPONSIVE */
+@media(max-width:500px){
+  .kpi-grid{grid-template-columns:repeat(2,1fr);}
+  .tbl-search{width:110px;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <a href="index.html"><i class="fas fa-arrow-left"></i> Voltar ao Site</a>
+  <span class="topbar-title">📊 Dashboard da Viagem</span>
+  <span class="topbar-badge">30 DIAS</span>
+</div>
+
+<!-- TABS NAV -->
+<div class="tabs-nav">
+  <button class="tab-btn active" data-tab="visao">🏠 Visão Geral</button>
+  <button class="tab-btn" data-tab="roteiro">🗺️ Roteiro</button>
+  <button class="tab-btn" data-tab="custos">💰 Custos</button>
+  <button class="tab-btn" data-tab="cambio">💱 Câmbio</button>
+  <button class="tab-btn" data-tab="fadiga">⚡ Fadiga</button>
+  <button class="tab-btn" data-tab="checklist">✅ Checklist</button>
+</div>
+
+<!-- ═══════════════════════════════════
+     ABA 1: VISÃO GERAL
+═══════════════════════════════════ -->
+<div class="page active" id="tab-visao">
+
+  <div class="kpi-grid">
+    <div class="kpi" data-tip="30 dias completos&#10;04 Set → 03 Out 2026&#10;Inclui chegada em NY&#10;e partida de Seattle">
+      <div class="kpi-val">30</div><div class="kpi-lbl">Dias</div>
+    </div>
+    <div class="kpi s" data-tip="3.850 km de estrada&#10;NY → Chicago: 1.270 km&#10;Rota 66: 1.800 km&#10;Califórnia → Seattle: 780 km">
+      <div class="kpi-val">3.850</div><div class="kpi-lbl">Km</div>
+    </div>
+    <div class="kpi g" data-tip="11 cidades principais&#10;NY · Philadelphia · DC&#10;Chicago · Las Vegas&#10;Santa Mônica · Big Sur&#10;San Francisco · Redwood&#10;Portland · Seattle">
+      <div class="kpi-val">11</div><div class="kpi-lbl">Cidades</div>
+    </div>
+    <div class="kpi y" data-tip="~58 horas ao volante&#10;Média: ~2h por dia&#10;Maior trecho: Chicago→STL&#10;Menor: SF→Napa (1h)">
+      <div class="kpi-val">58h</div><div class="kpi-lbl">Direção</div>
+    </div>
+    <div class="kpi p" data-tip="25 noites de hotel&#10;Média: USD $160/noite&#10;Mais caro: Big Sur $350&#10;Mais barato: Rota 66 $90">
+      <div class="kpi-val">25</div><div class="kpi-lbl">Noites</div>
+    </div>
+    <div class="kpi" data-tip="Orçamento base: USD $20.000&#10;Com margem 10%: USD $22.000&#10;Total gasto estimado: $13.640&#10;💰 Folga: USD $6.360">
+      <div class="kpi-val">$20k</div><div class="kpi-lbl">Orçamento</div>
+    </div>
+  </div>
+
+  <div class="chart-2col">
+    <div class="chart-wrap">
+      <h3>Distribuição de Custos</h3>
+      <canvas id="chartPizza" style="max-height:240px;"></canvas>
+    </div>
+    <div class="chart-wrap">
+      <h3>Km por Fase</h3>
+      <canvas id="chartKm" style="max-height:240px;"></canvas>
+    </div>
+  </div>
+
+  <div class="chart-wrap">
+    <h3>Custo Acumulado ao Longo da Viagem (USD)</h3>
+    <canvas id="chartAcumulado" style="max-height:200px;"></canvas>
+  </div>
+
+  <div class="sec"><i class="fas fa-route"></i> As 8 Fases Estratégicas</div>
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Fase</th><th>Destino</th><th>Dias</th><th>Km</th><th>Custo Est.</th><th>Clima</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><span class="badge-fase" style="background:#dbeafe;color:#1e40af;">1</span></td><td>🗽 New York</td><td>3</td><td>—</td><td>$1.100</td><td>18–27°C</td></tr>
+        <tr><td><span class="badge-fase" style="background:#dbeafe;color:#1e40af;">2</span></td><td>🏛️ Philadelphia & Washington DC</td><td>2</td><td>370</td><td>$700</td><td>20–26°C</td></tr>
+        <tr><td><span class="badge-fase" style="background:#dcfce7;color:#166534;">3</span></td><td>🌬️ Chicago</td><td>3</td><td>1.270</td><td>$1.200</td><td>15–22°C</td></tr>
+        <tr><td><span class="badge-fase" style="background:#fef9c3;color:#854d0e;">4</span></td><td>🛣️ Rota 66 Clássica</td><td>7</td><td>1.800</td><td>$2.800</td><td>18–35°C</td></tr>
+        <tr><td><span class="badge-fase" style="background:#fce7f3;color:#9d174d;">5</span></td><td>🎰 Las Vegas</td><td>3</td><td>450</td><td>$1.500</td><td>28–38°C</td></tr>
+        <tr><td><span class="badge-fase" style="background:#e0f2fe;color:#0369a1;">6</span></td><td>🌊 Santa Mônica & Big Sur</td><td>4</td><td>200</td><td>$2.200</td><td>14–22°C</td></tr>
+        <tr><td><span class="badge-fase" style="background:#f3e8ff;color:#6b21a8;">7</span></td><td>🌉 San Francisco</td><td>2</td><td>600</td><td>$1.100</td><td>13–20°C</td></tr>
+        <tr><td><span class="badge-fase" style="background:#dcfce7;color:#166534;">8</span></td><td>🌲 Redwood · Portland · Seattle</td><td>6</td><td>780</td><td>$2.040</td><td>12–20°C</td></tr>
+        <tr style="font-weight:700;background:var(--light);">
+          <td colspan="2"><strong>TOTAL</strong></td><td><strong>30</strong></td><td><strong>5.470</strong></td><td><strong>$12.640</strong></td><td>—</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     ABA 2: ROTEIRO DIA A DIA
+═══════════════════════════════════ -->
+<div class="page" id="tab-roteiro">
+  <div class="tbl-wrap">
+    <div class="tbl-header">
+      <h3>📅 Roteiro — 30 Dias</h3>
+      <input class="tbl-search" id="searchRoteiro" placeholder="🔍 Buscar cidade..." oninput="filterTable('tblRoteiro', this.value)">
+    </div>
+    <div style="overflow-x:auto;">
+    <table id="tblRoteiro">
+      <thead>
+        <tr><th>#</th><th>Data</th><th>Cidade</th><th>Fase</th><th>Km</th><th>Hotel</th><th>Clima</th><th>Custo/Dia</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>04/Set</td><td>🗽 New York</td><td><span class="badge-fase" style="background:#dbeafe;color:#1e40af;">NY</span></td><td>—</td><td>The Standard High Line</td><td>22°C ☀️</td><td>$370</td></tr>
+        <tr><td>2</td><td>05/Set</td><td>🗽 New York</td><td><span class="badge-fase" style="background:#dbeafe;color:#1e40af;">NY</span></td><td>—</td><td>The Standard High Line</td><td>21°C ☀️</td><td>$370</td></tr>
+        <tr><td>3</td><td>06/Set</td><td>🗽 New York</td><td><span class="badge-fase" style="background:#dbeafe;color:#1e40af;">NY</span></td><td>—</td><td>The Standard High Line</td><td>20°C ⛅</td><td>$360</td></tr>
+        <tr><td>4</td><td>07/Set</td><td>🏛️ Philadelphia</td><td><span class="badge-fase" style="background:#dbeafe;color:#1e40af;">PHL</span></td><td>150</td><td>Loews Philadelphia</td><td>22°C ☀️</td><td>$340</td></tr>
+        <tr><td>5</td><td>08/Set</td><td>🏛️ Washington DC</td><td><span class="badge-fase" style="background:#dbeafe;color:#1e40af;">DC</span></td><td>220</td><td>The Watergate Hotel</td><td>24°C ☀️</td><td>$360</td></tr>
+        <tr><td>6</td><td>09/Set</td><td>🌬️ Chicago</td><td><span class="badge-fase" style="background:#dcfce7;color:#166534;">CHI</span></td><td>1.100</td><td>Loews Chicago</td><td>18°C ⛅</td><td>$400</td></tr>
+        <tr><td>7</td><td>10/Set</td><td>🌬️ Chicago</td><td><span class="badge-fase" style="background:#dcfce7;color:#166534;">CHI</span></td><td>—</td><td>Loews Chicago</td><td>17°C ⛅</td><td>$400</td></tr>
+        <tr><td>8</td><td>11/Set</td><td>🌬️ Chicago</td><td><span class="badge-fase" style="background:#dcfce7;color:#166534;">CHI</span></td><td>—</td><td>Loews Chicago</td><td>16°C 🌧️</td><td>$400</td></tr>
+        <tr><td>9</td><td>12/Set</td><td>🛣️ Springfield, IL</td><td><span class="badge-fase" style="background:#fef9c3;color:#854d0e;">R66</span></td><td>320</td><td>Inn at 835</td><td>20°C ☀️</td><td>$280</td></tr>
+        <tr><td>10</td><td>13/Set</td><td>🛣️ St. Louis, MO</td><td><span class="badge-fase" style="background:#fef9c3;color:#854d0e;">R66</span></td><td>180</td><td>Marriott St. Louis</td><td>22°C ☀️</td><td>$320</td></tr>
+        <tr><td>11</td><td>14/Set</td><td>🛣️ Tulsa, OK</td><td><span class="badge-fase" style="background:#fef9c3;color:#854d0e;">R66</span></td><td>450</td><td>21c Museum Hotel</td><td>25°C ☀️</td><td>$300</td></tr>
+        <tr><td>12</td><td>15/Set</td><td>🛣️ Oklahoma City, OK</td><td><span class="badge-fase" style="background:#fef9c3;color:#854d0e;">R66</span></td><td>190</td><td>Colcord Hotel</td><td>26°C ☀️</td><td>$290</td></tr>
+        <tr><td>13</td><td>16/Set</td><td>🎨 Amarillo, TX</td><td><span class="badge-fase" style="background:#fef9c3;color:#854d0e;">R66</span></td><td>350</td><td>Big Texan Motel</td><td>28°C ☀️</td><td>$270</td></tr>
+        <tr><td>14</td><td>17/Set</td><td>🏜️ Albuquerque, NM</td><td><span class="badge-fase" style="background:#fef9c3;color:#854d0e;">R66</span></td><td>280</td><td>Hotel Parq Central</td><td>25°C ☀️</td><td>$280</td></tr>
+        <tr><td>15</td><td>18/Set</td><td>🏜️ Flagstaff, AZ</td><td><span class="badge-fase" style="background:#fef9c3;color:#854d0e;">R66</span></td><td>230</td><td>Little America Hotel</td><td>22°C ⛅</td><td>$280</td></tr>
+        <tr><td>16</td><td>19/Set</td><td>🎰 Las Vegas</td><td><span class="badge-fase" style="background:#fce7f3;color:#9d174d;">LV</span></td><td>450</td><td>Bellagio Hotel</td><td>34°C ☀️</td><td>$500</td></tr>
+        <tr><td>17</td><td>20/Set</td><td>🎰 Las Vegas</td><td><span class="badge-fase" style="background:#fce7f3;color:#9d174d;">LV</span></td><td>—</td><td>Bellagio Hotel</td><td>35°C ☀️</td><td>$500</td></tr>
+        <tr><td>18</td><td>21/Set</td><td>🎰 Las Vegas</td><td><span class="badge-fase" style="background:#fce7f3;color:#9d174d;">LV</span></td><td>—</td><td>Bellagio Hotel</td><td>33°C ☀️</td><td>$500</td></tr>
+        <tr><td>19</td><td>22/Set</td><td>🌊 Santa Mônica</td><td><span class="badge-fase" style="background:#e0f2fe;color:#0369a1;">CA</span></td><td>430</td><td>Shutters on the Beach</td><td>24°C ☀️</td><td>$480</td></tr>
+        <tr><td>20</td><td>23/Set</td><td>🌊 Malibu / PCH</td><td><span class="badge-fase" style="background:#e0f2fe;color:#0369a1;">CA</span></td><td>80</td><td>Malibu Beach Inn</td><td>23°C ☀️</td><td>$520</td></tr>
+        <tr><td>21</td><td>24/Set</td><td>🌊 Big Sur</td><td><span class="badge-fase" style="background:#e0f2fe;color:#0369a1;">CA</span></td><td>200</td><td>Post Ranch Inn</td><td>18°C ⛅</td><td>$650</td></tr>
+        <tr><td>22</td><td>25/Set</td><td>🌊 Big Sur / Carmel</td><td><span class="badge-fase" style="background:#e0f2fe;color:#0369a1;">CA</span></td><td>—</td><td>Post Ranch Inn</td><td>17°C ⛅</td><td>$550</td></tr>
+        <tr><td>23</td><td>26/Set</td><td>🌉 San Francisco</td><td><span class="badge-fase" style="background:#f3e8ff;color:#6b21a8;">SF</span></td><td>200</td><td>The Fairmont SF</td><td>16°C 🌫️</td><td>$560</td></tr>
+        <tr><td>24</td><td>27/Set</td><td>🌉 San Francisco</td><td><span class="badge-fase" style="background:#f3e8ff;color:#6b21a8;">SF</span></td><td>—</td><td>The Fairmont SF</td><td>15°C 🌫️</td><td>$540</td></tr>
+        <tr><td>25</td><td>28/Set</td><td>🌲 Redwood NP</td><td><span class="badge-fase" style="background:#dcfce7;color:#166534;">NW</span></td><td>480</td><td>Requa Inn</td><td>14°C 🌧️</td><td>$320</td></tr>
+        <tr><td>26</td><td>29/Set</td><td>🌲 Redwood / Crescent City</td><td><span class="badge-fase" style="background:#dcfce7;color:#166534;">NW</span></td><td>—</td><td>Requa Inn</td><td>13°C 🌧️</td><td>$300</td></tr>
+        <tr><td>27</td><td>30/Set</td><td>🍺 Portland</td><td><span class="badge-fase" style="background:#dcfce7;color:#166534;">NW</span></td><td>480</td><td>Ace Hotel Portland</td><td>16°C ⛅</td><td>$340</td></tr>
+        <tr><td>28</td><td>01/Out</td><td>🍺 Portland</td><td><span class="badge-fase" style="background:#dcfce7;color:#166534;">NW</span></td><td>—</td><td>Ace Hotel Portland</td><td>15°C ⛅</td><td>$340</td></tr>
+        <tr><td>29</td><td>02/Out</td><td>🚀 Seattle</td><td><span class="badge-fase" style="background:#dcfce7;color:#166534;">SEA</span></td><td>280</td><td>The Edgewater Hotel</td><td>14°C 🌧️</td><td>$380</td></tr>
+        <tr><td>30</td><td>03/Out</td><td>🚀 Seattle</td><td><span class="badge-fase" style="background:#dcfce7;color:#166534;">SEA</span></td><td>—</td><td>The Edgewater Hotel</td><td>13°C 🌧️</td><td>$380</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     ABA 3: CUSTOS
+═══════════════════════════════════ -->
+<div class="page" id="tab-custos">
+
+  <div class="kpi-grid">
+    <div class="kpi" data-tip="Total base sem margem&#10;Soma de todas as categorias"><div class="kpi-val">$12.4k</div><div class="kpi-lbl">Total Base</div></div>
+    <div class="kpi s" data-tip="Total com margem 10%&#10;$12.400 × 1,10 = $13.640"><div class="kpi-val">$13.6k</div><div class="kpi-lbl">Com Margem</div></div>
+    <div class="kpi g" data-tip="Orçamento disponível: $20.000&#10;Total com margem: $13.640&#10;💰 Folga: USD $6.360"><div class="kpi-val">$6.4k</div><div class="kpi-lbl">Folga</div></div>
+    <div class="kpi y" data-tip="Custo médio por dia&#10;$12.400 ÷ 30 dias = $413/dia&#10;Inclui todas as categorias"><div class="kpi-val">$413</div><div class="kpi-lbl">Média/Dia</div></div>
+  </div>
+
+  <div class="chart-wrap">
+    <h3>Breakdown de Custos por Categoria</h3>
+    <div id="costRows">
+      <div class="cost-row">
+        <div class="cost-dot" style="background:#6BA3D4;"></div>
+        <div class="cost-name">Hospedagem</div>
+        <div class="cost-bar-wrap"><div class="cost-bar-bg"><div class="cost-bar-fill" style="width:32%;background:#6BA3D4;"></div></div></div>
+        <div class="cost-usd">$4.000</div><div class="cost-pct">32%</div>
+      </div>
+      <div class="cost-row">
+        <div class="cost-dot" style="background:#D4A5D4;"></div>
+        <div class="cost-name">Aluguel + Seguro</div>
+        <div class="cost-bar-wrap"><div class="cost-bar-bg"><div class="cost-bar-fill" style="width:28%;background:#D4A5D4;"></div></div></div>
+        <div class="cost-usd">$3.500</div><div class="cost-pct">28%</div>
+      </div>
+      <div class="cost-row">
+        <div class="cost-dot" style="background:#9FD4B5;"></div>
+        <div class="cost-name">Alimentação</div>
+        <div class="cost-bar-wrap"><div class="cost-bar-bg"><div class="cost-bar-fill" style="width:19%;background:#9FD4B5;"></div></div></div>
+        <div class="cost-usd">$2.400</div><div class="cost-pct">19%</div>
+      </div>
+      <div class="cost-row">
+        <div class="cost-dot" style="background:#F4A9A8;"></div>
+        <div class="cost-name">Combustível</div>
+        <div class="cost-bar-wrap"><div class="cost-bar-bg"><div class="cost-bar-fill" style="width:10%;background:#F4A9A8;"></div></div></div>
+        <div class="cost-usd">$1.300</div><div class="cost-pct">10%</div>
+      </div>
+      <div class="cost-row">
+        <div class="cost-dot" style="background:#FFE5B4;"></div>
+        <div class="cost-name">Atividades & Ingressos</div>
+        <div class="cost-bar-wrap"><div class="cost-bar-bg"><div class="cost-bar-fill" style="width:10%;background:#FFE5B4;"></div></div></div>
+        <div class="cost-usd">$1.200</div><div class="cost-pct">10%</div>
+      </div>
+      <div class="cost-row" style="background:rgba(107,163,212,.05);border-radius:8px;padding:12px;">
+        <div class="cost-dot" style="background:#2C3E50;"></div>
+        <div class="cost-name" style="font-weight:800;">TOTAL BASE</div>
+        <div class="cost-bar-wrap"></div>
+        <div class="cost-usd" style="font-size:16px;">$12.400</div><div class="cost-pct">100%</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-wrap">
+    <h3>Custo por Fase (USD)</h3>
+    <canvas id="chartFases" style="max-height:220px;"></canvas>
+  </div>
+
+  <div class="tbl-wrap">
+    <div class="tbl-header"><h3>💳 Detalhamento de Ingressos & Atividades</h3></div>
+    <table>
+      <thead><tr><th>Atividade</th><th>Cidade</th><th>Custo/Pessoa</th><th>Total (2 pax)</th><th>Reserva</th></tr></thead>
+      <tbody>
+        <tr><td>🗽 Estátua da Liberdade + Ellis Island</td><td>New York</td><td>$24</td><td>$48</td><td>Antecipada</td></tr>
+        <tr><td>🏛️ Museus Smithsonian (5 museus)</td><td>Washington DC</td><td>GRÁTIS</td><td>$0</td><td>—</td></tr>
+        <tr><td>🎡 Navy Pier Chicago</td><td>Chicago</td><td>$20</td><td>$40</td><td>No local</td></tr>
+        <tr><td>🎨 Cadillac Ranch</td><td>Amarillo, TX</td><td>GRÁTIS</td><td>$0</td><td>—</td></tr>
+        <tr><td>🎰 Cirque du Soleil Las Vegas</td><td>Las Vegas</td><td>$120</td><td>$240</td><td>1+ mês antes</td></tr>
+        <tr><td>🚁 Helicóptero Grand Canyon</td><td>Las Vegas</td><td>$200</td><td>$400</td><td>1+ semana</td></tr>
+        <tr><td>🏝️ Alcatraz (Ferry + Tour)</td><td>San Francisco</td><td>$45</td><td>$90</td><td>2+ semanas</td></tr>
+        <tr><td>🚡 Cable Cars SF (diária)</td><td>San Francisco</td><td>$8</td><td>$16</td><td>No local</td></tr>
+        <tr><td>🚀 Space Needle Seattle</td><td>Seattle</td><td>$35</td><td>$70</td><td>Online</td></tr>
+        <tr><td>🌲 America the Beautiful Pass</td><td>Todos os parques</td><td>$80</td><td>$80</td><td>Online</td></tr>
+        <tr style="font-weight:700;background:var(--light);"><td colspan="3"><strong>TOTAL ATIVIDADES</strong></td><td><strong>$984</strong></td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     ABA 4: CÂMBIO
+═══════════════════════════════════ -->
+<div class="page" id="tab-cambio">
+
+  <div class="cambio-box">
+    <h3>💱 Simulador de Câmbio USD → BRL</h3>
+    <div class="slider-row">
+      <label>Taxa USD/BRL:</label>
+      <input type="range" id="taxa" min="4.50" max="7.00" step="0.05" value="5.20" oninput="updateCambio()">
+      <span class="taxa-val" id="taxaDisplay">R$ 5,20</span>
+    </div>
+    <div class="slider-row">
+      <label>Margem de Segurança:</label>
+      <input type="range" id="margem" min="0" max="20" step="1" value="10" oninput="updateCambio()">
+      <span class="taxa-val" id="margemDisplay">10%</span>
+    </div>
+  </div>
+
+  <div class="kpi-grid" id="kpisCambio">
+    <div class="kpi g"><div class="kpi-val" id="brlBase">R$64k</div><div class="kpi-lbl">Base BRL</div></div>
+    <div class="kpi s"><div class="kpi-val" id="brlMargem">R$71k</div><div class="kpi-lbl">Com Margem</div></div>
+    <div class="kpi p"><div class="kpi-val" id="brlOrcamento">R$104k</div><div class="kpi-lbl">Orçamento Total</div></div>
+    <div class="kpi y"><div class="kpi-val" id="brlFolga">R$33k</div><div class="kpi-lbl">Folga Disponível</div></div>
+  </div>
+
+  <div class="tbl-wrap">
+    <div class="tbl-header"><h3>Conversão por Categoria</h3></div>
+    <table id="tblCambio">
+      <thead><tr><th>Categoria</th><th>USD</th><th>BRL (taxa atual)</th><th>% do Total</th></tr></thead>
+      <tbody>
+        <tr><td>🏨 Hospedagem</td><td>$4.000</td><td id="c1">R$ 20.800</td><td>32%</td></tr>
+        <tr><td>🚗 Aluguel + Seguro</td><td>$3.500</td><td id="c2">R$ 18.200</td><td>28%</td></tr>
+        <tr><td>🍽️ Alimentação</td><td>$2.400</td><td id="c3">R$ 12.480</td><td>19%</td></tr>
+        <tr><td>⛽ Combustível</td><td>$1.300</td><td id="c4">R$ 6.760</td><td>10%</td></tr>
+        <tr><td>🎡 Atividades</td><td>$1.200</td><td id="c5">R$ 6.240</td><td>10%</td></tr>
+        <tr style="font-weight:700;background:var(--light);"><td><strong>TOTAL BASE</strong></td><td><strong>$12.400</strong></td><td id="cTotal"><strong>R$ 64.480</strong></td><td>100%</td></tr>
+        <tr style="background:rgba(244,169,168,.08);"><td>+ Margem 10%</td><td>$1.240</td><td id="cMargem">R$ 6.448</td><td>—</td></tr>
+        <tr style="font-weight:800;background:rgba(107,163,212,.08);"><td><strong>TOTAL COM MARGEM</strong></td><td><strong>$13.640</strong></td><td id="cFinal"><strong>R$ 70.928</strong></td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="chart-wrap">
+    <h3>Comparativo de Cenários em BRL</h3>
+    <canvas id="chartBRL" style="max-height:200px;"></canvas>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     ABA 5: ÍNDICE DE FADIGA
+═══════════════════════════════════ -->
+<div class="page" id="tab-fadiga">
+
+  <div class="alert"><strong>⚡ Como funciona:</strong> O índice de fadiga (0–10) combina km percorridos, horas de direção e intensidade das atividades. Dias acima de 7 são considerados muito intensos — planeje descanso antes e depois.</div>
+
+  <div class="kpi-grid">
+    <div class="kpi g" data-tip="Dias com fadiga baixa (0-3)&#10;Ideal para passeios tranquilos&#10;e exploração relaxada"><div class="kpi-val">12</div><div class="kpi-lbl">Dias Leves</div></div>
+    <div class="kpi y" data-tip="Dias com fadiga moderada (4-6)&#10;Bom ritmo de viagem&#10;Atividades equilibradas"><div class="kpi-val">11</div><div class="kpi-lbl">Dias Moderados</div></div>
+    <div class="kpi s" data-tip="Dias com fadiga alta (7-8)&#10;Muito km ou atividades intensas&#10;Descanse no dia seguinte"><div class="kpi-val">5</div><div class="kpi-lbl">Dias Intensos</div></div>
+    <div class="kpi p" data-tip="Dias com fadiga muito alta (9-10)&#10;Trecho longo + atividades&#10;Reserve energia com antecedência"><div class="kpi-val">2</div><div class="kpi-lbl">Muito Intensos</div></div>
+  </div>
+
+  <div class="tbl-wrap">
+    <div class="tbl-header"><h3>⚡ Índice de Fadiga por Dia</h3></div>
+    <div style="overflow-x:auto;">
+    <table>
+      <thead><tr><th>#</th><th>Cidade</th><th>Km</th><th>Índice</th><th>Nível</th><th>Recomendação</th></tr></thead>
+      <tbody id="tblFadiga"></tbody>
+    </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     ABA 6: CHECKLIST
+═══════════════════════════════════ -->
+<div class="page" id="tab-checklist">
+
+  <div class="sec"><i class="fas fa-clock"></i> 3 Meses Antes</div>
+  <div id="check1"></div>
+
+  <div class="sec"><i class="fas fa-calendar"></i> 1 Mês Antes</div>
+  <div id="check2"></div>
+
+  <div class="sec"><i class="fas fa-suitcase"></i> 1 Semana Antes</div>
+  <div id="check3"></div>
+
+  <div class="sec"><i class="fas fa-plane-arrival"></i> Na Chegada aos EUA</div>
+  <div id="check4"></div>
+
+  <div class="sec"><i class="fas fa-car"></i> Durante a Viagem</div>
+  <div id="check5"></div>
+
+  <div class="sec"><i class="fas fa-home"></i> Retorno ao Brasil</div>
+  <div id="check6"></div>
+</div>
+
+<!-- ═══════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════ -->
+<script>
+/* ── TABS ── */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    // init charts on demand
+    if (btn.dataset.tab === 'visao') initVisaoCharts();
+    if (btn.dataset.tab === 'custos') initCustosChart();
+    if (btn.dataset.tab === 'cambio') { updateCambio(); initBRLChart(); }
+    if (btn.dataset.tab === 'fadiga') renderFadiga();
+    if (btn.dataset.tab === 'checklist') renderChecklist();
+  });
+});
+
+/* ── SEARCH TABLE ── */
+function filterTable(id, q) {
+  const rows = document.querySelectorAll('#' + id + ' tbody tr');
+  rows.forEach(r => {
+    r.style.display = r.textContent.toLowerCase().includes(q.toLowerCase()) ? '' : 'none';
+  });
+}
+
+/* ── CHARTS VISÃO GERAL ── */
+let visaoInit = false;
+function initVisaoCharts() {
+  if (visaoInit) return; visaoInit = true;
+  const colors = ['#6BA3D4','#D4A5D4','#9FD4B5','#F4A9A8','#FFE5B4'];
+
+  new Chart(document.getElementById('chartPizza'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Hospedagem','Aluguel+Seguro','Alimentação','Combustível','Atividades'],
+      datasets: [{ data: [4000,3500,2400,1300,1200], backgroundColor: colors, borderColor:'#fff', borderWidth:3 }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom', labels: { font:{size:10}, padding:10 } },
+        tooltip: { callbacks: { label: ctx => ` $${ctx.parsed.toLocaleString()} (${Math.round(ctx.parsed/12400*100)}%)` } }
+      }
+    }
+  });
+
+  new Chart(document.getElementById('chartKm'), {
+    type: 'bar',
+    data: {
+      labels: ['NY→DC','DC→CHI','Rota 66','→LV','→SM','→SF','→SEA'],
+      datasets: [{ data: [370,1100,1800,450,200,600,780], backgroundColor: colors, borderRadius:6 }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend:{display:false}, tooltip:{callbacks:{label:ctx=>` ${ctx.parsed.y} km`}} },
+      scales: { y:{beginAtZero:true, ticks:{callback:v=>v+'km'}} }
+    }
+  });
+
+  // Custo acumulado
+  const dias = [1,3,5,8,15,18,22,24,26,28,30];
+  const acum = [370,1100,1800,3000,5800,7300,9700,10800,11400,12080,12640];
+  new Chart(document.getElementById('chartAcumulado'), {
+    type: 'line',
+    data: {
+      labels: dias.map(d=>'Dia '+d),
+      datasets: [{
+        label: 'Custo Acumulado (USD)',
+        data: acum,
+        borderColor: '#6BA3D4',
+        backgroundColor: 'rgba(107,163,212,.12)',
+        fill: true,
+        tension: 0.4,
+        pointBackgroundColor: '#6BA3D4',
+        pointRadius: 4
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend:{display:false}, tooltip:{callbacks:{label:ctx=>` $${ctx.parsed.y.toLocaleString()}`}} },
+      scales: { y:{beginAtZero:true, ticks:{callback:v=>'$'+v/1000+'k'}} }
+    }
+  });
+}
+
+/* ── CHART CUSTOS POR FASE ── */
+let custosInit = false;
+function initCustosChart() {
+  if (custosInit) return; custosInit = true;
+  new Chart(document.getElementById('chartFases'), {
+    type: 'bar',
+    data: {
+      labels: ['New York','Philly+DC','Chicago','Rota 66','Las Vegas','Big Sur','San Francisco','NW+Seattle'],
+      datasets: [
+        { label: 'Hospedagem', data: [840,700,540,630,600,1200,440,480], backgroundColor:'#6BA3D4', borderRadius:4 },
+        { label: 'Alimentação', data: [240,160,240,560,240,320,160,480], backgroundColor:'#9FD4B5', borderRadius:4 },
+        { label: 'Atividades', data: [80,0,40,0,640,0,106,70], backgroundColor:'#FFE5B4', borderRadius:4 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend:{position:'bottom',labels:{font:{size:10},padding:10}} },
+      scales: { x:{stacked:true}, y:{stacked:true, beginAtZero:true, ticks:{callback:v=>'$'+v}} }
+    }
+  });
+}
+
+/* ── CÂMBIO ── */
+let brlInit = false;
+function updateCambio() {
+  const taxa = parseFloat(document.getElementById('taxa').value);
+  const margPct = parseFloat(document.getElementById('margem').value);
+  document.getElementById('taxaDisplay').textContent = 'R$ ' + taxa.toFixed(2);
+  document.getElementById('margemDisplay').textContent = margPct + '%';
+  const base = 12400;
+  const marg = base * margPct / 100;
+  const total = base + marg;
+  const orc = 20000;
+  const folga = orc - total;
+  document.getElementById('brlBase').textContent      = 'R$' + Math.round(base*taxa/1000)+'k';
+  document.getElementById('brlMargem').textContent    = 'R$' + Math.round(total*taxa/1000)+'k';
+  document.getElementById('brlOrcamento').textContent = 'R$' + Math.round(orc*taxa/1000)+'k';
+  document.getElementById('brlFolga').textContent     = 'R$' + Math.round(folga*taxa/1000)+'k';
+  // tabela
+  const vals = [4000,3500,2400,1300,1200];
+  vals.forEach((v,i) => {
+    const el = document.getElementById('c'+(i+1));
+    if(el) el.textContent = 'R$ ' + (v*taxa).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0});
+  });
+  document.getElementById('cTotal').innerHTML   = '<strong>R$ ' + (base*taxa).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0}) + '</strong>';
+  document.getElementById('cMargem').textContent = 'R$ ' + (marg*taxa).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0});
+  document.getElementById('cFinal').innerHTML   = '<strong>R$ ' + (total*taxa).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0}) + '</strong>';
+}
+
+function initBRLChart() {
+  if (brlInit) return; brlInit = true;
+  new Chart(document.getElementById('chartBRL'), {
+    type: 'bar',
+    data: {
+      labels: ['Taxa R$4,50','Taxa R$5,20','Taxa R$5,80','Taxa R$6,50'],
+      datasets: [{
+        label: 'Total com Margem (BRL)',
+        data: [61380, 70928, 79112, 88660],
+        backgroundColor: ['#9FD4B5','#6BA3D4','#FFE5B4','#F4A9A8'],
+        borderRadius: 8
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend:{display:false}, tooltip:{callbacks:{label:ctx=>' R$ '+ctx.parsed.y.toLocaleString('pt-BR')}} },
+      scales: { y:{beginAtZero:true, ticks:{callback:v=>'R$'+v/1000+'k'}} }
+    }
+  });
+}
+
+/* ── FADIGA ── */
+const fadigaData = [
+  {d:1,c:'New York',km:0,idx:3,nivel:'Leve',rec:'Chegada e descanso. Passeio tranquilo por Manhattan.'},
+  {d:2,c:'New York',km:0,idx:5,nivel:'Moderado',rec:'Central Park, MoMA. Ritmo confortável.'},
+  {d:3,c:'New York',km:0,idx:6,nivel:'Moderado',rec:'Estátua da Liberdade. Dia cheio mas prazeroso.'},
+  {d:4,c:'Philadelphia',km:150,idx:5,nivel:'Moderado',rec:'Trecho curto. Liberty Bell e Independence Hall.'},
+  {d:5,c:'Washington DC',km:220,idx:6,nivel:'Moderado',rec:'Smithsonian gratuito. Muita caminhada.'},
+  {d:6,c:'Chicago',km:1100,idx:9,nivel:'Muito Intenso',rec:'⚠️ Trecho longo! Descanse ao chegar. Jante tranquilo.'},
+  {d:7,c:'Chicago',km:0,idx:4,nivel:'Leve',rec:'Explore Millennium Park. Ritmo relaxado.'},
+  {d:8,c:'Chicago',km:0,idx:5,nivel:'Moderado',rec:'Lago Michigan, deep dish pizza. Ótimo dia.'},
+  {d:9,c:'Springfield, IL',km:320,idx:6,nivel:'Moderado',rec:'Rota 66 começa! Lincoln Library. Animado.'},
+  {d:10,c:'St. Louis, MO',km:180,idx:5,nivel:'Moderado',rec:'Gateway Arch. Trecho curto e agradável.'},
+  {d:11,c:'Tulsa, OK',km:450,idx:7,nivel:'Intenso',rec:'⚠️ Dia longo. Pare em cidades da Rota 66.'},
+  {d:12,c:'Oklahoma City',km:190,idx:5,nivel:'Moderado',rec:'Murais históricos. Ritmo bom.'},
+  {d:13,c:'Amarillo, TX',km:350,idx:7,nivel:'Intenso',rec:'⚠️ Cadillac Ranch! Trecho longo mas recompensador.'},
+  {d:14,c:'Albuquerque, NM',km:280,idx:6,nivel:'Moderado',rec:'Balões de ar quente. Paisagem linda.'},
+  {d:15,c:'Flagstaff, AZ',km:230,idx:5,nivel:'Moderado',rec:'Porta para o Grand Canyon. Altitude 2.100m.'},
+  {d:16,c:'Las Vegas',km:450,idx:8,nivel:'Intenso',rec:'⚠️ Chegada + The Strip. Ritmo acelerado.'},
+  {d:17,c:'Las Vegas',km:0,idx:6,nivel:'Moderado',rec:'Grand Canyon tour. Cirque du Soleil.'},
+  {d:18,c:'Las Vegas',km:0,idx:7,nivel:'Intenso',rec:'⚠️ Último dia LV. Não exagere no cassino!'},
+  {d:19,c:'Santa Mônica',km:430,idx:8,nivel:'Intenso',rec:'⚠️ Fim da Rota 66! Emocionante mas cansativo.'},
+  {d:20,c:'Malibu / PCH',km:80,idx:4,nivel:'Leve',rec:'Dia relaxado na praia. Merecido descanso.'},
+  {d:21,c:'Big Sur',km:200,idx:5,nivel:'Moderado',rec:'Highway 1. Dirija devagar — paisagem incrível.'},
+  {d:22,c:'Big Sur / Carmel',km:0,idx:3,nivel:'Leve',rec:'Dia de contemplação. McWay Falls ao pôr do sol.'},
+  {d:23,c:'San Francisco',km:200,idx:6,nivel:'Moderado',rec:'Golden Gate, Alcatraz. Dia cheio e recompensador.'},
+  {d:24,c:'San Francisco',km:0,idx:5,nivel:'Moderado',rec:'Fisherman\'s Wharf, Cable Cars. Ritmo bom.'},
+  {d:25,c:'Redwood NP',km:480,idx:9,nivel:'Muito Intenso',rec:'⚠️ Trecho mais longo! Saia cedo. Descanse ao chegar.'},
+  {d:26,c:'Redwood / Crescent City',km:0,idx:3,nivel:'Leve',rec:'Caminhada entre as sequoias gigantes. Mágico.'},
+  {d:27,c:'Portland',km:480,idx:7,nivel:'Intenso',rec:'⚠️ Trecho longo. Portland à noite é animada.'},
+  {d:28,c:'Portland',km:0,idx:4,nivel:'Leve',rec:'Powell\'s Books, food trucks. Dia relaxado.'},
+  {d:29,c:'Seattle',km:280,idx:6,nivel:'Moderado',rec:'Space Needle, Pike Place Market. Ótimo dia.'},
+  {d:30,c:'Seattle',km:0,idx:3,nivel:'Leve',rec:'Último dia. Compras, despedida. Voo de volta.'},
+];
+
+function renderFadiga() {
+  const tbody = document.getElementById('tblFadiga');
+  if (tbody.innerHTML) return;
+  fadigaData.forEach(r => {
+    const cor = r.idx<=3?'#9FD4B5':r.idx<=6?'#FFE5B4':r.idx<=8?'#F4A9A8':'#e74c3c';
+    const cls = r.idx<=3?'Leve 🟢':r.idx<=6?'Moderado 🟡':r.idx<=8?'Intenso 🟠':'Muito Intenso 🔴';
+    tbody.innerHTML += `<tr>
+      <td>${r.d}</td><td>${r.c}</td><td>${r.km||'—'}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:60px;height:6px;background:var(--border);border-radius:3px;">
+            <div style="width:${r.idx*10}%;height:100%;background:${cor};border-radius:3px;"></div>
+          </div>
+          <span style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;">${r.idx}</span>
+        </div>
+      </td>
+      <td><span style="background:${cor}33;color:${cor==='#9FD4B5'?'#166534':cor==='#FFE5B4'?'#854d0e':cor==='#F4A9A8'?'#9d174d':'#7f1d1d'};padding:3px 10px;border-radius:10px;font-size:10px;font-weight:700;">${cls}</span></td>
+      <td style="font-size:11px;color:var(--mid);">${r.rec}</td>
+    </tr>`;
+  });
+}
+
+/* ── CHECKLIST ── */
+const checklists = {
+  check1: [
+    'Reservar hotel Big Sur (esgota rápido!)',
+    'Comprar seguro de viagem internacional (cobertura mín. USD $100k)',
+    'Verificar validade do passaporte (mín. 6 meses)',
+    'Solicitar ESTA — autorização eletrônica ($21)',
+    'Reservar Alcatraz online (alcatrazcruises.com)',
+    'Reservar Cirque du Soleil Las Vegas',
+    'Solicitar CNH Internacional (DETRAN)',
+    'Reservar helicóptero Grand Canyon',
+    'Reservar hotéis de Las Vegas',
+    'Reservar hotéis de New York',
+  ],
+  check2: [
+    'Ativar eSIM para os EUA (T-Mobile ou AT&T)',
+    'Baixar Google Maps offline (todos os estados)',
+    'Reservar restaurantes especiais em NY e SF',
+    'Confirmar todas as reservas de hotel',
+    'Baixar app GasBuddy (combustível mais barato)',
+    'Comprar America the Beautiful Pass ($80)',
+    'Notificar banco sobre viagem internacional',
+    'Contratar cartão sem IOF (Nubank, C6, Wise)',
+    'Reservar aluguel de carro (Hertz ou Avis)',
+    'Baixar app Waze e Maps.me',
+  ],
+  check3: [
+    'Fazer cópias digitais de todos os documentos',
+    'Carregar adaptador de tomada (tipo A/B)',
+    'Preparar kit de primeiros socorros',
+    'Baixar tradutor offline (Google Translate)',
+    'Confirmar check-in do voo',
+    'Preparar mala com camadas (temperatura varia muito)',
+    'Levar protetor solar FPS 50+ (deserto!)',
+    'Preparar playlist para a Rota 66',
+  ],
+  check4: [
+    'Preencher formulário de imigração no avião',
+    'Ter endereço do primeiro hotel em mãos',
+    'Retirar dinheiro em espécie (USD $500)',
+    'Ativar eSIM ao desembarcar',
+    'Confirmar reserva do aluguel de carro',
+    'Testar cartões de crédito',
+  ],
+  check5: [
+    'Confirmar reserva do próximo hotel a cada manhã',
+    'Manter tanque acima de 1/4 (postos escassos na Rota 66)',
+    'Fotografar placa do carro alugado',
+    'Guardar recibos de combustível',
+    'Verificar previsão do tempo diariamente',
+    'Respeitar limites de velocidade',
+    'Não usar celular ao volante',
+  ],
+  check6: [
+    'Devolver carro com tanque cheio',
+    'Verificar itens esquecidos no hotel',
+    'Guardar notas fiscais para declaração',
+    'Fazer check-in do voo de retorno',
+    'Chegar ao aeroporto com 3h de antecedência',
+    'Declarar compras acima de USD $500 na Receita',
+  ],
+};
+
+function renderChecklist() {
+  Object.entries(checklists).forEach(([id, items]) => {
+    const el = document.getElementById(id);
+    if (!el || el.innerHTML) return;
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.05);margin-bottom:16px;';
+    items.forEach((item, i) => {
+      const row = document.createElement('label');
+      row.style.cssText = 'display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer;font-size:13px;color:var(--dark);';
+      row.innerHTML = `<input type="checkbox" style="margin-top:2px;accent-color:var(--blue);width:15px;height:15px;flex-shrink:0;"> <span>${item}</span>`;
+      row.querySelector('input').addEventListener('change', function() {
+        row.querySelector('span').style.textDecoration = this.checked ? 'line-through' : '';
+        row.querySelector('span').style.color = this.checked ? 'var(--mid)' : 'var(--dark)';
+      });
+      if (i === items.length-1) row.style.borderBottom = 'none';
+      wrap.appendChild(row);
+    });
+    el.appendChild(wrap);
+  });
+}
+
+/* ── INIT ── */
+initVisaoCharts();
+updateCambio();
+</script>
+</body>
+</html>
