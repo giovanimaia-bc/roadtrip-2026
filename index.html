@@ -79,7 +79,7 @@ html,body{height:100%;overflow:hidden;font-family:'Lato',sans-serif;background:v
    BOTÃO HOME
 ═══════════════════════════════════════════ */
 .home-btn{
-  position:fixed;bottom:20px;left:20px;width:50px;height:50px;
+  position:fixed;top:20px;right:80px;width:50px;height:50px;
   background:linear-gradient(135deg,#a8d5ff 0%,#c8a8ff 100%);
   border:none;border-radius:50%;cursor:pointer;
   display:flex;align-items:center;justify-content:center;
@@ -89,14 +89,14 @@ html,body{height:100%;overflow:hidden;font-family:'Lato',sans-serif;background:v
 .home-btn:hover{transform:scale(1.1);box-shadow:0 6px 20px rgba(168,213,255,.6);}
 .home-btn:active{transform:scale(.95);}
 @media(max-width:768px){
-  .home-btn{width:45px;height:45px;font-size:20px;bottom:15px;left:15px;}
+  .home-btn{width:45px;height:45px;font-size:20px;top:15px;right:75px;}
 }
 
 /* ═══════════════════════════════════════════
    CHATBOT IA
 ═══════════════════════════════════════════ */
 .chatbot-btn{
-  position:fixed;bottom:80px;left:20px;width:50px;height:50px;
+  position:fixed;top:20px;right:20px;width:50px;height:50px;
   background:linear-gradient(135deg,#ff6b6b 0%,#ff8787 100%);
   border:none;border-radius:50%;cursor:pointer;
   display:flex;align-items:center;justify-content:center;
@@ -107,7 +107,7 @@ html,body{height:100%;overflow:hidden;font-family:'Lato',sans-serif;background:v
 .chatbot-btn:active{transform:scale(.95);}
 
 .chatbot-widget{
-  position:fixed;bottom:140px;left:20px;width:350px;height:500px;
+  position:fixed;top:80px;right:20px;width:350px;height:500px;
   background:#fff;border-radius:15px;box-shadow:0 5px 40px rgba(0,0,0,.16);
   display:none;flex-direction:column;z-index:998;
   animation:slideUp .3s ease;
@@ -399,7 +399,6 @@ html,body{height:100%;overflow:hidden;font-family:'Lato',sans-serif;background:v
 <header class="topbar">
   <button class="ham" id="ham"><i class="fas fa-bars"></i></button>
   <span class="topbar-title">Descobrindo a América</span>
-  <span class="topbar-badge">30 DIAS</span>
 </header>
 
 <!-- ═══════════════════════════════════════════
