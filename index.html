@@ -92,6 +92,79 @@ html,body{height:100%;overflow:hidden;font-family:'Lato',sans-serif;background:v
 }
 
 /* ═══════════════════════════════════════════
+   CHATBOT IA
+═══════════════════════════════════════════ */
+.chatbot-btn{
+  position:fixed;bottom:80px;left:20px;width:50px;height:50px;
+  background:linear-gradient(135deg,#ff6b6b 0%,#ff8787 100%);
+  border:none;border-radius:50%;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:24px;box-shadow:0 4px 15px rgba(255,107,107,.4);
+  transition:all .3s ease;z-index:998;
+}
+.chatbot-btn:hover{transform:scale(1.1);box-shadow:0 6px 20px rgba(255,107,107,.6);}
+.chatbot-btn:active{transform:scale(.95);}
+
+.chatbot-widget{
+  position:fixed;bottom:140px;left:20px;width:350px;height:500px;
+  background:#fff;border-radius:15px;box-shadow:0 5px 40px rgba(0,0,0,.16);
+  display:none;flex-direction:column;z-index:998;
+  animation:slideUp .3s ease;
+}
+.chatbot-widget.open{display:flex;}
+
+@keyframes slideUp{
+  from{transform:translateY(20px);opacity:0;}
+  to{transform:translateY(0);opacity:1;}
+}
+
+.chatbot-header{
+  background:linear-gradient(135deg,#ff6b6b 0%,#ff8787 100%);
+  color:#fff;padding:16px;border-radius:15px 15px 0 0;
+  display:flex;justify-content:space-between;align-items:center;
+  font-weight:700;font-size:14px;
+}
+.chatbot-close{
+  background:none;border:none;color:#fff;cursor:pointer;font-size:20px;
+}
+
+.chatbot-messages{
+  flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;
+}
+
+.message{
+  padding:10px 14px;border-radius:10px;font-size:13px;line-height:1.4;
+  max-width:85%;
+}
+.message.user{
+  align-self:flex-end;background:#e3f2fd;color:#1976d2;border-radius:10px 0 10px 10px;
+}
+.message.bot{
+  align-self:flex-start;background:#f5f5f5;color:#333;border-radius:0 10px 10px 10px;
+}
+
+.chatbot-input{
+  padding:12px;border-top:1px solid #e0e0e0;display:flex;gap:8px;
+}
+.chatbot-input input{
+  flex:1;border:1px solid #ddd;border-radius:20px;padding:8px 14px;
+  font-size:13px;outline:none;transition:border-color .2s;
+}
+.chatbot-input input:focus{
+  border-color:#ff6b6b;
+}
+.chatbot-input button{
+  background:#ff6b6b;color:#fff;border:none;border-radius:50%;width:36px;height:36px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;
+}
+.chatbot-input button:hover{background:#ff5252;}
+
+@media(max-width:768px){
+  .chatbot-widget{width:90%;left:5%;bottom:100px;height:400px;}
+  .chatbot-btn{bottom:60px;left:20px;}
+}
+
+/* ═══════════════════════════════════════════
    PÁGINAS (SPA)
 ═══════════════════════════════════════════ */
 .page{
@@ -279,6 +352,26 @@ html,body{height:100%;overflow:hidden;font-family:'Lato',sans-serif;background:v
 <body>
 <!-- Botão Home -->
 <button class="home-btn" onclick="document.querySelector('[data-page=inicio]').click()" title="Voltar ao Menu Inicial">🏠</button>
+
+<!-- Botão Chatbot IA -->
+<button class="chatbot-btn" onclick="toggleChatbot()" title="Assistente de IA">🤖</button>
+
+<!-- Chat Widget -->
+<div class="chatbot-widget" id="chatbot-widget">
+  <div class="chatbot-header">
+    <span>🤖 Assistente de IA</span>
+    <button class="chatbot-close" onclick="toggleChatbot()">×</button>
+  </div>
+  <div class="chatbot-messages" id="chatbot-messages">
+    <div class="message bot">
+      Ola! Sou seu assistente de IA. Faca perguntas sobre a viagem, custos, roteiro, hoteis, atividades e muito mais!
+    </div>
+  </div>
+  <div class="chatbot-input">
+    <input type="text" id="chatbot-input" placeholder="Digite sua pergunta..." onkeypress="handleChatInput(event)">
+    <button onclick="sendChatMessage()">➤</button>
+  </div>
+</div>
 
 <!-- OVERLAY -->
 <div class="overlay" id="overlay"></div>
@@ -891,3 +984,85 @@ function initCambio() {
 </script>
 </body>
 </html>
+
+/* ── CHATBOT IA ── */
+function toggleChatbot() {
+  const widget = document.getElementById('chatbot-widget');
+  widget.classList.toggle('open');
+  if (widget.classList.contains('open')) {
+    document.getElementById('chatbot-input').focus();
+  }
+}
+
+function handleChatInput(event) {
+  if (event.key === 'Enter') {
+    sendChatMessage();
+  }
+}
+
+async function sendChatMessage() {
+  const input = document.getElementById('chatbot-input');
+  const message = input.value.trim();
+  
+  if (!message) return;
+  
+  // Adicionar mensagem do usuario
+  addChatMessage(message, 'user');
+  input.value = '';
+  
+  // Chamar IA para responder
+  const response = await getChatbotResponse(message);
+  addChatMessage(response, 'bot');
+}
+
+function addChatMessage(text, sender) {
+  const messagesDiv = document.getElementById('chatbot-messages');
+  const messageEl = document.createElement('div');
+  messageEl.className = 'message ' + sender;
+  messageEl.textContent = text;
+  messagesDiv.appendChild(messageEl);
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+async function getChatbotResponse(userMessage) {
+  // Respostas pre-programadas sobre a viagem
+  const lowerMessage = userMessage.toLowerCase();
+  
+  // Perguntas sobre custos
+  if (lowerMessage.includes('custo') || lowerMessage.includes('orcamento') || lowerMessage.includes('preco')) {
+    return 'O orcamento total da viagem eh USD $22.000 (ou R$ 71.500 com taxa 5.0). Hospedagem: $4.200 | Aluguel+Seguro: $3.500 | Alimentacao: $2.400 | Combustivel: $1.500 | Atividades: $1.300 | Margem: $8.100. Quer detalhes de alguma categoria?';
+  }
+  
+  // Perguntas sobre roteiro
+  if (lowerMessage.includes('roteiro') || lowerMessage.includes('dias') || lowerMessage.includes('cidades')) {
+    return '30 dias visitando 13 cidades: Quebec, Montreal, New York, Philadelphia, DC, Chicago, Springfield, Tulsa, Amarillo, Albuquerque, Las Vegas, Yosemite, San Francisco. Quer saber sobre alguma cidade especifica?';
+  }
+  
+  // Perguntas sobre hoteis
+  if (lowerMessage.includes('hotel') || lowerMessage.includes('hospedagem') || lowerMessage.includes('acomodacao')) {
+    return 'Hospedagem varia de $90-280/noite. NY e SF: The Standard e Fairmont (5 estrelas). Chicago: The Peninsula (4 estrelas). Rota 66: hospedagem economica. Qual cidade te interessa?';
+  }
+  
+  // Perguntas sobre atividades
+  if (lowerMessage.includes('atividade') || lowerMessage.includes('o que fazer') || lowerMessage.includes('atracoes')) {
+    return 'Principais atividades: Central Park (NY), Alcatraz (SF), Cirque du Soleil (Vegas), Rota 66, Yosemite, Grand Canyon, Smithsonian (DC - gratis). Total de $1.300 em ingressos. Qual te interessa?';
+  }
+  
+  // Perguntas sobre combustivel
+  if (lowerMessage.includes('combustivel') || lowerMessage.includes('gasolina') || lowerMessage.includes('km')) {
+    return '4.200 km no total. Consumo ~9 km/litro. Custo estimado $1.500 (USD $3.50/galao). Dica: use GasBuddy para encontrar postos mais baratos!';
+  }
+  
+  // Perguntas sobre cambio
+  if (lowerMessage.includes('cambio') || lowerMessage.includes('real') || lowerMessage.includes('brl')) {
+    return 'Taxa USD/BRL atual: ~5.0. USD $22.000 = R$ 110.000. Use o simulador de cambio no dashboard para calcular com outras taxas!';
+  }
+  
+  // Perguntas sobre duracao
+  if (lowerMessage.includes('quanto tempo') || lowerMessage.includes('duracao') || lowerMessage.includes('dura')) {
+    return '30 dias (4 de setembro a 3 de outubro de 2026). Ritmo moderado: 3 dias em cidades grandes, 1-2 dias em cidades menores.';
+  }
+  
+  // Resposta padrao
+  return 'Otima pergunta! Sou um assistente especializado em sua viagem. Pergunte-me sobre: custos, roteiro, hoteis, atividades, combustivel, cambio, cidades, dicas de viagem, ou qualquer outra duvida!';
+}
