@@ -16,7 +16,7 @@
       display: flex; align-items: center; padding: 0 20px;
       z-index: 1000; box-shadow: 0 2px 8px rgba(0,0,0,.1);
     }
-    .topbar-title { font-size: 20px; font-weight: 700; color: #2c3e50; }
+    .topbar-title { font-size: 20px; font-weight: 700; color: #2c3e50; margin-left: 20px; }
     .ham { background: none; border: none; font-size: 24px; cursor: pointer; }
     
     /* BOTÕES FLUTUANTES */
@@ -235,7 +235,7 @@
   <a href="#" onclick="showPage('custos')">💰 Custos</a>
   <a href="#" onclick="showPage('estrategia')">⚡ Estratégias & Consultor</a>
   <a href="#" onclick="showPage('dicas')">💡 Dicas</a>
-  <a href="#" onclick="showPage('preview')">🎬 Preview</a>
+
 </div>
 
 <!-- OVERLAY -->
@@ -252,6 +252,12 @@
     <br>
     <button class="btn" onclick="showPage('roteiro')">Ver Roteiro</button>
     <button class="btn btn-secondary" onclick="window.open('dashboard.html', '_blank')">Dashboard Interativo</button>
+  </div>
+  
+  <div style="background: linear-gradient(135deg, #ff6b6b 0%, #ff8787 100%); color: #fff; padding: 30px; border-radius: 15px; margin-bottom: 30px; text-align: center;">
+    <h3 style="font-size: 24px; margin-bottom: 10px;">🎬 Preview Cinematográfico</h3>
+    <p style="margin-bottom: 15px;">22 slides sincronizados com narração profissional de 4 min 46 seg</p>
+    <button class="btn" style="background: #fff; color: #ff6b6b;" onclick="window.open('preview.html', '_blank')">Assistir Agora</button>
   </div>
   
   <div class="grid">
@@ -596,17 +602,18 @@ function addChatMessage(text, sender) {
 }
 
 function getChatbotResponse(userMessage) {
+  console.log('Pergunta recebida:', userMessage);
   const msg = userMessage.toLowerCase();
   
-  if (msg.includes('custo') || msg.includes('orcamento') || msg.includes('preco')) {
+  if (msg.includes('custo') || msg.includes('orcamento') || msg.includes('preco') || msg.includes('valor')) {
     return '💰 Orçamento total: USD $22.000 (R$ 110.000 com taxa 5.0)\n\nBreakdown:\n🏨 Hospedagem: $4.200\n🚗 Aluguel+Seguro: $3.500\n🍽️ Alimentação: $2.400\n⛽ Combustível: $1.500\n🎫 Atividades: $1.300\n📈 Margem: $8.100\n\nQuer detalhes de alguma categoria?';
   }
   
-  if (msg.includes('roteiro') || msg.includes('dias') || msg.includes('cidades')) {
+  if (msg.includes('roteiro') || msg.includes('dias') || msg.includes('cidades') || msg.includes('onde')) {
     return '🗺️ Roteiro de 30 dias:\n\n🍁 Dias 1-5: Quebec & Montreal\n🗽 Dias 6-8: New York\n🏛️ Dias 9-10: Philadelphia & DC\n🌬️ Dias 11-13: Chicago\n🛣️ Dias 14-20: Rota 66\n🎰 Dias 21-23: Las Vegas\n🏞️ Dias 24-26: Yosemite & Sequoias\n🌉 Dias 27-30: San Francisco\n\nTotal: 13 cidades, 4.200 km';
   }
   
-  if (msg.includes('hotel') || msg.includes('hospedagem') || msg.includes('acomodacao')) {
+  if (msg.includes('hotel') || msg.includes('hospedagem') || msg.includes('acomodacao') || msg.includes('onde fica')) {
     return '🏨 Hospedagem por categoria:\n\n⭐⭐⭐⭐⭐ 5 ESTRELAS:\n- New York: The Standard ($280/noite)\n- San Francisco: Fairmont ($280/noite)\n\n⭐⭐⭐⭐ 4 ESTRELAS:\n- Chicago: The Peninsula ($220/noite)\n- Philadelphia/DC: Watergate ($200/noite)\n\n⭐⭐⭐ 3 ESTRELAS:\n- Rota 66: Hospedagem histórica ($90/noite)\n- Yosemite: Lodge ($120/noite)';
   }
   
@@ -626,6 +633,7 @@ function getChatbotResponse(userMessage) {
     return '⏱️ Duração:\n\nData: 4 de setembro a 3 de outubro de 2026\nTotal: 30 dias\nRitmo: Moderado\n\n- Cidades grandes: 3 dias (NY, SF, Chicago)\n- Cidades médias: 2 dias (Vegas, DC)\n- Cidades pequenas: 1 dia\n- Parques: 3 dias (Yosemite)\n\nPerfeitamente balanceado!';
   }
   
+  console.log('Resposta padrão enviada');
   return '🚗 Sou seu assistente de viagem!\n\nPosso ajudar com:\n💰 Custos e orçamento\n🗺️ Roteiro e cidades\n🏨 Hotéis e hospedagem\n🎫 Atividades\n⛽ Combustível e km\n💱 Câmbio\n🚗 Aluguel de carro\n📍 Dicas de viagem\n\nO que você gostaria de saber? 😊';
 }
 
