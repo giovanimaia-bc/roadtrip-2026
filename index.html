@@ -7,6 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/openai@4.0.0/index.min.js"></script>
 <style>
 /* ═══════════════════════════════════════════
    VARIÁVEIS & RESET
@@ -1025,44 +1026,43 @@ function addChatMessage(text, sender) {
 }
 
 async function getChatbotResponse(userMessage) {
-  // Respostas pre-programadas sobre a viagem
   const lowerMessage = userMessage.toLowerCase();
   
   // Perguntas sobre custos
   if (lowerMessage.includes('custo') || lowerMessage.includes('orcamento') || lowerMessage.includes('preco')) {
-    return 'O orcamento total da viagem eh USD $22.000 (ou R$ 71.500 com taxa 5.0). Hospedagem: $4.200 | Aluguel+Seguro: $3.500 | Alimentacao: $2.400 | Combustivel: $1.500 | Atividades: $1.300 | Margem: $8.100. Quer detalhes de alguma categoria?';
+    return '💰 ORCAMENTO TOTAL: USD $22.000 (R$ 110.000 com taxa 5.0)\n\nBREAKDOWN:\n🏨 Hospedagem: $4.200 (25 noites, $90-280/noite)\n🚗 Aluguel+Seguro: $3.500 (SUV 25 dias)\n🍽️ Alimentacao: $2.400 (30 dias, ~$80/dia)\n⛽ Combustivel: $1.500 (4.200 km)\n🎫 Atividades: $1.300 (ingressos e tours)\n📈 Margem: $8.100 (folga e upgrades)\n\nQuer detalhes de alguma categoria?';
   }
   
   // Perguntas sobre roteiro
   if (lowerMessage.includes('roteiro') || lowerMessage.includes('dias') || lowerMessage.includes('cidades')) {
-    return '30 dias visitando 13 cidades: Quebec, Montreal, New York, Philadelphia, DC, Chicago, Springfield, Tulsa, Amarillo, Albuquerque, Las Vegas, Yosemite, San Francisco. Quer saber sobre alguma cidade especifica?';
+    return '🗺️ ROTEIRO DE 30 DIAS:\n\n🍁 Dias 1-5: Quebec & Montreal\n🗽 Dias 6-8: New York\n🏛️ Dias 9-10: Philadelphia & DC\n🌬️ Dias 11-13: Chicago\n🛣️ Dias 14-20: Rota 66\n🎰 Dias 21-23: Las Vegas\n🏞️ Dias 24-26: Yosemite & Sequoias\n🌉 Dias 27-30: San Francisco\n\nTotal: 13 cidades, 4.200 km. Quer detalhes de alguma fase?';
   }
   
   // Perguntas sobre hoteis
   if (lowerMessage.includes('hotel') || lowerMessage.includes('hospedagem') || lowerMessage.includes('acomodacao')) {
-    return 'Hospedagem varia de $90-280/noite. NY e SF: The Standard e Fairmont (5 estrelas). Chicago: The Peninsula (4 estrelas). Rota 66: hospedagem economica. Qual cidade te interessa?';
+    return '🏨 HOSPEDAGEM POR CATEGORIA:\n\n⭐⭐⭐⭐⭐ (5 ESTRELAS):\n- New York: The Standard High Line ($280/noite)\n- San Francisco: Fairmont Heritage ($280/noite)\n\n⭐⭐⭐⭐ (4 ESTRELAS):\n- Chicago: The Peninsula ($220/noite)\n- Philadelphia/DC: Watergate Hotel ($200/noite)\n\n⭐⭐⭐ (3 ESTRELAS):\n- Rota 66: Hospedagem historica ($90/noite)\n- Yosemite: Lodge variados ($120/noite)\n\nQual cidade te interessa?';
   }
   
   // Perguntas sobre atividades
   if (lowerMessage.includes('atividade') || lowerMessage.includes('o que fazer') || lowerMessage.includes('atracoes')) {
-    return 'Principais atividades: Central Park (NY), Alcatraz (SF), Cirque du Soleil (Vegas), Rota 66, Yosemite, Grand Canyon, Smithsonian (DC - gratis). Total de $1.300 em ingressos. Qual te interessa?';
+    return '🎫 PRINCIPAIS ATIVIDADES:\n\n🗽 NEW YORK: Central Park, Times Square, MoMA, Estátua da Liberdade\n🏛️ DC: Smithsonian (GRATIS!), Lincoln Memorial, Capitol\n🌬️ CHICAGO: Cloud Gate, Millennium Park, Lago Michigan\n🛣️ ROTA 66: Cadillac Ranch, murais historicos, Springfield\n🎰 LAS VEGAS: Cirque du Soleil, Grand Canyon tour, The Strip\n🏞️ YOSEMITE: Half Dome, El Capitan, Glacier Point, Vernal Falls\n🌉 SAN FRANCISCO: Alcatraz, Golden Gate, Cable Cars, Fishermans Wharf\n\nTotal: $1.300 em ingressos. Qual te interessa?';
   }
   
   // Perguntas sobre combustivel
   if (lowerMessage.includes('combustivel') || lowerMessage.includes('gasolina') || lowerMessage.includes('km')) {
-    return '4.200 km no total. Consumo ~9 km/litro. Custo estimado $1.500 (USD $3.50/galao). Dica: use GasBuddy para encontrar postos mais baratos!';
+    return '⛽ COMBUSTIVEL E DISTANCIA:\n\nDistancia total: 4.200 km\nConsumo: ~9 km/litro (SUV)\nLitros necessarios: ~467 litros\nPreco medio: USD $3.50/galao\nCusto total: USD $1.500\n\n💡 DICAS:\n- Use GasBuddy para encontrar postos mais baratos\n- Mantenha tanque acima de 1/4 (postos escassos na Rota 66)\n- Velocidade constante economiza combustivel';
   }
   
   // Perguntas sobre cambio
   if (lowerMessage.includes('cambio') || lowerMessage.includes('real') || lowerMessage.includes('brl')) {
-    return 'Taxa USD/BRL atual: ~5.0. USD $22.000 = R$ 110.000. Use o simulador de cambio no dashboard para calcular com outras taxas!';
+    return '💱 CAMBIO USD/BRL:\n\nTaxa atual: ~5.0\nUSD $22.000 = R$ 110.000\n\nSIMULADOR:\n- Taxa 4.5: R$ 99.000\n- Taxa 5.0: R$ 110.000\n- Taxa 5.5: R$ 121.000\n- Taxa 6.0: R$ 132.000\n\nUse o simulador interativo no dashboard para calcular com outras taxas!';
   }
   
   // Perguntas sobre duracao
   if (lowerMessage.includes('quanto tempo') || lowerMessage.includes('duracao') || lowerMessage.includes('dura')) {
-    return '30 dias (4 de setembro a 3 de outubro de 2026). Ritmo moderado: 3 dias em cidades grandes, 1-2 dias em cidades menores.';
+    return '⏱️ DURACAO DA VIAGEM:\n\nData: 4 de setembro a 3 de outubro de 2026\nTotal: 30 dias\nRitmo: Moderado\n\n- Cidades grandes: 3 dias (NY, SF, Chicago)\n- Cidades medias: 2 dias (Vegas, DC)\n- Cidades pequenas: 1 dia (Springfield, Tulsa)\n- Parques: 3 dias (Yosemite)\n\nPerfeitamente balanceado para aproveitar sem pressa!';
   }
   
   // Resposta padrao
-  return 'Otima pergunta! Sou um assistente especializado em sua viagem. Pergunte-me sobre: custos, roteiro, hoteis, atividades, combustivel, cambio, cidades, dicas de viagem, ou qualquer outra duvida!';
+  return '🚗 ASSISTENTE DE VIAGEM - DESCOBRINDO A AMERICA\n\nSou seu assistente especializado nesta jornada de 30 dias pelos EUA e Canada!\n\nPosso ajudar com:\n💰 Custos e orcamento\n🗺️ Roteiro e cidades\n🏨 Hoteis e hospedagem\n🎫 Atividades e atracacoes\n⛽ Combustivel e km\n💱 Cambio USD/BRL\n🚗 Aluguel de carro\n📍 Dicas de viagem\n🌡️ Clima e roupas\n📸 Melhores fotos\n\nO que voce gostaria de saber? 😊';
 }
