@@ -272,7 +272,6 @@ html,body{height:100%;overflow:hidden;font-family:'Lato',sans-serif;background:v
   </div>
   <div class="sb-nav">
     <a href="#" data-page="inicio" class="active"><i class="fas fa-home"></i> Início</a>
-    <a href="#" data-page="dashboard"><i class="fas fa-chart-pie"></i> Dashboard</a>
     <a href="#" data-page="roteiro"><i class="fas fa-map-marked-alt"></i> Roteiro</a>
     <a href="#" data-page="custos"><i class="fas fa-dollar-sign"></i> Custos</a>
     <a href="#" data-page="consultor"><i class="fas fa-lightbulb"></i> Consultor</a>
@@ -457,15 +456,26 @@ html,body{height:100%;overflow:hidden;font-family:'Lato',sans-serif;background:v
 <div class="page" id="page-custos">
   <div class="page-title"><i class="fas fa-dollar-sign"></i> Análise de Custos</div>
 
-  <!-- Dashboard Interativo -->
-  <a href="planilha.html" target="_blank" class="excel-banner" style="background:linear-gradient(135deg,#6BA3D4,#9FD4B5);">
-    <div class="excel-icon">📊</div>
-    <div class="excel-info">
-      <h3>Dashboard Interativo</h3>
-      <p>Gráficos, tabelas, simulador de câmbio e muito mais — tudo em uma página</p>
+  <!-- Dashboard Interativo Unificado -->
+  <div style="background:linear-gradient(135deg,#6BA3D4,#9FD4B5);border-radius:12px;padding:16px 20px;display:flex;align-items:center;gap:14px;margin-bottom:20px;color:#fff;cursor:pointer;transition:opacity .2s;" onclick="showDashboardModal()">
+    <div style="font-size:32px;flex-shrink:0;">📊</div>
+    <div style="flex:1;">
+      <h3 style="font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;margin-bottom:3px;color:#fff;">Dashboard Interativo</h3>
+      <p style="font-size:11px;opacity:.8;color:#fff;">Gráficos, tabelas, simulador de câmbio e muito mais — tudo em uma página</p>
     </div>
-    <div class="excel-arrow"><i class="fas fa-arrow-right"></i></div>
-  </a>
+    <div style="margin-left:auto;font-size:20px;opacity:.7;color:#fff;"><i class="fas fa-arrow-right"></i></div>
+  </div>
+
+  <!-- Modal do Dashboard -->
+  <div id="dashboardModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;padding:10px;">
+    <div style="background:#fff;border-radius:12px;width:100%;height:100%;max-width:1200px;margin:0 auto;display:flex;flex-direction:column;box-shadow:0 10px 40px rgba(0,0,0,.3);">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid #e8eaed;">
+        <h2 style="font-family:'Montserrat',sans-serif;font-size:16px;font-weight:800;color:#2c3e50;">📊 Dashboard Interativo da Viagem</h2>
+        <button onclick="closeDashboardModal()" style="background:none;border:none;font-size:28px;cursor:pointer;color:#bdc3c7;transition:color .2s;" onmouseover="this.style.color='#e74c3c'" onmouseout="this.style.color='#bdc3c7';">×</button>
+      </div>
+      <iframe id="dashboardFrame" src="dashboard.html" style="flex:1;border:none;border-radius:0;"></iframe>
+    </div>
+  </div>
 
   <!-- KPIs de custo -->
   <div class="kpi-grid">
@@ -864,6 +874,21 @@ function initCenariosChart() {
     }
   });
 }
+
+/* ── MODAL DASHBOARD ── */
+function showDashboardModal() {
+  document.getElementById('dashboardModal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeDashboardModal() {
+  document.getElementById('dashboardModal').style.display = 'none';
+  document.body.style.overflow = 'auto';
+}
+
+document.getElementById('dashboardModal')?.addEventListener('click', function(e) {
+  if (e.target === this) closeDashboardModal();
+});
 
 /* ── SIMULADOR CÂMBIO ── */
 function initCambio() {
