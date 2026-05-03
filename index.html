@@ -270,6 +270,8 @@
             border-radius: 10px;
             max-width: 80%;
             word-wrap: break-word;
+            font-size: 14px;
+            line-height: 1.4;
         }
 
         .message.user {
@@ -282,6 +284,13 @@
             background: #e9ecef;
             color: #333;
             align-self: flex-start;
+        }
+
+        .message.loading {
+            background: #e9ecef;
+            color: #999;
+            align-self: flex-start;
+            font-style: italic;
         }
 
         .chatbot-input {
@@ -308,6 +317,11 @@
             height: 40px;
             cursor: pointer;
             font-size: 18px;
+            transition: all 0.3s;
+        }
+
+        .chatbot-input button:hover {
+            background: #5568d3;
         }
 
         .chatbot-btn {
@@ -324,6 +338,11 @@
             cursor: pointer;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             z-index: 999;
+            transition: all 0.3s;
+        }
+
+        .chatbot-btn:hover {
+            transform: scale(1.1);
         }
 
         /* HOME BUTTON */
@@ -341,6 +360,11 @@
             cursor: pointer;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             z-index: 999;
+            transition: all 0.3s;
+        }
+
+        .home-btn:hover {
+            transform: scale(1.1);
         }
 
         /* RESPONSIVE */
@@ -578,7 +602,7 @@
             <button class="chatbot-close" onclick="toggleChatbot()">×</button>
         </div>
         <div class="chatbot-messages" id="messages">
-            <div class="message bot">Olá! Sou seu assistente de viagem. Faça perguntas sobre custos, roteiro, hotéis, atividades, combustível, câmbio, aluguel de carro ou dicas de viagem! 😊</div>
+            <div class="message bot">Olá! Sou seu assistente de viagem com IA. Posso responder qualquer pergunta sobre custos, roteiro, distâncias, hotéis, atividades, combustível, câmbio, aluguel de carro ou dicas de viagem! 😊</div>
         </div>
         <div class="chatbot-input">
             <input type="text" id="chatbot-input" placeholder="Digite sua pergunta..." onkeypress="if(event.key==='Enter') sendMessage()">
@@ -587,6 +611,10 @@
     </div>
 
     <script>
+        // Gerar ID único para a sessão
+        const SESSION_ID = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        const API_URL = 'http://localhost:3000/api/chat';
+
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             sidebar.classList.toggle('closed');
@@ -614,7 +642,7 @@
             showPage('inicio');
         }
 
-        function sendMessage() {
+        async function sendMessage() {
             const input = document.getElementById('chatbot-input');
             const message = input.value.trim();
             if (!message) return;
@@ -626,49 +654,65 @@
             userMsg.textContent = message;
             messagesDiv.appendChild(userMsg);
 
-            // Get response
-            const response = getChatbotResponse(message);
-            const botMsg = document.createElement('div');
-            botMsg.className = 'message bot';
-            botMsg.textContent = response;
-            messagesDiv.appendChild(botMsg);
-
             // Clear input
             input.value = '';
+
+            // Show loading message
+            const loadingMsg = document.createElement('div');
+            loadingMsg.className = 'message loading';
+            loadingMsg.textContent = 'Processando...';
+            loadingMsg.id = 'loading-msg';
+            messagesDiv.appendChild(loadingMsg);
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        }
 
-        function getChatbotResponse(message) {
-            const msg = message.toLowerCase();
+            try {
+                // Call API
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        sessionId: SESSION_ID
+                    })
+                });
 
-            if (msg.includes('custo') || msg.includes('orçamento') || msg.includes('preço')) {
-                return 'Orçamento total: USD $22.000 (R$ 110.000). Hospedagem: $4.200, Aluguel: $3.500, Alimentação: $2.400, Combustível: $1.500, Atividades: $1.300, Margem: $8.100.';
+                const data = await response.json();
+
+                // Remove loading message
+                const loadingElement = document.getElementById('loading-msg');
+                if (loadingElement) {
+                    loadingElement.remove();
+                }
+
+                if (data.success) {
+                    const botMsg = document.createElement('div');
+                    botMsg.className = 'message bot';
+                    botMsg.textContent = data.message;
+                    messagesDiv.appendChild(botMsg);
+                } else {
+                    const errorMsg = document.createElement('div');
+                    errorMsg.className = 'message bot';
+                    errorMsg.textContent = 'Desculpe, não consegui processar sua pergunta. Tente novamente!';
+                    messagesDiv.appendChild(errorMsg);
+                }
+            } catch (error) {
+                console.error('Erro ao enviar mensagem:', error);
+                
+                // Remove loading message
+                const loadingElement = document.getElementById('loading-msg');
+                if (loadingElement) {
+                    loadingElement.remove();
+                }
+
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'message bot';
+                errorMsg.textContent = 'Erro de conexão. Verifique se o servidor está rodando em http://localhost:3000';
+                messagesDiv.appendChild(errorMsg);
             }
-            if (msg.includes('hospedagem') || msg.includes('hotel')) {
-                return 'Hospedagem: $4.200 total (25 noites). New York: $280/noite, Chicago: $220/noite, Rota 66: $90/noite, San Francisco: $280/noite.';
-            }
-            if (msg.includes('combustível') || msg.includes('gasolina') || msg.includes('km')) {
-                return 'Combustível: $1.500 para 4.200 km. Consumo: ~9 km/litro. Preço médio: $3.50/galão.';
-            }
-            if (msg.includes('roteiro') || msg.includes('dias')) {
-                return 'Roteiro: 30 dias. Quebec/Montreal (5), New York (3), Philadelphia/DC (2), Chicago (3), Rota 66 (7), Las Vegas (3), Yosemite/Sequoias (3), San Francisco (4).';
-            }
-            if (msg.includes('clima') || msg.includes('tempo') || msg.includes('setembro')) {
-                return 'Setembro é ideal: clima ameno (20-25°C), menos turistas, preços menores. Leve roupas para clima variável.';
-            }
-            if (msg.includes('dica') || msg.includes('conselho')) {
-                return 'Dicas: Reserve voos com antecedência, use cartão de crédito, alugue carro com seguro completo, leve chip local para telefone, prefira hotéis 4-5 estrelas.';
-            }
-            if (msg.includes('aluguel') || msg.includes('carro') || msg.includes('carro')) {
-                return 'Aluguel: $3.500 para 30 dias. Alugue no aeroporto, seguro completo recomendado. Dirigir à direita, velocidade máxima: 65-75 mph.';
-            }
-            if (msg.includes('câmbio') || msg.includes('real') || msg.includes('dólar')) {
-                return 'Taxa: 1 USD = 5 BRL (aproximado). Orçamento em reais: $22.000 × 5 = R$ 110.000. Use cartão de crédito para melhor taxa.';
-            }
-            if (msg.includes('new york') || msg.includes('chicago') || msg.includes('san francisco') || msg.includes('vegas')) {
-                return 'Cidades principais: New York (3 dias), Chicago (3 dias), Rota 66 (7 dias), Las Vegas (3 dias), San Francisco (4 dias). Cada uma tem atrações únicas!';
-            }
-            return 'Posso ajudar com: custos, roteiro, hotéis, atividades, combustível, câmbio, aluguel de carro, dicas de viagem. O que você gostaria de saber? 😊';
+
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
         }
     </script>
 </body>
