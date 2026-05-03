@@ -152,10 +152,24 @@
             margin-bottom: 30px;
             position: relative;
             height: 400px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .chart-container:hover {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
         }
 
         .chart-container canvas {
             max-height: 350px;
+        }
+
+        .chart-hint {
+            font-size: 11px;
+            color: #bdc3c7;
+            margin-top: 10px;
+            text-align: center;
+            font-style: italic;
         }
 
         .table-container {
@@ -198,7 +212,7 @@
         .modal {
             display: none;
             position: fixed;
-            z-index: 1000;
+            z-index: 10000;
             left: 0;
             top: 0;
             width: 100%;
@@ -222,6 +236,7 @@
             max-height: 80vh;
             overflow-y: auto;
             box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            z-index: 10001;
         }
 
         .modal-header {
@@ -245,6 +260,7 @@
             cursor: pointer;
             color: #bdc3c7;
             transition: color 0.3s ease;
+            z-index: 10002;
         }
 
         .close-btn:hover {
@@ -374,7 +390,7 @@
     <div class="container">
         <div class="header">
             <h1>📊 Dashboard da Viagem</h1>
-            <p>Giovani & Silvana — 30 dias pelos Estados Unidos (Setembro-Outubro 2026)</p>
+            <p>Giovani & Silvana — 30 dias pelos Estados Unidos e Canadá (Setembro-Outubro 2026)</p>
         </div>
 
         <div class="tabs">
@@ -395,12 +411,12 @@
                     <div class="kpi-hint">Clique para detalhes</div>
                 </div>
                 <div class="kpi-card clickable" onclick="showModal('km')">
-                    <div class="kpi-value">3.850</div>
+                    <div class="kpi-value">4.200</div>
                     <div class="kpi-label">Km</div>
                     <div class="kpi-hint">Clique para detalhes</div>
                 </div>
                 <div class="kpi-card clickable" onclick="showModal('direcao')">
-                    <div class="kpi-value">58h</div>
+                    <div class="kpi-value">62h</div>
                     <div class="kpi-label">Direção</div>
                     <div class="kpi-hint">Clique para detalhes</div>
                 </div>
@@ -415,24 +431,26 @@
                     <div class="kpi-hint">Clique para detalhes</div>
                 </div>
                 <div class="kpi-card clickable" onclick="showModal('cidades')">
-                    <div class="kpi-value">11</div>
+                    <div class="kpi-value">13</div>
                     <div class="kpi-label">Cidades</div>
                     <div class="kpi-hint">Clique para detalhes</div>
                 </div>
             </div>
 
-            <div class="chart-container">
+            <div class="chart-container" onclick="drillChart('custos')">
                 <h3 style="margin-bottom: 20px; color: #2c3e50;">💰 Distribuição de Custos</h3>
                 <canvas id="chartCustos"></canvas>
+                <div class="chart-hint">👆 Clique para detalhar</div>
             </div>
 
-            <div class="chart-container">
+            <div class="chart-container" onclick="drillChart('fases')">
                 <h3 style="margin-bottom: 20px; color: #2c3e50;">🛣️ Km por Fase</h3>
                 <canvas id="chartFases"></canvas>
+                <div class="chart-hint">👆 Clique para detalhar</div>
             </div>
 
             <div class="table-container">
-                <h3 style="margin-bottom: 20px; color: #2c3e50;">📍 As 8 Fases da Viagem</h3>
+                <h3 style="margin-bottom: 20px; color: #2c3e50;">📍 As 9 Fases da Viagem</h3>
                 <table>
                     <thead>
                         <tr>
@@ -445,60 +463,60 @@
                     </thead>
                     <tbody>
                         <tr>
+                            <td>🍁 Quebec & Montreal</td>
+                            <td>1-5</td>
+                            <td>0 km</td>
+                            <td>Variados</td>
+                            <td>$150</td>
+                        </tr>
+                        <tr>
                             <td>🗽 New York</td>
-                            <td>1-3</td>
+                            <td>6-8</td>
                             <td>0 km</td>
                             <td>The Standard High Line</td>
                             <td>$280</td>
                         </tr>
                         <tr>
                             <td>🏛️ Philadelphia & DC</td>
-                            <td>4-5</td>
+                            <td>9-10</td>
                             <td>300 km</td>
                             <td>Watergate Hotel</td>
                             <td>$200</td>
                         </tr>
                         <tr>
                             <td>🌬️ Chicago</td>
-                            <td>6-8</td>
+                            <td>11-13</td>
                             <td>1.270 km</td>
                             <td>The Peninsula</td>
                             <td>$220</td>
                         </tr>
                         <tr>
                             <td>🛣️ Rota 66</td>
-                            <td>9-15</td>
+                            <td>14-20</td>
                             <td>1.800 km</td>
                             <td>Variados</td>
                             <td>$90</td>
                         </tr>
                         <tr>
                             <td>🎰 Las Vegas</td>
-                            <td>16-18</td>
+                            <td>21-23</td>
                             <td>600 km</td>
                             <td>Bellagio</td>
                             <td>$200</td>
                         </tr>
                         <tr>
-                            <td>🌊 Big Sur</td>
-                            <td>19-22</td>
+                            <td>🏞️ Yosemite & Sequoias</td>
+                            <td>24-26</td>
                             <td>400 km</td>
-                            <td>Ventana</td>
-                            <td>$350</td>
+                            <td>Variados</td>
+                            <td>$120</td>
                         </tr>
                         <tr>
                             <td>🌉 San Francisco</td>
-                            <td>23-24</td>
-                            <td>150 km</td>
+                            <td>27-30</td>
+                            <td>180 km</td>
                             <td>Fairmont</td>
                             <td>$280</td>
-                        </tr>
-                        <tr>
-                            <td>🌲 Redwood & Seattle</td>
-                            <td>25-30</td>
-                            <td>330 km</td>
-                            <td>Edgewater</td>
-                            <td>$200</td>
                         </tr>
                     </tbody>
                 </table>
@@ -522,36 +540,36 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td>1</td><td>04 Set</td><td>New York</td><td>Chegada, Central Park</td><td>The Standard</td><td>$280</td></tr>
-                        <tr><td>2</td><td>05 Set</td><td>New York</td><td>Times Square, MoMA</td><td>The Standard</td><td>$280</td></tr>
-                        <tr><td>3</td><td>06 Set</td><td>New York</td><td>Estátua da Liberdade, Brooklyn</td><td>The Standard</td><td>$280</td></tr>
-                        <tr><td>4</td><td>07 Set</td><td>Philadelphia</td><td>Liberty Bell, Independence Hall</td><td>Watergate</td><td>$200</td></tr>
-                        <tr><td>5</td><td>08 Set</td><td>Washington DC</td><td>Smithsonian, Lincoln Memorial</td><td>Watergate</td><td>$200</td></tr>
-                        <tr><td>6</td><td>09 Set</td><td>Chicago</td><td>Chegada, Cloud Gate</td><td>The Peninsula</td><td>$220</td></tr>
-                        <tr><td>7</td><td>10 Set</td><td>Chicago</td><td>Millennium Park, Lago Michigan</td><td>The Peninsula</td><td>$220</td></tr>
-                        <tr><td>8</td><td>11 Set</td><td>Chicago</td><td>Deep Dish Pizza, Skyline</td><td>The Peninsula</td><td>$220</td></tr>
-                        <tr><td>9</td><td>12 Set</td><td>Springfield, IL</td><td>Rota 66 início, museus Lincoln</td><td>Variado</td><td>$90</td></tr>
-                        <tr><td>10</td><td>13 Set</td><td>Tulsa, OK</td><td>Rota 66, murais históricos</td><td>Variado</td><td>$90</td></tr>
-                        <tr><td>11</td><td>14 Set</td><td>Amarillo, TX</td><td>Cadillac Ranch, Palo Duro</td><td>Variado</td><td>$90</td></tr>
-                        <tr><td>12</td><td>15 Set</td><td>Albuquerque, NM</td><td>Rota 66, Old Town</td><td>Variado</td><td>$90</td></tr>
-                        <tr><td>13</td><td>16 Set</td><td>Albuquerque, NM</td><td>Sandia Peak, Kasha-Katuwe</td><td>Variado</td><td>$90</td></tr>
-                        <tr><td>14</td><td>17 Set</td><td>Albuquerque, NM</td><td>Rota 66 Museum, Petroglyph</td><td>Variado</td><td>$90</td></tr>
-                        <tr><td>15</td><td>18 Set</td><td>Las Vegas, NV</td><td>Chegada, The Strip</td><td>Bellagio</td><td>$200</td></tr>
-                        <tr><td>16</td><td>19 Set</td><td>Las Vegas, NV</td><td>Cirque du Soleil, Grand Canyon</td><td>Bellagio</td><td>$200</td></tr>
-                        <tr><td>17</td><td>20 Set</td><td>Las Vegas, NV</td><td>Bellagio, Fountain Show</td><td>Bellagio</td><td>$200</td></tr>
-                        <tr><td>18</td><td>21 Set</td><td>Santa Mônica, CA</td><td>Fim Rota 66, Pier</td><td>Variado</td><td>$120</td></tr>
-                        <tr><td>19</td><td>22 Set</td><td>Big Sur, CA</td><td>Highway 1, Bixby Bridge</td><td>Ventana</td><td>$350</td></tr>
-                        <tr><td>20</td><td>23 Set</td><td>Big Sur, CA</td><td>McWay Falls, Pfeiffer Beach</td><td>Ventana</td><td>$350</td></tr>
-                        <tr><td>21</td><td>24 Set</td><td>Big Sur, CA</td><td>Pôr do sol, Mirantes</td><td>Ventana</td><td>$350</td></tr>
-                        <tr><td>22</td><td>25 Set</td><td>Big Sur, CA</td><td>Exploração final, partida</td><td>Ventana</td><td>$350</td></tr>
-                        <tr><td>23</td><td>26 Set</td><td>San Francisco, CA</td><td>Chegada, Golden Gate</td><td>Fairmont</td><td>$280</td></tr>
-                        <tr><td>24</td><td>27 Set</td><td>San Francisco, CA</td><td>Alcatraz, Cable Cars</td><td>Fairmont</td><td>$280</td></tr>
-                        <tr><td>25</td><td>28 Set</td><td>Redwood, CA</td><td>Sequoias gigantes, Humboldt</td><td>Variado</td><td>$150</td></tr>
-                        <tr><td>26</td><td>29 Set</td><td>Portland, OR</td><td>Powell's Books, Food Scene</td><td>Variado</td><td>$150</td></tr>
-                        <tr><td>27</td><td>30 Set</td><td>Seattle, WA</td><td>Chegada, Pike Place Market</td><td>Edgewater</td><td>$200</td></tr>
-                        <tr><td>28</td><td>01 Out</td><td>Seattle, WA</td><td>Space Needle, Mount Rainier</td><td>Edgewater</td><td>$200</td></tr>
-                        <tr><td>29</td><td>02 Out</td><td>Seattle, WA</td><td>Exploração final, compras</td><td>Edgewater</td><td>$200</td></tr>
-                        <tr><td>30</td><td>03 Out</td><td>Seattle, WA</td><td>Partida para aeroporto</td><td>Edgewater</td><td>$200</td></tr>
+                        <tr><td>1</td><td>04 Set</td><td>Quebec</td><td>Chegada, Old Quebec</td><td>Variado</td><td>$150</td></tr>
+                        <tr><td>2</td><td>05 Set</td><td>Quebec</td><td>Montmorency Falls, Île d'Orléans</td><td>Variado</td><td>$150</td></tr>
+                        <tr><td>3</td><td>06 Set</td><td>Montreal</td><td>Mont-Royal, Vieux Montreal</td><td>Variado</td><td>$150</td></tr>
+                        <tr><td>4</td><td>07 Set</td><td>Montreal</td><td>Museu de Belas Artes, Chinatown</td><td>Variado</td><td>$150</td></tr>
+                        <tr><td>5</td><td>08 Set</td><td>Montreal</td><td>Voo para New York</td><td>Variado</td><td>$150</td></tr>
+                        <tr><td>6</td><td>09 Set</td><td>New York</td><td>Chegada, Central Park</td><td>The Standard</td><td>$280</td></tr>
+                        <tr><td>7</td><td>10 Set</td><td>New York</td><td>Times Square, MoMA</td><td>The Standard</td><td>$280</td></tr>
+                        <tr><td>8</td><td>11 Set</td><td>New York</td><td>Estátua da Liberdade, Brooklyn</td><td>The Standard</td><td>$280</td></tr>
+                        <tr><td>9</td><td>12 Set</td><td>Philadelphia</td><td>Liberty Bell, Independence Hall</td><td>Watergate</td><td>$200</td></tr>
+                        <tr><td>10</td><td>13 Set</td><td>Washington DC</td><td>Smithsonian, Lincoln Memorial</td><td>Watergate</td><td>$200</td></tr>
+                        <tr><td>11</td><td>14 Set</td><td>Chicago</td><td>Chegada, Cloud Gate</td><td>The Peninsula</td><td>$220</td></tr>
+                        <tr><td>12</td><td>15 Set</td><td>Chicago</td><td>Millennium Park, Lago Michigan</td><td>The Peninsula</td><td>$220</td></tr>
+                        <tr><td>13</td><td>16 Set</td><td>Chicago</td><td>Deep Dish Pizza, Skyline</td><td>The Peninsula</td><td>$220</td></tr>
+                        <tr><td>14</td><td>17 Set</td><td>Springfield, IL</td><td>Rota 66 início, museus Lincoln</td><td>Variado</td><td>$90</td></tr>
+                        <tr><td>15</td><td>18 Set</td><td>Tulsa, OK</td><td>Rota 66, murais históricos</td><td>Variado</td><td>$90</td></tr>
+                        <tr><td>16</td><td>19 Set</td><td>Amarillo, TX</td><td>Cadillac Ranch, Palo Duro</td><td>Variado</td><td>$90</td></tr>
+                        <tr><td>17</td><td>20 Set</td><td>Albuquerque, NM</td><td>Rota 66, Old Town</td><td>Variado</td><td>$90</td></tr>
+                        <tr><td>18</td><td>21 Set</td><td>Albuquerque, NM</td><td>Sandia Peak, Kasha-Katuwe</td><td>Variado</td><td>$90</td></tr>
+                        <tr><td>19</td><td>22 Set</td><td>Albuquerque, NM</td><td>Rota 66 Museum, Petroglyph</td><td>Variado</td><td>$90</td></tr>
+                        <tr><td>20</td><td>23 Set</td><td>Las Vegas, NV</td><td>Chegada, The Strip</td><td>Bellagio</td><td>$200</td></tr>
+                        <tr><td>21</td><td>24 Set</td><td>Las Vegas, NV</td><td>Cirque du Soleil, Grand Canyon</td><td>Bellagio</td><td>$200</td></tr>
+                        <tr><td>22</td><td>25 Set</td><td>Las Vegas, NV</td><td>Bellagio, Fountain Show</td><td>Bellagio</td><td>$200</td></tr>
+                        <tr><td>23</td><td>26 Set</td><td>Yosemite, CA</td><td>Chegada, Half Dome, El Capitan</td><td>Variado</td><td>$120</td></tr>
+                        <tr><td>24</td><td>27 Set</td><td>Yosemite, CA</td><td>Glacier Point, Vernal Fall</td><td>Variado</td><td>$120</td></tr>
+                        <tr><td>25</td><td>28 Set</td><td>Sequoia, CA</td><td>Giant Sequoias, General Sherman</td><td>Variado</td><td>$120</td></tr>
+                        <tr><td>26</td><td>29 Set</td><td>Santa Mônica, CA</td><td>Fim Rota 66, Pier</td><td>Variado</td><td>$120</td></tr>
+                        <tr><td>27</td><td>30 Set</td><td>San Francisco, CA</td><td>Chegada, Golden Gate</td><td>Fairmont</td><td>$280</td></tr>
+                        <tr><td>28</td><td>01 Out</td><td>San Francisco, CA</td><td>Alcatraz, Cable Cars</td><td>Fairmont</td><td>$280</td></tr>
+                        <tr><td>29</td><td>02 Out</td><td>San Francisco, CA</td><td>Fisherman's Wharf, Chinatown</td><td>Fairmont</td><td>$280</td></tr>
+                        <tr><td>30</td><td>03 Out</td><td>San Francisco, CA</td><td>Exploração final, partida</td><td>Fairmont</td><td>$280</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -561,14 +579,14 @@
         <div id="custos" class="tab-content">
             <div class="kpi-grid">
                 <div class="kpi-card clickable" onclick="showModal('hospedagem')">
-                    <div class="kpi-value">$4k</div>
+                    <div class="kpi-value">$4.2k</div>
                     <div class="kpi-label">Hospedagem</div>
                     <div class="kpi-hint">25 noites</div>
                 </div>
                 <div class="kpi-card clickable" onclick="showModal('combustivel')">
-                    <div class="kpi-value">$1.3k</div>
+                    <div class="kpi-value">$1.5k</div>
                     <div class="kpi-label">Combustível</div>
-                    <div class="kpi-hint">3.850 km</div>
+                    <div class="kpi-hint">4.200 km</div>
                 </div>
                 <div class="kpi-card clickable" onclick="showModal('alimentacao')">
                     <div class="kpi-value">$2.4k</div>
@@ -576,7 +594,7 @@
                     <div class="kpi-hint">30 dias</div>
                 </div>
                 <div class="kpi-card clickable" onclick="showModal('atividades')">
-                    <div class="kpi-value">$1.2k</div>
+                    <div class="kpi-value">$1.3k</div>
                     <div class="kpi-label">Atividades</div>
                     <div class="kpi-hint">Ingressos</div>
                 </div>
@@ -586,15 +604,16 @@
                     <div class="kpi-hint">25 dias</div>
                 </div>
                 <div class="kpi-card clickable" onclick="showModal('margem')">
-                    <div class="kpi-value">$4.4k</div>
+                    <div class="kpi-value">$4.1k</div>
                     <div class="kpi-label">Folga</div>
                     <div class="kpi-hint">Upgrades</div>
                 </div>
             </div>
 
-            <div class="chart-container">
+            <div class="chart-container" onclick="drillChart('custosDetalhado')">
                 <h3 style="margin-bottom: 20px; color: #2c3e50;">📊 Breakdown Detalhado</h3>
                 <canvas id="chartCustosDetalhado"></canvas>
+                <div class="chart-hint">👆 Clique para detalhar</div>
             </div>
 
             <div class="table-container">
@@ -611,8 +630,8 @@
                     <tbody>
                         <tr>
                             <td>🏨 Hospedagem</td>
-                            <td>$4.000</td>
-                            <td>31%</td>
+                            <td>$4.200</td>
+                            <td>32%</td>
                             <td>25 noites, 4-5 estrelas</td>
                         </tr>
                         <tr>
@@ -629,25 +648,25 @@
                         </tr>
                         <tr>
                             <td>⛽ Combustível</td>
-                            <td>$1.300</td>
-                            <td>10%</td>
-                            <td>3.850 km, ~$3.50/gal</td>
+                            <td>$1.500</td>
+                            <td>11%</td>
+                            <td>4.200 km, ~$3.50/gal</td>
                         </tr>
                         <tr>
                             <td>🎫 Atividades</td>
-                            <td>$1.200</td>
-                            <td>9%</td>
-                            <td>Ingressos, tours</td>
+                            <td>$1.300</td>
+                            <td>10%</td>
+                            <td>Ingressos, tours, parques</td>
                         </tr>
                         <tr style="background: #f0f8ff; font-weight: bold;">
                             <td>💰 Margem (10%)</td>
-                            <td>$1.240</td>
-                            <td>10%</td>
+                            <td>$1.400</td>
+                            <td>11%</td>
                             <td>Reserva estratégica</td>
                         </tr>
                         <tr style="background: #e8f5e9; font-weight: bold;">
                             <td>✅ TOTAL</td>
-                            <td>$13.640</td>
+                            <td>$14.300</td>
                             <td>100%</td>
                             <td>Orçamento com margem</td>
                         </tr>
@@ -659,17 +678,17 @@
         <!-- CÂMBIO -->
         <div id="cambio" class="tab-content">
             <div class="kpi-grid">
-                <div class="kpi-card">
-                    <div class="kpi-value" id="valorUSD">$13.640</div>
+                <div class="kpi-card clickable" onclick="showModal('usd')">
+                    <div class="kpi-value" id="valorUSD">$14.300</div>
                     <div class="kpi-label">USD</div>
                     <div class="kpi-hint">Orçamento com margem</div>
                 </div>
-                <div class="kpi-card">
-                    <div class="kpi-value" id="valorBRL">R$ 70.928</div>
+                <div class="kpi-card clickable" onclick="showModal('brl')">
+                    <div class="kpi-value" id="valorBRL">R$ 74.360</div>
                     <div class="kpi-label">BRL</div>
                     <div class="kpi-hint">Conversão atual</div>
                 </div>
-                <div class="kpi-card">
+                <div class="kpi-card clickable" onclick="showModal('taxa')">
                     <div class="kpi-value" id="taxaAtual">5,20</div>
                     <div class="kpi-label">Taxa USD/BRL</div>
                     <div class="kpi-hint">Ajuste abaixo</div>
@@ -698,8 +717,8 @@
                     <tbody>
                         <tr>
                             <td>Hospedagem</td>
-                            <td>$4.000</td>
-                            <td id="brl-hospedagem">R$ 20.800</td>
+                            <td>$4.200</td>
+                            <td id="brl-hospedagem">R$ 21.840</td>
                         </tr>
                         <tr>
                             <td>Aluguel+Seguro</td>
@@ -713,28 +732,28 @@
                         </tr>
                         <tr>
                             <td>Combustível</td>
-                            <td>$1.300</td>
-                            <td id="brl-combustivel">R$ 6.760</td>
+                            <td>$1.500</td>
+                            <td id="brl-combustivel">R$ 7.800</td>
                         </tr>
                         <tr>
                             <td>Atividades</td>
-                            <td>$1.200</td>
-                            <td id="brl-atividades">R$ 6.240</td>
+                            <td>$1.300</td>
+                            <td id="brl-atividades">R$ 6.760</td>
                         </tr>
                         <tr style="background: #f0f8ff; font-weight: bold;">
                             <td>Subtotal</td>
-                            <td>$12.400</td>
-                            <td id="brl-subtotal">R$ 64.480</td>
+                            <td>$12.900</td>
+                            <td id="brl-subtotal">R$ 67.080</td>
                         </tr>
                         <tr style="background: #fff3e0; font-weight: bold;">
                             <td>Margem (10%)</td>
-                            <td>$1.240</td>
-                            <td id="brl-margem">R$ 6.448</td>
+                            <td>$1.400</td>
+                            <td id="brl-margem">R$ 7.280</td>
                         </tr>
                         <tr style="background: #e8f5e9; font-weight: bold;">
                             <td>TOTAL</td>
-                            <td>$13.640</td>
-                            <td id="brl-total">R$ 70.928</td>
+                            <td>$14.300</td>
+                            <td id="brl-total">R$ 74.360</td>
                         </tr>
                     </tbody>
                 </table>
@@ -756,14 +775,14 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td>1-3</td><td>New York</td><td>⭐⭐⭐⭐⭐ (5)</td><td>Moderado</td><td>Exploração urbana</td></tr>
-                        <tr><td>4-5</td><td>Philly & DC</td><td>⭐⭐⭐ (3)</td><td>Leve</td><td>Museus, caminhadas</td></tr>
-                        <tr><td>6-8</td><td>Chicago</td><td>⭐⭐⭐⭐ (4)</td><td>Moderado</td><td>Cidade + natureza</td></tr>
-                        <tr><td>9-15</td><td>Rota 66</td><td>⭐⭐⭐⭐⭐⭐ (6)</td><td>Intenso</td><td>Muita direção</td></tr>
-                        <tr><td>16-18</td><td>Las Vegas</td><td>⭐⭐⭐⭐⭐⭐⭐ (7)</td><td>Muito Intenso</td><td>Atividades noturnas</td></tr>
-                        <tr><td>19-22</td><td>Big Sur</td><td>⭐⭐⭐⭐ (4)</td><td>Moderado</td><td>Relaxante, paisagem</td></tr>
-                        <tr><td>23-24</td><td>San Francisco</td><td>⭐⭐⭐⭐ (4)</td><td>Moderado</td><td>Exploração urbana</td></tr>
-                        <tr><td>25-30</td><td>Redwood & Seattle</td><td>⭐⭐⭐ (3)</td><td>Leve</td><td>Natureza, descanso</td></tr>
+                        <tr><td>1-5</td><td>Quebec & Montreal</td><td>⭐⭐⭐ (3)</td><td>Leve</td><td>Exploração urbana</td></tr>
+                        <tr><td>6-8</td><td>New York</td><td>⭐⭐⭐⭐⭐ (5)</td><td>Moderado</td><td>Exploração urbana</td></tr>
+                        <tr><td>9-10</td><td>Philly & DC</td><td>⭐⭐⭐ (3)</td><td>Leve</td><td>Museus, caminhadas</td></tr>
+                        <tr><td>11-13</td><td>Chicago</td><td>⭐⭐⭐⭐ (4)</td><td>Moderado</td><td>Cidade + natureza</td></tr>
+                        <tr><td>14-20</td><td>Rota 66</td><td>⭐⭐⭐⭐⭐⭐ (6)</td><td>Intenso</td><td>Muita direção</td></tr>
+                        <tr><td>21-23</td><td>Las Vegas</td><td>⭐⭐⭐⭐⭐⭐⭐ (7)</td><td>Muito Intenso</td><td>Atividades noturnas</td></tr>
+                        <tr><td>24-26</td><td>Yosemite & Sequoias</td><td>⭐⭐⭐ (3)</td><td>Leve</td><td>Natureza, caminhadas</td></tr>
+                        <tr><td>27-30</td><td>San Francisco</td><td>⭐⭐⭐⭐ (4)</td><td>Moderado</td><td>Exploração urbana</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -777,7 +796,7 @@
                 <h4 style="margin-top: 25px; margin-bottom: 15px; color: #2c3e50;">📅 3 Meses Antes</h4>
                 <div class="checkbox-item">
                     <input type="checkbox" id="check1">
-                    <label for="check1">Reserve Big Sur (esgota rápido!)</label>
+                    <label for="check1">Reserve Yosemite e Sequoias (parques populares!)</label>
                 </div>
                 <div class="checkbox-item">
                     <input type="checkbox" id="check2">
@@ -792,86 +811,96 @@
                     <label for="check4">Verifique validade do passaporte (mín. 6 meses)</label>
                 </div>
 
-                <h4 style="margin-top: 25px; margin-bottom: 15px; color: #2c3e50;">📱 1 Mês Antes</h4>
+                <h4 style="margin-top: 25px; margin-bottom: 15px; color: #2c3e50;">🇨🇦 Canadá (Quebec/Montreal)</h4>
                 <div class="checkbox-item">
                     <input type="checkbox" id="check5">
-                    <label for="check5">Ative eSIM para os EUA (T-Mobile/AT&T)</label>
+                    <label for="check5">Reserve hotéis em Quebec e Montreal</label>
                 </div>
                 <div class="checkbox-item">
                     <input type="checkbox" id="check6">
-                    <label for="check6">Baixe Google Maps offline</label>
+                    <label for="check6">Verifique requisitos de entrada no Canadá</label>
                 </div>
                 <div class="checkbox-item">
                     <input type="checkbox" id="check7">
-                    <label for="check7">Reserve restaurantes especiais</label>
+                    <label for="check7">Compre passagem aérea para New York</label>
                 </div>
+
+                <h4 style="margin-top: 25px; margin-bottom: 15px; color: #2c3e50;">📱 1 Mês Antes</h4>
                 <div class="checkbox-item">
                     <input type="checkbox" id="check8">
-                    <label for="check8">Confirme todos os hotéis</label>
+                    <label for="check8">Ative eSIM para os EUA (T-Mobile/AT&T)</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="check9">
+                    <label for="check9">Baixe Google Maps offline</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="check10">
+                    <label for="check10">Reserve restaurantes especiais</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="check11">
+                    <label for="check11">Confirme todos os hotéis</label>
                 </div>
 
                 <h4 style="margin-top: 25px; margin-bottom: 15px; color: #2c3e50;">🚗 1 Semana Antes</h4>
                 <div class="checkbox-item">
-                    <input type="checkbox" id="check9">
-                    <label for="check9">Confirme aluguel de carro</label>
-                </div>
-                <div class="checkbox-item">
-                    <input type="checkbox" id="check10">
-                    <label for="check10">Prepare documentos (passaporte, ESTA, CNH)</label>
-                </div>
-                <div class="checkbox-item">
-                    <input type="checkbox" id="check11">
-                    <label for="check11">Faça cópia digital de documentos</label>
-                </div>
-                <div class="checkbox-item">
                     <input type="checkbox" id="check12">
-                    <label for="check12">Prepare mala e eletrônicos</label>
+                    <label for="check12">Confirme aluguel de carro</label>
                 </div>
-
-                <h4 style="margin-top: 25px; margin-bottom: 15px; color: #2c3e50;">✈️ Chegada em NY</h4>
                 <div class="checkbox-item">
                     <input type="checkbox" id="check13">
-                    <label for="check13">Retire o carro no aeroporto</label>
-                </div>
-                <div class="checkbox-item">
-                    <input type="checkbox" id="check13b">
-                    <label for="check13b">Ative eSIM nos EUA</label>
+                    <label for="check13">Prepare documentos (passaporte, ESTA, CNH)</label>
                 </div>
                 <div class="checkbox-item">
                     <input type="checkbox" id="check14">
-                    <label for="check14">Faça câmbio ou saque no caixa eletrônico</label>
+                    <label for="check14">Faça cópia digital de documentos</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="check15">
+                    <label for="check15">Prepare mala e eletrônicos</label>
+                </div>
+
+                <h4 style="margin-top: 25px; margin-bottom: 15px; color: #2c3e50;">✈️ Chegada em Quebec</h4>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="check16">
+                    <label for="check16">Ative eSIM no Canadá</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="check17">
+                    <label for="check17">Faça câmbio ou saque no caixa eletrônico</label>
                 </div>
 
                 <h4 style="margin-top: 25px; margin-bottom: 15px; color: #2c3e50;">🛣️ Durante a Viagem</h4>
                 <div class="checkbox-item">
-                    <input type="checkbox" id="check15">
-                    <label for="check15">Confirme reservas com 24h de antecedência</label>
-                </div>
-                <div class="checkbox-item">
-                    <input type="checkbox" id="check16">
-                    <label for="check16">Mantenha tanque acima de 1/4</label>
-                </div>
-                <div class="checkbox-item">
-                    <input type="checkbox" id="check17">
-                    <label for="check17">Respeite limites de velocidade</label>
-                </div>
-                <div class="checkbox-item">
                     <input type="checkbox" id="check18">
-                    <label for="check18">Carregue água sempre</label>
+                    <label for="check18">Confirme reservas com 24h de antecedência</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="check19">
+                    <label for="check19">Mantenha tanque acima de 1/4</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="check20">
+                    <label for="check20">Respeite limites de velocidade</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="check21">
+                    <label for="check21">Carregue água sempre</label>
                 </div>
 
                 <h4 style="margin-top: 25px; margin-bottom: 15px; color: #2c3e50;">🏠 Retorno</h4>
                 <div class="checkbox-item">
-                    <input type="checkbox" id="check19">
-                    <label for="check19">Devolva o carro no aeroporto</label>
+                    <input type="checkbox" id="check22">
+                    <label for="check22">Devolva o carro no aeroporto de SF</label>
                 </div>
                 <div class="checkbox-item">
-                    <input type="checkbox" id="check20">
-                    <label for="check20">Verifique fotos e vídeos salvos</label>
+                    <input type="checkbox" id="check23">
+                    <label for="check23">Verifique fotos e vídeos salvos</label>
                 </div>
                 <div class="checkbox-item">
-                    <input type="checkbox" id="check21">
-                    <label for="check21">Compartilhe experiências com amigos</label>
+                    <input type="checkbox" id="check24">
+                    <label for="check24">Compartilhe experiências com amigos</label>
                 </div>
             </div>
         </div>
@@ -886,18 +915,18 @@
             </div>
             <p><strong>Período:</strong> 04 de Setembro → 03 de Outubro 2026</p>
             <p><strong>Duração:</strong> 30 dias completos</p>
-            <p><strong>Chegada:</strong> Dia 1 em New York (JFK)</p>
-            <p><strong>Saída:</strong> Dia 30 de Seattle (SEA-TAC)</p>
+            <p><strong>Chegada:</strong> Dia 1 em Quebec (YUL)</p>
+            <p><strong>Saída:</strong> Dia 30 de San Francisco (SFO)</p>
             <h4 style="margin-top: 20px;">Fases:</h4>
             <table style="width: 100%; margin-top: 10px;">
-                <tr><td>New York</td><td>1-3</td></tr>
-                <tr><td>Philadelphia & DC</td><td>4-5</td></tr>
-                <tr><td>Chicago</td><td>6-8</td></tr>
-                <tr><td>Rota 66</td><td>9-15</td></tr>
-                <tr><td>Las Vegas</td><td>16-18</td></tr>
-                <tr><td>Big Sur</td><td>19-22</td></tr>
-                <tr><td>San Francisco</td><td>23-24</td></tr>
-                <tr><td>Redwood & Seattle</td><td>25-30</td></tr>
+                <tr><td>Quebec & Montreal</td><td>1-5</td></tr>
+                <tr><td>New York</td><td>6-8</td></tr>
+                <tr><td>Philadelphia & DC</td><td>9-10</td></tr>
+                <tr><td>Chicago</td><td>11-13</td></tr>
+                <tr><td>Rota 66</td><td>14-20</td></tr>
+                <tr><td>Las Vegas</td><td>21-23</td></tr>
+                <tr><td>Yosemite & Sequoias</td><td>24-26</td></tr>
+                <tr><td>San Francisco</td><td>27-30</td></tr>
             </table>
         </div>
     </div>
@@ -905,7 +934,7 @@
     <div id="modalKM" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>🛣️ Detalhes dos 3.850 Km</h2>
+                <h2>🛣️ Detalhes dos 4.200 Km</h2>
                 <button class="close-btn" onclick="closeModal('modalKM')">×</button>
             </div>
             <table style="width: 100%;">
@@ -914,14 +943,11 @@
                 <tr><td><strong>Washington DC → Chicago</strong></td><td>1.270 km</td></tr>
                 <tr><td><strong>Chicago → Rota 66</strong></td><td>1.800 km</td></tr>
                 <tr><td><strong>Rota 66 → Las Vegas</strong></td><td>600 km</td></tr>
-                <tr><td><strong>Las Vegas → Santa Mônica</strong></td><td>270 km</td></tr>
-                <tr><td><strong>Santa Mônica → Big Sur</strong></td><td>130 km</td></tr>
-                <tr><td><strong>Big Sur → San Francisco</strong></td><td>150 km</td></tr>
-                <tr><td><strong>San Francisco → Redwood</strong></td><td>150 km</td></tr>
-                <tr><td><strong>Redwood → Portland</strong></td><td>180 km</td></tr>
-                <tr><td><strong>Portland → Seattle</strong><td>330 km</td></tr>
+                <tr><td><strong>Las Vegas → Yosemite</strong></td><td>300 km</td></tr>
+                <tr><td><strong>Yosemite → Sequoia</strong></td><td>100 km</td></tr>
+                <tr><td><strong>Sequoia → San Francisco</strong></td><td>280 km</td></tr>
             </table>
-            <p style="margin-top: 20px;"><strong>Combustível estimado:</strong> ~1.300 litros @ $3.50/galão = USD $1.300</p>
+            <p style="margin-top: 20px;"><strong>Combustível estimado:</strong> ~470 litros @ $3.50/galão = USD $1.500</p>
         </div>
     </div>
 
@@ -932,17 +958,16 @@
                 <button class="close-btn" onclick="closeModal('modalOrcamento')">×</button>
             </div>
             <p><strong>Orçamento Total:</strong> USD $22.000</p>
-            <p><strong>Base Estimada:</strong> USD $13.640</p>
-            <p><strong>Margem de Segurança (10%):</strong> USD $1.240</p>
-            <p><strong>Folga para Upgrades:</strong> USD $6.360</p>
+            <p><strong>Base Estimada:</strong> USD $14.300</p>
+            <p><strong>Folga:</strong> USD $7.700</p>
             <h4 style="margin-top: 20px;">Distribuição:</h4>
             <ul style="margin-left: 20px;">
-                <li>Hospedagem: 31% ($4.000)</li>
+                <li>Hospedagem: 32% ($4.200)</li>
                 <li>Aluguel+Seguro: 27% ($3.500)</li>
                 <li>Alimentação: 18% ($2.400)</li>
-                <li>Combustível: 10% ($1.300)</li>
-                <li>Atividades: 9% ($1.200)</li>
-                <li>Margem: 10% ($1.240)</li>
+                <li>Combustível: 11% ($1.500)</li>
+                <li>Atividades: 10% ($1.300)</li>
+                <li>Folga: 10% ($1.400)</li>
             </ul>
         </div>
     </div>
@@ -950,20 +975,20 @@
     <div id="modalHospedagem" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>🏨 Hospedagem - USD $4.000</h2>
+                <h2>🏨 Hospedagem - USD $4.200</h2>
                 <button class="close-btn" onclick="closeModal('modalHospedagem')">×</button>
             </div>
-            <p><strong>Total:</strong> USD $4.000 (31% do orçamento)</p>
+            <p><strong>Total:</strong> USD $4.200 (32% do orçamento)</p>
             <p><strong>Noites:</strong> 25 (5 noites em cada grande cidade)</p>
             <table style="width: 100%; margin-top: 15px;">
+                <tr><td>Quebec & Montreal (5 noites)</td><td>Variados</td><td>$150/noite</td></tr>
                 <tr><td>New York (3 noites)</td><td>The Standard High Line</td><td>$280/noite</td></tr>
                 <tr><td>Philadelphia & DC (2 noites)</td><td>Watergate Hotel</td><td>$200/noite</td></tr>
                 <tr><td>Chicago (3 noites)</td><td>The Peninsula</td><td>$220/noite</td></tr>
                 <tr><td>Rota 66 (7 noites)</td><td>Variados</td><td>$90/noite</td></tr>
                 <tr><td>Las Vegas (3 noites)</td><td>Bellagio</td><td>$200/noite</td></tr>
-                <tr><td>Big Sur (4 noites)</td><td>Ventana</td><td>$350/noite</td></tr>
-                <tr><td>San Francisco (2 noites)</td><td>Fairmont</td><td>$280/noite</td></tr>
-                <tr><td>Redwood & Seattle (6 noites)</td><td>Variados</td><td>$150/noite</td></tr>
+                <tr><td>Yosemite & Sequoias (3 noites)</td><td>Variados</td><td>$120/noite</td></tr>
+                <tr><td>San Francisco (4 noites)</td><td>Fairmont</td><td>$280/noite</td></tr>
             </table>
         </div>
     </div>
@@ -971,13 +996,13 @@
     <div id="modalCombustivel" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>⛽ Combustível - USD $1.300</h2>
+                <h2>⛽ Combustível - USD $1.500</h2>
                 <button class="close-btn" onclick="closeModal('modalCombustivel')">×</button>
             </div>
-            <p><strong>Total:</strong> USD $1.300 (10% do orçamento)</p>
-            <p><strong>Distância:</strong> 3.850 km</p>
+            <p><strong>Total:</strong> USD $1.500 (11% do orçamento)</p>
+            <p><strong>Distância:</strong> 4.200 km</p>
             <p><strong>Consumo médio:</strong> ~9 km/litro (SUV)</p>
-            <p><strong>Litros necessários:</strong> ~427 litros</p>
+            <p><strong>Litros necessários:</strong> ~467 litros</p>
             <p><strong>Preço médio:</strong> USD $3.50/galão (~USD $0.92/litro)</p>
             <p style="margin-top: 15px;"><strong>Dica:</strong> Use GasBuddy para encontrar postos mais baratos!</p>
         </div>
@@ -1006,17 +1031,17 @@
     <div id="modalAtividades" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>🎫 Atividades - USD $1.200</h2>
+                <h2>🎫 Atividades - USD $1.300</h2>
                 <button class="close-btn" onclick="closeModal('modalAtividades')">×</button>
             </div>
-            <p><strong>Total:</strong> USD $1.200 (9% do orçamento)</p>
+            <p><strong>Total:</strong> USD $1.300 (10% do orçamento)</p>
             <table style="width: 100%; margin-top: 15px;">
-                <tr><td>Alcatraz</td><td>USD $40</td></tr>
-                <tr><td>Cirque du Soleil (Las Vegas)</td><td>USD $150</td></tr>
+                <tr><td>Yosemite & Sequoias Pass</td><td>USD $80</td></tr>
+                <tr><td>Alcatraz (SF)</td><td>USD $40</td></tr>
+                <tr><td>Cirque du Soleil (LV)</td><td>USD $150</td></tr>
                 <tr><td>Grand Canyon Helicopter</td><td>USD $200</td></tr>
-                <tr><td>Museus Smithsonian (DC)</td><td>Gratuito</td></tr>
                 <tr><td>America the Beautiful Pass</td><td>USD $80</td></tr>
-                <tr><td>Outros tours e ingressos</td><td>USD $730</td></tr>
+                <tr><td>Outros tours e ingressos</td><td>USD $750</td></tr>
             </table>
         </div>
     </div>
@@ -1030,7 +1055,7 @@
             <p><strong>Total:</strong> USD $3.500 (27% do orçamento)</p>
             <p><strong>Veículo:</strong> SUV Compacto (Hertz Gold Plus)</p>
             <p><strong>Retirada:</strong> JFK, New York</p>
-            <p><strong>Devolução:</strong> SEA-TAC, Seattle</p>
+            <p><strong>Devolução:</strong> SFO, San Francisco</p>
             <p><strong>Dias:</strong> 25 dias</p>
             <p><strong>Custo diário:</strong> ~USD $140</p>
             <p style="margin-top: 15px;"><strong>Incluso:</strong> Seguro completo, sem taxa de devolução em outra cidade</p>
@@ -1040,11 +1065,11 @@
     <div id="modalMargem" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>💎 Folga para Upgrades - USD $4.360</h2>
+                <h2>💎 Folga para Upgrades - USD $7.700</h2>
                 <button class="close-btn" onclick="closeModal('modalMargem')">×</button>
             </div>
-            <p><strong>Margem de Segurança (10%):</strong> USD $1.240</p>
-            <p><strong>Folga Disponível:</strong> USD $6.360</p>
+            <p><strong>Margem de Segurança (10%):</strong> USD $1.400</p>
+            <p><strong>Folga Disponível:</strong> USD $7.700</p>
             <p style="margin-top: 15px;"><strong>Sugestões de Upgrades:</strong></p>
             <ul style="margin-left: 20px;">
                 <li>Helicóptero Grand Canyon: USD $200</li>
@@ -1059,10 +1084,12 @@
     <div id="modalCidades" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>🌍 As 11 Cidades</h2>
+                <h2>🌍 As 13 Cidades</h2>
                 <button class="close-btn" onclick="closeModal('modalCidades')">×</button>
             </div>
             <ol style="margin-left: 20px;">
+                <li>🍁 Quebec</li>
+                <li>🍁 Montreal</li>
                 <li>🗽 New York</li>
                 <li>🏛️ Philadelphia</li>
                 <li>🏛️ Washington DC</li>
@@ -1072,8 +1099,8 @@
                 <li>🛣️ Amarillo, TX (Rota 66)</li>
                 <li>🛣️ Albuquerque, NM (Rota 66)</li>
                 <li>🎰 Las Vegas</li>
+                <li>🏞️ Yosemite & Sequoias</li>
                 <li>🌉 San Francisco</li>
-                <li>🚀 Seattle</li>
             </ol>
         </div>
     </div>
@@ -1081,13 +1108,13 @@
     <div id="modalDirecao" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>🚗 58 Horas de Direção</h2>
+                <h2>🚗 62 Horas de Direção</h2>
                 <button class="close-btn" onclick="closeModal('modalDirecao')">×</button>
             </div>
-            <p><strong>Total:</strong> 58 horas de direção</p>
+            <p><strong>Total:</strong> 62 horas de direção</p>
             <p><strong>Média por dia:</strong> ~2 horas</p>
             <p><strong>Dias com direção intensa:</strong> 7 (Rota 66)</p>
-            <p style="margin-top: 15px;"><strong>Dica:</strong> Dirija devagar em Big Sur — curvas perigosas!</p>
+            <p style="margin-top: 15px;"><strong>Dica:</strong> Dirija devagar em Yosemite — estradas montanhosas!</p>
         </div>
     </div>
 
@@ -1098,28 +1125,57 @@
                 <button class="close-btn" onclick="closeModal('modalNoites')">×</button>
             </div>
             <p><strong>Total de noites:</strong> 25 (30 dias - 5 dias de direção)</p>
-            <p><strong>Hospedagem média:</strong> USD $160/noite</p>
+            <p><strong>Hospedagem média:</strong> USD $168/noite</p>
             <p><strong>Qualidade:</strong> 4-5 estrelas em cidades grandes, 3-4 em cidades menores</p>
+        </div>
+    </div>
+
+    <div id="modalUSD" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>💵 USD $14.300</h2>
+                <button class="close-btn" onclick="closeModal('modalUSD')">×</button>
+            </div>
+            <p><strong>Orçamento base:</strong> USD $14.300</p>
+            <p><strong>Orçamento total (com folga):</strong> USD $22.000</p>
+            <p><strong>Folga disponível:</strong> USD $7.700</p>
+        </div>
+    </div>
+
+    <div id="modalBRL" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>💵 Conversão para BRL</h2>
+                <button class="close-btn" onclick="closeModal('modalBRL')">×</button>
+            </div>
+            <p><strong>Taxa atual (5,20):</strong> R$ 74.360</p>
+            <p><strong>Ajuste o slider para simular outras taxas!</strong></p>
+        </div>
+    </div>
+
+    <div id="modalTaxa" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>💱 Taxa USD/BRL</h2>
+                <button class="close-btn" onclick="closeModal('modalTaxa')">×</button>
+            </div>
+            <p><strong>Taxa atual:</strong> 5,20</p>
+            <p><strong>Intervalo:</strong> 4,50 a 7,00</p>
+            <p><strong>Use o slider para simular diferentes cenários de câmbio!</strong></p>
         </div>
     </div>
 
     <script>
         function switchTab(tabName) {
-            // Hide all tabs
             const tabs = document.querySelectorAll('.tab-content');
             tabs.forEach(tab => tab.classList.remove('active'));
             
-            // Remove active from all buttons
             const buttons = document.querySelectorAll('.tab-btn');
             buttons.forEach(btn => btn.classList.remove('active'));
             
-            // Show selected tab
             document.getElementById(tabName).classList.add('active');
-            
-            // Add active to clicked button
             event.target.classList.add('active');
 
-            // Initialize charts if needed
             if (tabName === 'visao-geral' && !window.chartsInitialized) {
                 initCharts();
                 window.chartsInitialized = true;
@@ -1139,7 +1195,10 @@
                 'margem': 'modalMargem',
                 'cidades': 'modalCidades',
                 'direcao': 'modalDirecao',
-                'noites': 'modalNoites'
+                'noites': 'modalNoites',
+                'usd': 'modalUSD',
+                'brl': 'modalBRL',
+                'taxa': 'modalTaxa'
             };
             const modalId = modalMap[type];
             if (modalId) {
@@ -1181,37 +1240,86 @@
             document.getElementById('taxaDisplay').textContent = taxa.toFixed(2);
             document.getElementById('taxaAtual').textContent = taxa.toFixed(2);
 
-            const usd = 13640;
+            const usd = 14300;
             const brl = (usd * taxa).toFixed(0);
             document.getElementById('valorBRL').textContent = 'R$ ' + parseInt(brl).toLocaleString('pt-BR');
 
-            // Update table
-            document.getElementById('brl-hospedagem').textContent = 'R$ ' + (4000 * taxa).toFixed(0);
+            document.getElementById('brl-hospedagem').textContent = 'R$ ' + (4200 * taxa).toFixed(0);
             document.getElementById('brl-aluguel').textContent = 'R$ ' + (3500 * taxa).toFixed(0);
             document.getElementById('brl-alimentacao').textContent = 'R$ ' + (2400 * taxa).toFixed(0);
-            document.getElementById('brl-combustivel').textContent = 'R$ ' + (1300 * taxa).toFixed(0);
-            document.getElementById('brl-atividades').textContent = 'R$ ' + (1200 * taxa).toFixed(0);
-            document.getElementById('brl-subtotal').textContent = 'R$ ' + (12400 * taxa).toFixed(0);
-            document.getElementById('brl-margem').textContent = 'R$ ' + (1240 * taxa).toFixed(0);
-            document.getElementById('brl-total').textContent = 'R$ ' + (13640 * taxa).toFixed(0);
+            document.getElementById('brl-combustivel').textContent = 'R$ ' + (1500 * taxa).toFixed(0);
+            document.getElementById('brl-atividades').textContent = 'R$ ' + (1300 * taxa).toFixed(0);
+            document.getElementById('brl-subtotal').textContent = 'R$ ' + (12900 * taxa).toFixed(0);
+            document.getElementById('brl-margem').textContent = 'R$ ' + (1400 * taxa).toFixed(0);
+            document.getElementById('brl-total').textContent = 'R$ ' + (14300 * taxa).toFixed(0);
+        }
+
+        function drillChart(tipo) {
+            const details = {
+                custos: {
+                    title: '💰 Distribuição de Custos',
+                    html: `<p><strong>Breakdown dos custos principais:</strong></p>
+                           <table style="width:100%; margin-top:15px;">
+                           <tr><td>Hospedagem</td><td>$4.200</td><td>32%</td></tr>
+                           <tr><td>Aluguel+Seguro</td><td>$3.500</td><td>27%</td></tr>
+                           <tr><td>Alimentação</td><td>$2.400</td><td>18%</td></tr>
+                           <tr><td>Combustível</td><td>$1.500</td><td>11%</td></tr>
+                           <tr><td>Atividades</td><td>$1.300</td><td>10%</td></tr>
+                           <tr><td>Margem</td><td>$1.400</td><td>11%</td></tr>
+                           </table>`
+                },
+                fases: {
+                    title: '🛣️ Km por Fase',
+                    html: `<p><strong>Distância em cada fase:</strong></p>
+                           <table style="width:100%; margin-top:15px;">
+                           <tr><td>New York → Chicago</td><td>1.270 km</td></tr>
+                           <tr><td>Rota 66</td><td>1.800 km</td></tr>
+                           <tr><td>Rota 66 → Las Vegas</td><td>600 km</td></tr>
+                           <tr><td>Las Vegas → Yosemite</td><td>300 km</td></tr>
+                           <tr><td>Yosemite → San Francisco</td><td>230 km</td></tr>
+                           </table>`
+                },
+                custosDetalhado: {
+                    title: '📊 Breakdown Detalhado',
+                    html: `<p><strong>Análise detalhada por categoria:</strong></p>
+                           <table style="width:100%; margin-top:15px;">
+                           <tr><td>🏨 Hospedagem</td><td>$4.200</td><td>25 noites</td></tr>
+                           <tr><td>🚗 Aluguel+Seguro</td><td>$3.500</td><td>25 dias</td></tr>
+                           <tr><td>🍽️ Alimentação</td><td>$2.400</td><td>30 dias</td></tr>
+                           <tr><td>⛽ Combustível</td><td>$1.500</td><td>4.200 km</td></tr>
+                           <tr><td>🎫 Atividades</td><td>$1.300</td><td>Ingressos</td></tr>
+                           </table>`
+                }
+            };
+
+            if (details[tipo]) {
+                const modal = document.createElement('div');
+                modal.className = 'modal active';
+                modal.innerHTML = `
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2>${details[tipo].title}</h2>
+                            <button class="close-btn" onclick="this.closest('.modal').remove()">×</button>
+                        </div>
+                        ${details[tipo].html}
+                    </div>
+                `;
+                document.body.appendChild(modal);
+                modal.onclick = function(e) {
+                    if (e.target === this) this.remove();
+                };
+            }
         }
 
         function initCharts() {
-            // Chart 1: Distribuição de Custos
             const ctx1 = document.getElementById('chartCustos').getContext('2d');
             new Chart(ctx1, {
                 type: 'doughnut',
                 data: {
                     labels: ['Hospedagem', 'Aluguel+Seguro', 'Alimentação', 'Combustível', 'Atividades'],
                     datasets: [{
-                        data: [4000, 3500, 2400, 1300, 1200],
-                        backgroundColor: [
-                            '#a8d5ff',
-                            '#c8a8ff',
-                            '#ffb3ba',
-                            '#ffffba',
-                            '#baffc9'
-                        ],
+                        data: [4200, 3500, 2400, 1500, 1300],
+                        backgroundColor: ['#a8d5ff', '#c8a8ff', '#ffb3ba', '#ffffba', '#baffc9'],
                         borderColor: '#fff',
                         borderWidth: 2
                     }]
@@ -1220,22 +1328,19 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: {
-                            position: 'bottom'
-                        }
+                        legend: { position: 'bottom' }
                     }
                 }
             });
 
-            // Chart 2: Km por Fase
             const ctx2 = document.getElementById('chartFases').getContext('2d');
             new Chart(ctx2, {
                 type: 'bar',
                 data: {
-                    labels: ['NY', 'Philly', 'Chicago', 'Rota 66', 'Vegas', 'Big Sur', 'SF', 'Redwood'],
+                    labels: ['NY', 'Philly', 'Chicago', 'Rota 66', 'Vegas', 'Yosemite', 'SF'],
                     datasets: [{
                         label: 'Km',
-                        data: [0, 300, 1270, 1800, 600, 400, 150, 330],
+                        data: [0, 300, 1270, 1800, 600, 400, 180],
                         backgroundColor: '#a8d5ff',
                         borderColor: '#7fb3d5',
                         borderWidth: 1
@@ -1245,15 +1350,10 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     indexAxis: 'y',
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    }
+                    plugins: { legend: { display: false } }
                 }
             });
 
-            // Chart 3: Custos Detalhado
             const ctx3 = document.getElementById('chartCustosDetalhado').getContext('2d');
             new Chart(ctx3, {
                 type: 'bar',
@@ -1261,23 +1361,18 @@
                     labels: ['Hospedagem', 'Aluguel+Seguro', 'Alimentação', 'Combustível', 'Atividades', 'Margem'],
                     datasets: [{
                         label: 'USD',
-                        data: [4000, 3500, 2400, 1300, 1200, 1240],
+                        data: [4200, 3500, 2400, 1500, 1300, 1400],
                         backgroundColor: ['#a8d5ff', '#c8a8ff', '#ffb3ba', '#ffffba', '#baffc9', '#ffc9ba']
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    }
+                    plugins: { legend: { display: false } }
                 }
             });
         }
 
-        // Initialize on load
         window.addEventListener('load', function() {
             initCharts();
             window.chartsInitialized = true;
