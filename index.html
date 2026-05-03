@@ -1,373 +1,226 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Descobrindo a América — Giovani & Silvana 2026</title>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/openai@4.0.0/index.min.js"></script>
-<style>
-/* ═══════════════════════════════════════════
-   VARIÁVEIS & RESET
-═══════════════════════════════════════════ */
-:root {
-  --blue:   #6BA3D4;
-  --salmon: #F4A9A8;
-  --green:  #9FD4B5;
-  --yellow: #FFE5B4;
-  --purple: #D4A5D4;
-  --white:  #FFFFFF;
-  --bg:     #F8F9FA;
-  --border: #E8EAED;
-  --dark:   #2C3E50;
-  --mid:    #5A6C7D;
-  --sidebar-w: 260px;
-}
-*{margin:0;padding:0;box-sizing:border-box;}
-html,body{height:100%;overflow:hidden;font-family:'Lato',sans-serif;background:var(--bg);color:var(--dark);}
-
-/* ═══════════════════════════════════════════
-   SIDEBAR
-═══════════════════════════════════════════ */
-.sidebar{
-  position:fixed;left:0;top:0;width:var(--sidebar-w);height:100vh;
-  background:linear-gradient(160deg,#2C3E50 0%,#3d5166 100%);
-  z-index:900;display:flex;flex-direction:column;
-  transform:translateX(-100%);transition:transform .3s ease;
-  box-shadow:4px 0 20px rgba(0,0,0,.18);
-}
-.sidebar.open{transform:translateX(0);}
-.sb-header{padding:28px 20px 20px;border-bottom:1px solid rgba(255,255,255,.12);}
-.sb-logo{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:800;color:#fff;letter-spacing:2px;text-transform:uppercase;}
-.sb-sub{font-size:11px;color:rgba(255,255,255,.55);margin-top:4px;letter-spacing:1px;}
-.sb-nav{flex:1;overflow-y:auto;padding:12px 0;}
-.sb-nav a{
-  display:flex;align-items:center;gap:12px;padding:13px 20px;
-  color:rgba(255,255,255,.75);text-decoration:none;font-size:13px;font-weight:600;
-  border-left:3px solid transparent;transition:all .2s;letter-spacing:.3px;
-}
-.sb-nav a:hover{background:rgba(255,255,255,.08);color:#fff;}
-.sb-nav a.active{background:rgba(255,255,255,.14);border-left-color:#fff;color:#fff;}
-.sb-nav i{width:18px;text-align:center;font-size:15px;}
-.sb-footer{padding:16px 20px;border-top:1px solid rgba(255,255,255,.1);font-size:11px;color:rgba(255,255,255,.4);}
-
-/* ═══════════════════════════════════════════
-   OVERLAY
-═══════════════════════════════════════════ */
-.overlay{
-  position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:800;
-  opacity:0;pointer-events:none;transition:opacity .3s;
-}
-.overlay.show{opacity:1;pointer-events:all;}
-
-/* ═══════════════════════════════════════════
-   TOPBAR
-═══════════════════════════════════════════ */
-.topbar{
-  position:fixed;top:0;left:0;right:0;height:56px;
-  background:#fff;border-bottom:1px solid var(--border);
-  display:flex;align-items:center;gap:14px;padding:0 16px;
-  z-index:700;box-shadow:0 1px 8px rgba(0,0,0,.06);
-}
-.ham{background:none;border:none;cursor:pointer;font-size:20px;color:var(--dark);padding:6px;}
-.topbar-title{font-family:'Montserrat',sans-serif;font-size:14px;font-weight:800;color:var(--dark);letter-spacing:.5px;}
-.topbar-badge{margin-left:auto;background:var(--salmon);color:#fff;font-size:10px;font-weight:700;padding:4px 10px;border-radius:12px;letter-spacing:.5px;}
-
-/* ═══════════════════════════════════════════
-   BOTÃO HOME
-═══════════════════════════════════════════ */
-.home-btn{
-  position:fixed;top:20px;right:80px;width:50px;height:50px;
-  background:linear-gradient(135deg,#a8d5ff 0%,#c8a8ff 100%);
-  border:none;border-radius:50%;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  font-size:24px;box-shadow:0 4px 15px rgba(168,213,255,.4);
-  transition:all .3s ease;z-index:999;
-}
-.home-btn:hover{transform:scale(1.1);box-shadow:0 6px 20px rgba(168,213,255,.6);}
-.home-btn:active{transform:scale(.95);}
-@media(max-width:768px){
-  .home-btn{width:45px;height:45px;font-size:20px;top:15px;right:75px;}
-}
-
-/* ═══════════════════════════════════════════
-   CHATBOT IA
-═══════════════════════════════════════════ */
-.chatbot-btn{
-  position:fixed;top:20px;right:20px;width:50px;height:50px;
-  background:linear-gradient(135deg,#ff6b6b 0%,#ff8787 100%);
-  border:none;border-radius:50%;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  font-size:24px;box-shadow:0 4px 15px rgba(255,107,107,.4);
-  transition:all .3s ease;z-index:998;
-}
-.chatbot-btn:hover{transform:scale(1.1);box-shadow:0 6px 20px rgba(255,107,107,.6);}
-.chatbot-btn:active{transform:scale(.95);}
-
-.chatbot-widget{
-  position:fixed;top:80px;right:20px;width:350px;height:500px;
-  background:#fff;border-radius:15px;box-shadow:0 5px 40px rgba(0,0,0,.16);
-  display:none;flex-direction:column;z-index:998;
-  animation:slideUp .3s ease;
-}
-.chatbot-widget.open{display:flex;}
-
-@keyframes slideUp{
-  from{transform:translateY(20px);opacity:0;}
-  to{transform:translateY(0);opacity:1;}
-}
-
-.chatbot-header{
-  background:linear-gradient(135deg,#ff6b6b 0%,#ff8787 100%);
-  color:#fff;padding:16px;border-radius:15px 15px 0 0;
-  display:flex;justify-content:space-between;align-items:center;
-  font-weight:700;font-size:14px;
-}
-.chatbot-close{
-  background:none;border:none;color:#fff;cursor:pointer;font-size:20px;
-}
-
-.chatbot-messages{
-  flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;
-}
-
-.message{
-  padding:10px 14px;border-radius:10px;font-size:13px;line-height:1.4;
-  max-width:85%;
-}
-.message.user{
-  align-self:flex-end;background:#e3f2fd;color:#1976d2;border-radius:10px 0 10px 10px;
-}
-.message.bot{
-  align-self:flex-start;background:#f5f5f5;color:#333;border-radius:0 10px 10px 10px;
-}
-
-.chatbot-input{
-  padding:12px;border-top:1px solid #e0e0e0;display:flex;gap:8px;
-}
-.chatbot-input input{
-  flex:1;border:1px solid #ddd;border-radius:20px;padding:8px 14px;
-  font-size:13px;outline:none;transition:border-color .2s;
-}
-.chatbot-input input:focus{
-  border-color:#ff6b6b;
-}
-.chatbot-input button{
-  background:#ff6b6b;color:#fff;border:none;border-radius:50%;width:36px;height:36px;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;
-}
-.chatbot-input button:hover{background:#ff5252;}
-
-@media(max-width:768px){
-  .chatbot-widget{width:90%;left:5%;bottom:100px;height:400px;}
-  .chatbot-btn{bottom:60px;left:20px;}
-}
-
-/* ═══════════════════════════════════════════
-   PÁGINAS (SPA)
-═══════════════════════════════════════════ */
-.page{
-  position:fixed;inset:0;top:56px;
-  overflow-y:auto;overflow-x:hidden;
-  background:var(--bg);
-  opacity:0;pointer-events:none;
-  transition:opacity .35s ease;
-  padding:24px 20px 40px;
-}
-.page.active{opacity:1;pointer-events:all;}
-
-/* ═══════════════════════════════════════════
-   COMPONENTES COMUNS
-═══════════════════════════════════════════ */
-.page-title{
-  font-family:'Montserrat',sans-serif;font-size:18px;font-weight:800;
-  color:var(--dark);margin-bottom:20px;display:flex;align-items:center;gap:10px;
-  padding-bottom:12px;border-bottom:2px solid var(--border);
-}
-.page-title i{color:var(--blue);}
-
-/* KPI GRID */
-.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:20px;}
-.kpi{
-  background:#fff;border-radius:12px;padding:14px 12px;text-align:center;
-  border-top:3px solid var(--blue);box-shadow:0 2px 8px rgba(0,0,0,.05);
-  position:relative;cursor:default;transition:box-shadow .2s;z-index:1;
-}
-.kpi:hover{box-shadow:0 4px 16px rgba(0,0,0,.12);z-index:1000;}
-.kpi.s{border-top-color:var(--salmon);}
-.kpi.g{border-top-color:var(--green);}
-.kpi.y{border-top-color:var(--yellow);}
-.kpi.p{border-top-color:var(--purple);}
-.kpi-val{font-family:'Montserrat',sans-serif;font-size:22px;font-weight:800;color:var(--dark);}
-.kpi-lbl{font-size:10px;color:var(--mid);text-transform:uppercase;letter-spacing:.8px;margin-top:3px;}
-
-/* TOOLTIP */
-.kpi[data-tip]:hover::after{
-  content:attr(data-tip);
-  position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);
-  background:var(--dark);color:#fff;font-size:11px;line-height:1.5;
-  padding:8px 12px;border-radius:8px;white-space:pre-line;text-align:left;
-  min-width:180px;max-width:260px;z-index:9999;
-  box-shadow:0 4px 16px rgba(0,0,0,.25);pointer-events:none;
-}
-.kpi[data-tip]:hover::before{
-  content:'';position:absolute;bottom:calc(100% + 2px);left:50%;transform:translateX(-50%);
-  border:6px solid transparent;border-top-color:var(--dark);z-index:9999;
-}
-
-/* CARDS GRID */
-.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-bottom:20px;}
-.card{
-  background:#fff;border-radius:12px;padding:16px;
-  box-shadow:0 2px 8px rgba(0,0,0,.05);transition:all .2s;
-  position:relative;cursor:default;
-}
-.card:hover{box-shadow:0 6px 20px rgba(0,0,0,.1);transform:translateY(-2px);}
-.card-icon{font-size:26px;margin-bottom:8px;}
-.card-title{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;color:var(--dark);margin-bottom:6px;}
-.card-text{font-size:12px;color:var(--mid);line-height:1.55;}
-.card-link{display:inline-block;margin-top:10px;font-size:11px;font-weight:700;color:var(--blue);text-decoration:none;letter-spacing:.3px;}
-.card-link:hover{text-decoration:underline;}
-
-/* CARD TOOLTIP */
-.card[data-tip]:hover::after{
-  content:attr(data-tip);
-  position:absolute;top:calc(100% + 8px);left:0;
-  background:var(--dark);color:#fff;font-size:11px;line-height:1.6;
-  padding:10px 14px;border-radius:8px;white-space:pre-line;
-  min-width:220px;max-width:300px;z-index:9999;
-  box-shadow:0 4px 16px rgba(0,0,0,.25);pointer-events:none;
-}
-
-/* CHART CONTAINER */
-.chart-wrap{background:#fff;border-radius:12px;padding:16px;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,.05);}
-.chart-wrap h3{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;color:var(--mid);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;}
-.chart-wrap canvas{max-height:260px;}
-
-/* TABS */
-.tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
-.tab{
-  padding:8px 16px;border-radius:20px;border:2px solid var(--border);
-  background:#fff;font-size:12px;font-weight:700;color:var(--mid);
-  cursor:pointer;transition:all .2s;font-family:'Montserrat',sans-serif;
-}
-.tab.active{background:var(--blue);border-color:var(--blue);color:#fff;}
-.tab-content{display:none;}
-.tab-content.active{display:block;}
-
-/* SCENARIO CARD */
-.scenario{background:#fff;border-radius:12px;padding:20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.05);}
-.scenario h3{font-family:'Montserrat',sans-serif;font-size:15px;font-weight:700;margin-bottom:14px;color:var(--dark);}
-.scenario-item{background:var(--bg);border-radius:8px;padding:10px 12px;margin-bottom:8px;font-size:12px;color:var(--mid);line-height:1.6;}
-.scenario-item strong{color:var(--dark);}
-
-/* HERO (Início) */
-.hero{
-  background:linear-gradient(135deg,var(--dark) 0%,#3d5166 100%);
-  border-radius:16px;padding:32px 24px;color:#fff;margin-bottom:20px;
-  position:relative;overflow:hidden;
-}
-.hero::before{
-  content:'';position:absolute;top:-40px;right:-40px;
-  width:180px;height:180px;border-radius:50%;
-  background:rgba(107,163,212,.15);pointer-events:none;
-}
-.hero h1{font-family:'Montserrat',sans-serif;font-size:clamp(22px,5vw,32px);font-weight:900;line-height:1.15;margin-bottom:10px;}
-.hero h1 span{color:var(--salmon);}
-.hero p{font-size:13px;opacity:.8;line-height:1.65;max-width:520px;}
-.hero-btns{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap;}
-.btn{display:inline-flex;align-items:center;gap:7px;padding:10px 18px;border-radius:24px;font-size:12px;font-weight:700;text-decoration:none;transition:all .2s;letter-spacing:.3px;font-family:'Montserrat',sans-serif;}
-.btn-primary{background:var(--salmon);color:#fff;box-shadow:0 4px 14px rgba(244,169,168,.4);}
-.btn-primary:hover{background:#e8908f;transform:translateY(-1px);}
-.btn-outline{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.3);}
-.btn-outline:hover{background:rgba(255,255,255,.22);}
-
-/* PREVIEW BANNER */
-.preview-banner{
-  background:linear-gradient(135deg,#1a1f2e,#2c3e50);
-  border-radius:12px;padding:20px;text-align:center;color:#fff;margin-bottom:20px;
-}
-.preview-banner h2{font-family:'Montserrat',sans-serif;font-size:16px;font-weight:800;margin-bottom:8px;}
-.preview-banner p{font-size:12px;opacity:.65;margin-bottom:14px;}
-
-/* EXCEL BANNER */
-.excel-banner{
-  background:linear-gradient(135deg,#1D6F42,#2e8b57);
-  border-radius:12px;padding:16px 20px;display:flex;align-items:center;gap:14px;
-  margin-bottom:20px;color:#fff;text-decoration:none;transition:opacity .2s;
-}
-.excel-banner:hover{opacity:.9;}
-.excel-icon{font-size:32px;flex-shrink:0;}
-.excel-info h3{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;margin-bottom:3px;}
-.excel-info p{font-size:11px;opacity:.8;}
-.excel-arrow{margin-left:auto;font-size:20px;opacity:.7;}
-
-/* CUSTO CARD */
-.cost-card{
-  background:#fff;border-radius:12px;padding:16px;
-  box-shadow:0 2px 8px rgba(0,0,0,.05);position:relative;cursor:default;
-  transition:all .2s;z-index:1;
-}
-.cost-card:hover{box-shadow:0 6px 20px rgba(0,0,0,.1);transform:translateY(-2px);z-index:1000;}
-.cost-card[data-tip]:hover::after{
-  content:attr(data-tip);
-  position:absolute;top:calc(100% + 8px);left:0;
-  background:var(--dark);color:#fff;font-size:11px;line-height:1.6;
-  padding:10px 14px;border-radius:8px;white-space:pre-line;
-  min-width:220px;max-width:300px;z-index:9999;
-  box-shadow:0 4px 16px rgba(0,0,0,.25);pointer-events:none;
-}
-.cost-card[data-tip]:hover::before{
-  content:'';position:absolute;top:calc(100% + 2px);left:20px;
-  border:6px solid transparent;border-bottom-color:var(--dark);z-index:9999;
-}
-.cost-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
-.cost-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
-.cost-name{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;color:var(--dark);}
-.cost-amount{font-family:'Montserrat',sans-serif;font-size:20px;font-weight:800;color:var(--dark);}
-.cost-pct{font-size:11px;color:var(--mid);margin-top:2px;}
-.cost-bar-track{height:5px;background:var(--border);border-radius:3px;margin-top:10px;}
-.cost-bar-fill{height:100%;border-radius:3px;transition:width .8s ease;}
-
-/* DICA CARD */
-.dica-card{background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.05);margin-bottom:12px;}
-.dica-card h4{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;color:var(--dark);margin-bottom:6px;display:flex;align-items:center;gap:8px;}
-.dica-card p{font-size:12px;color:var(--mid);line-height:1.6;}
-
-/* ALERTA */
-.alert{background:rgba(244,169,168,.12);border-left:3px solid var(--salmon);border-radius:8px;padding:12px 14px;margin-bottom:10px;font-size:12px;color:var(--dark);line-height:1.6;}
-.alert strong{color:var(--salmon);}
-
-/* RESPONSIVE */
-@media(max-width:600px){
-  .kpi-grid{grid-template-columns:repeat(2,1fr);}
-  .cards{grid-template-columns:1fr 1fr;}
-}
-@media(max-width:380px){
-  .cards{grid-template-columns:1fr;}
-}
-</style>
-<!-- Updated: 1777776049 -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Descobrindo a América — Giovani & Silvana 2026</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f7fa; color: #333; }
+    
+    /* TOPBAR */
+    .topbar {
+      position: fixed; top: 0; left: 0; right: 0; height: 60px;
+      background: #fff; border-bottom: 1px solid #e0e0e0;
+      display: flex; align-items: center; padding: 0 20px;
+      z-index: 1000; box-shadow: 0 2px 8px rgba(0,0,0,.1);
+    }
+    .topbar-title { font-size: 20px; font-weight: 700; color: #2c3e50; }
+    .ham { background: none; border: none; font-size: 24px; cursor: pointer; }
+    
+    /* BOTÕES FLUTUANTES */
+    .home-btn {
+      position: fixed; top: 20px; right: 80px; width: 50px; height: 50px;
+      background: linear-gradient(135deg, #a8d5ff 0%, #c8a8ff 100%);
+      border: none; border-radius: 50%; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; box-shadow: 0 4px 15px rgba(168,213,255,.4);
+      transition: all .3s ease; z-index: 999;
+    }
+    .home-btn:hover { transform: scale(1.1); box-shadow: 0 6px 20px rgba(168,213,255,.6); }
+    
+    .chatbot-btn {
+      position: fixed; top: 20px; right: 20px; width: 50px; height: 50px;
+      background: linear-gradient(135deg, #ff6b6b 0%, #ff8787 100%);
+      border: none; border-radius: 50%; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; box-shadow: 0 4px 15px rgba(255,107,107,.4);
+      transition: all .3s ease; z-index: 999;
+    }
+    .chatbot-btn:hover { transform: scale(1.1); box-shadow: 0 6px 20px rgba(255,107,107,.6); }
+    
+    /* CHATBOT WIDGET */
+    .chatbot-widget {
+      position: fixed; top: 80px; right: 20px; width: 350px; height: 500px;
+      background: #fff; border-radius: 15px; box-shadow: 0 5px 40px rgba(0,0,0,.16);
+      display: none; flex-direction: column; z-index: 998;
+      animation: slideUp .3s ease;
+    }
+    .chatbot-widget.open { display: flex; }
+    
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    
+    .chatbot-header {
+      background: linear-gradient(135deg, #ff6b6b 0%, #ff8787 100%);
+      color: #fff; padding: 16px; border-radius: 15px 15px 0 0;
+      display: flex; justify-content: space-between; align-items: center;
+      font-weight: 700; font-size: 14px;
+    }
+    .chatbot-close {
+      background: none; border: none; color: #fff; cursor: pointer;
+      font-size: 20px; transition: transform .2s;
+    }
+    .chatbot-close:hover { transform: scale(1.2); }
+    
+    .chatbot-messages {
+      flex: 1; overflow-y: auto; padding: 16px;
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    
+    .message {
+      padding: 10px 14px; border-radius: 10px; font-size: 13px;
+      line-height: 1.4; max-width: 85%; word-wrap: break-word;
+    }
+    .message.user {
+      background: #007bff; color: #fff; align-self: flex-end;
+    }
+    .message.bot {
+      background: #e9ecef; color: #333; align-self: flex-start;
+    }
+    
+    .chatbot-input {
+      display: flex; gap: 8px; padding: 12px;
+      border-top: 1px solid #e0e0e0;
+    }
+    .chatbot-input input {
+      flex: 1; border: 1px solid #ddd; border-radius: 8px;
+      padding: 8px 12px; font-size: 13px;
+    }
+    .chatbot-input button {
+      background: #ff6b6b; color: #fff; border: none;
+      border-radius: 8px; padding: 8px 12px; cursor: pointer;
+      font-size: 16px; transition: background .2s;
+    }
+    .chatbot-input button:hover { background: #ff5252; }
+    
+    /* SIDEBAR */
+    .sidebar {
+      position: fixed; left: -300px; top: 60px; width: 300px;
+      height: calc(100vh - 60px); background: #2c3e50;
+      transition: left .3s ease; z-index: 500;
+      overflow-y: auto;
+    }
+    .sidebar.open { left: 0; }
+    .sidebar a {
+      display: block; padding: 16px 20px; color: #fff;
+      text-decoration: none; border-bottom: 1px solid #34495e;
+      transition: background .2s;
+    }
+    .sidebar a:hover { background: #34495e; }
+    .sidebar a.active { background: #3498db; }
+    
+    /* OVERLAY */
+    .overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,.5); display: none; z-index: 400;
+    }
+    .overlay.open { display: block; }
+    
+    /* MAIN CONTENT */
+    .main { margin-top: 60px; }
+    .page { display: none; padding: 20px; }
+    .page.active { display: block; }
+    
+    /* HERO */
+    .hero {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff; padding: 40px 20px; border-radius: 15px;
+      margin-bottom: 30px; text-align: center;
+    }
+    .hero h1 { font-size: 40px; margin-bottom: 10px; }
+    .hero p { font-size: 16px; opacity: .9; }
+    
+    /* BUTTONS */
+    .btn {
+      display: inline-block; padding: 12px 24px;
+      background: #3498db; color: #fff; text-decoration: none;
+      border-radius: 8px; transition: background .2s;
+      border: none; cursor: pointer; font-size: 14px;
+    }
+    .btn:hover { background: #2980b9; }
+    .btn-secondary {
+      background: #95a5a6;
+    }
+    .btn-secondary:hover { background: #7f8c8d; }
+    
+    /* CARDS */
+    .card {
+      background: #fff; padding: 20px; border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.1); margin-bottom: 20px;
+      cursor: pointer; transition: all .3s ease;
+    }
+    .card:hover {
+      box-shadow: 0 4px 16px rgba(0,0,0,.15);
+      transform: translateY(-2px);
+    }
+    .card h3 { color: #2c3e50; margin-bottom: 10px; }
+    .card p { color: #666; font-size: 14px; line-height: 1.6; }
+    
+    /* MODAL */
+    .modal {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,.7); display: none; z-index: 2000;
+      align-items: center; justify-content: center;
+    }
+    .modal.open { display: flex; }
+    .modal-content {
+      background: #fff; padding: 30px; border-radius: 15px;
+      max-width: 600px; width: 90%; max-height: 80vh;
+      overflow-y: auto; position: relative;
+    }
+    .modal-close {
+      position: absolute; top: 15px; right: 15px;
+      background: none; border: none; font-size: 24px;
+      cursor: pointer; color: #666;
+    }
+    
+    /* TABELAS */
+    table {
+      width: 100%; border-collapse: collapse; margin: 20px 0;
+    }
+    th, td {
+      padding: 12px; text-align: left; border-bottom: 1px solid #ddd;
+    }
+    th {
+      background: #f8f9fa; font-weight: 700; color: #2c3e50;
+    }
+    tr:hover { background: #f8f9fa; cursor: pointer; }
+    
+    /* GRID */
+    .grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px; margin: 20px 0;
+    }
+    
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 28px; }
+      .chatbot-widget { width: 100%; right: 0; left: 0; top: auto; bottom: 0; border-radius: 15px 15px 0 0; }
+      .home-btn, .chatbot-btn { width: 45px; height: 45px; font-size: 20px; }
+    }
+  </style>
 </head>
 <body>
-<!-- Botão Home -->
-<button class="home-btn" onclick="document.querySelector('[data-page=inicio]').click()" title="Voltar ao Menu Inicial">🏠</button>
 
-<!-- Botão Chatbot IA -->
-<button class="chatbot-btn" onclick="toggleChatbot()" title="Assistente de IA">🤖</button>
+<!-- TOPBAR -->
+<header class="topbar">
+  <button class="ham" id="ham"><i class="fas fa-bars"></i></button>
+  <span class="topbar-title">Descobrindo a América</span>
+  <button class="home-btn" onclick="goHome()" title="Voltar ao Menu Inicial">🏠</button>
+  <button class="chatbot-btn" onclick="toggleChatbot()" title="Assistente de IA">🤖</button>
+</header>
 
-<!-- Chat Widget -->
+<!-- CHATBOT WIDGET -->
 <div class="chatbot-widget" id="chatbot-widget">
   <div class="chatbot-header">
     <span>🤖 Assistente de IA</span>
     <button class="chatbot-close" onclick="toggleChatbot()">×</button>
   </div>
   <div class="chatbot-messages" id="chatbot-messages">
-    <div class="message bot">
-      Ola! Sou seu assistente de IA. Faca perguntas sobre a viagem, custos, roteiro, hoteis, atividades e muito mais!
-    </div>
+    <div class="message bot">Olá! Sou seu assistente de IA. Faça perguntas sobre a viagem! 😊</div>
   </div>
   <div class="chatbot-input">
     <input type="text" id="chatbot-input" placeholder="Digite sua pergunta..." onkeypress="handleChatInput(event)">
@@ -375,618 +228,335 @@ html,body{height:100%;overflow:hidden;font-family:'Lato',sans-serif;background:v
   </div>
 </div>
 
-<!-- OVERLAY -->
-<div class="overlay" id="overlay"></div>
-
 <!-- SIDEBAR -->
-<nav class="sidebar" id="sidebar">
-  <div class="sb-header">
-    <div class="sb-logo">🚗 Road Trip</div>
-    <div class="sb-sub">Giovani & Silvana · 2026</div>
-  </div>
-  <div class="sb-nav">
-    <a href="#" data-page="inicio" class="active"><i class="fas fa-home"></i> Início</a>
-    <a href="#" data-page="roteiro"><i class="fas fa-map-marked-alt"></i> Roteiro</a>
-    <a href="#" data-page="custos"><i class="fas fa-dollar-sign"></i> Custos</a>
-    <a href="#" data-page="consultor"><i class="fas fa-lightbulb"></i> Consultor</a>
-    <a href="#" data-page="estrategias"><i class="fas fa-chess"></i> Estratégias</a>
-    <a href="#" data-page="dicas"><i class="fas fa-check-circle"></i> Dicas</a>
-    <a href="preview.html" target="_blank"><i class="fas fa-play-circle"></i> Preview Cinematográfico</a>
-  </div>
-  <div class="sb-footer">Setembro — Outubro 2026</div>
-</nav>
+<div class="sidebar" id="sidebar">
+  <a href="#" onclick="showPage('inicio')">🏠 Início</a>
+  <a href="#" onclick="showPage('roteiro')">🗺️ Roteiro</a>
+  <a href="#" onclick="showPage('custos')">💰 Custos</a>
+  <a href="#" onclick="showPage('estrategia')">⚡ Estratégias & Consultor</a>
+  <a href="#" onclick="showPage('dicas')">💡 Dicas</a>
+  <a href="#" onclick="showPage('preview')">🎬 Preview</a>
+</div>
 
-<!-- TOPBAR -->
-<header class="topbar">
-  <button class="ham" id="ham"><i class="fas fa-bars"></i></button>
-  <span class="topbar-title">Descobrindo a América</span>
-</header>
+<!-- OVERLAY -->
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 
-<!-- ═══════════════════════════════════════════
-     PÁGINA: INÍCIO
-═══════════════════════════════════════════ -->
+<!-- MAIN CONTENT -->
+<div class="main">
+
+<!-- PÁGINA: INÍCIO -->
 <div class="page active" id="page-inicio">
   <div class="hero">
-    <h1>Descobrindo<br><span>a América</span></h1>
-    <p>Uma jornada épica de 30 dias pelos Estados Unidos — de Nova York a Seattle, passando pela lendária Rota 66. Setembro a Outubro de 2026.</p>
-    <div class="hero-btns">
-      <a href="preview.html" target="_blank" class="btn btn-primary"><i class="fas fa-play"></i> Ver Preview</a>
-      <a href="dashboard.html" target="_blank" class="btn btn-outline"><i class="fas fa-chart-pie"></i> Dashboard Interativo</a>
-      <a href="#" data-page="roteiro" class="btn btn-outline nav-btn"><i class="fas fa-map"></i> Roteiro</a>
-    </div>
+    <h1>Descobrindo<br>a América</h1>
+    <p>Uma jornada épica de 30 dias pelos EUA e Canadá</p>
+    <br>
+    <button class="btn" onclick="showPage('roteiro')">Ver Roteiro</button>
+    <button class="btn btn-secondary" onclick="window.open('dashboard.html', '_blank')">Dashboard Interativo</button>
   </div>
-
-  <!-- KPIs rápidos -->
-  <div class="kpi-grid">
-    <div class="kpi" data-tip="30 dias completos&#10;04 Set → 03 Out 2026&#10;Inclui chegada em NY&#10;e partida de Seattle">
-      <div class="kpi-val">30</div><div class="kpi-lbl">Dias</div>
+  
+  <div class="grid">
+    <div class="card" onclick="showModal('kpi-30dias')">
+      <h3>📅 30 Dias</h3>
+      <p>4 de setembro a 3 de outubro de 2026</p>
     </div>
-    <div class="kpi s" data-tip="3.850 km de estrada&#10;NY → Chicago: 1.270 km&#10;Rota 66: 1.800 km&#10;Califórnia → Seattle: 780 km">
-      <div class="kpi-val">3.850</div><div class="kpi-lbl">Km</div>
+    <div class="card" onclick="showModal('kpi-4200km')">
+      <h3>🛣️ 4.200 km</h3>
+      <p>Distância total da viagem</p>
     </div>
-    <div class="kpi g" data-tip="11 cidades principais&#10;NY · Philadelphia · DC&#10;Chicago · Las Vegas&#10;Santa Mônica · Big Sur&#10;San Francisco · Redwood&#10;Portland · Seattle">
-      <div class="kpi-val">11</div><div class="kpi-lbl">Cidades</div>
+    <div class="card" onclick="showModal('kpi-13cidades')">
+      <h3>🏙️ 13 Cidades</h3>
+      <p>Quebec, Montreal, NY, DC, Chicago, Rota 66, Vegas, Yosemite, SF</p>
     </div>
-    <div class="kpi y" data-tip="Orçamento total: USD $22k&#10;Base: USD $20.000&#10;Margem 10%: USD $2.000&#10;Câmbio: R$ 5,20/USD&#10;Total BRL: ~R$ 114.400">
-      <div class="kpi-val">$22k</div><div class="kpi-lbl">Orçamento</div>
+    <div class="card" onclick="showModal('kpi-22k')">
+      <h3>💰 USD $22.000</h3>
+      <p>Orçamento total (R$ 110.000 com taxa 5.0)</p>
     </div>
-    <div class="kpi p" data-tip="~58 horas ao volante&#10;Média: ~2h/dia&#10;Maior trecho: Chicago→STL&#10;Menor trecho: SF→Napa&#10;Combustível: ~USD $1.300">
-      <div class="kpi-val">58h</div><div class="kpi-lbl">Direção</div>
-    </div>
-  </div>
-
-  <!-- Preview banner -->
-  <div class="preview-banner">
-    <h2>🎬 Preview Cinematográfico</h2>
-    <p>22 slides sincronizados com narração profissional de 4 min 46 seg</p>
-    <a href="preview.html" target="_blank" class="btn btn-primary"><i class="fas fa-play"></i> Assistir Agora</a>
-  </div>
-
-  <!-- Fases rápidas -->
-  <div class="page-title" style="margin-top:4px;"><i class="fas fa-route"></i> As 8 Fases da Jornada</div>
-  <div class="cards">
-    <div class="card"><div class="card-icon">🗽</div><div class="card-title">Fase 1 — New York</div><div class="card-text">Dias 1–3 · Manhattan, Central Park, Brooklyn Bridge, Estátua da Liberdade</div></div>
-    <div class="card"><div class="card-icon">🏛️</div><div class="card-title">Fase 2 — Philadelphia & DC</div><div class="card-text">Dias 4–5 · Liberty Bell, Lincoln Memorial, Smithsonian (gratuito)</div></div>
-    <div class="card"><div class="card-icon">🌬️</div><div class="card-title">Fase 3 — Chicago</div><div class="card-text">Dias 6–8 · Cloud Gate, Millennium Park, Lago Michigan, deep dish pizza</div></div>
-    <div class="card"><div class="card-icon">🛣️</div><div class="card-title">Fase 4 — Rota 66</div><div class="card-text">Dias 9–15 · Springfield, Tulsa, Amarillo, Cadillac Ranch, Albuquerque</div></div>
-    <div class="card"><div class="card-icon">🎰</div><div class="card-title">Fase 5 — Las Vegas</div><div class="card-text">Dias 16–18 · The Strip, Bellagio, Cirque du Soleil, Grand Canyon tour</div></div>
-    <div class="card"><div class="card-icon">🌊</div><div class="card-title">Fase 6 — Big Sur</div><div class="card-text">Dias 19–22 · Santa Mônica, Highway 1, Bixby Bridge, McWay Falls</div></div>
-    <div class="card"><div class="card-icon">🌉</div><div class="card-title">Fase 7 — San Francisco</div><div class="card-text">Dias 23–24 · Golden Gate, Alcatraz, Fisherman's Wharf, Cable Cars</div></div>
-    <div class="card"><div class="card-icon">🚀</div><div class="card-title">Fase 8 — Redwood & Seattle</div><div class="card-text">Dias 25–30 · Redwood, Portland, Space Needle, Pike Place Market</div></div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     PÁGINA: ROTEIRO
-═══════════════════════════════════════════ -->
+<!-- PÁGINA: ROTEIRO -->
 <div class="page" id="page-roteiro">
-  <div class="page-title"><i class="fas fa-map-marked-alt"></i> Roteiro por Fases</div>
-
-  <div class="cards">
-    <div class="card" data-tip="Hotel sugerido: The Standard High Line&#10;Clima: 18–27°C em setembro&#10;Estrada: I-95 (chegada)&#10;Atividades: MoMA, Central Park, Staten Island Ferry (grátis), Brooklyn Bridge a pé">
-      <div class="card-icon">🗽</div>
-      <div class="card-title">New York City</div>
-      <div class="card-text">Dias 1–3 · Central Park, Times Square, MoMA, Estátua da Liberdade</div>
-      <a href="https://www.nycandcompany.com/" target="_blank" class="card-link">NYC Tourism →</a>
-    </div>
-    <div class="card" data-tip="Philadelphia: Liberty Bell, Independence Hall&#10;Washington DC: Lincoln Memorial, Smithsonian (gratuito!)&#10;Clima: 20–26°C&#10;Estrada: I-95 Sul&#10;Hotel DC: The Watergate Hotel">
-      <div class="card-icon">🏛️</div>
-      <div class="card-title">Philadelphia & Washington DC</div>
-      <div class="card-text">Dias 4–5 · Liberty Bell, Lincoln Memorial, Smithsonian</div>
-      <a href="https://washington.org/" target="_blank" class="card-link">Visit DC →</a>
-    </div>
-    <div class="card" data-tip="Hotel: Loews Chicago O'Hare&#10;Clima: 15–22°C&#10;Estrada: I-76 / I-80 Oeste&#10;Atividades: Cloud Gate, Millennium Park, Lago Michigan, Museu de Arte, Deep Dish Pizza no Lou Malnati's">
-      <div class="card-icon">🌬️</div>
-      <div class="card-title">Chicago</div>
-      <div class="card-text">Dias 6–8 · Cloud Gate, Millennium Park, Lago Michigan, deep dish pizza</div>
-      <a href="https://www.choosechicago.com/" target="_blank" class="card-link">Choose Chicago →</a>
-    </div>
-    <div class="card" data-tip="Paradas: Springfield IL, St. Louis MO&#10;Tulsa OK, Amarillo TX, Albuquerque NM&#10;Destaque: Cadillac Ranch (Amarillo)&#10;Clima: 18–35°C (varia muito)&#10;Estrada: US-66 histórica">
-      <div class="card-icon">🛣️</div>
-      <div class="card-title">Rota 66 Clássica</div>
-      <div class="card-text">Dias 9–15 · Springfield, Tulsa, Cadillac Ranch, Albuquerque</div>
-      <a href="https://www.historic66.com/" target="_blank" class="card-link">Historic Route 66 →</a>
-    </div>
-    <div class="card" data-tip="Hotel: Bellagio ou MGM Grand&#10;Clima: 28–38°C (quente!)&#10;Estrada: I-40 / US-93&#10;Atividades: The Strip, Bellagio Fountains, Cirque du Soleil, tour helicóptero Grand Canyon">
-      <div class="card-icon">🎰</div>
-      <div class="card-title">Las Vegas</div>
-      <div class="card-text">Dias 16–18 · The Strip, Bellagio, Cirque du Soleil, Grand Canyon</div>
-      <a href="https://www.visitlasvegas.com/" target="_blank" class="card-link">Visit Las Vegas →</a>
-    </div>
-    <div class="card" data-tip="Santa Mônica: fim da Rota 66!&#10;Big Sur: McWay Falls, Bixby Bridge&#10;Hotel: Post Ranch Inn (luxo) ou Ventana&#10;Clima: 14–22°C&#10;Estrada: CA-1 (Highway 1)&#10;⚠️ Reserve com 3+ meses!">
-      <div class="card-icon">🌊</div>
-      <div class="card-title">Santa Mônica & Big Sur</div>
-      <div class="card-text">Dias 19–22 · Fim da Rota 66, Highway 1, Bixby Bridge, McWay Falls</div>
-      <a href="https://www.parks.ca.gov/?page_id=570" target="_blank" class="card-link">Big Sur Parks →</a>
-    </div>
-    <div class="card" data-tip="Hotel: The Fairmont SF ou Kimpton&#10;Clima: 13–20°C (névoa matinal)&#10;Estrada: CA-1 / US-101&#10;Atividades: Golden Gate a pé, Alcatraz (reserve online!), Fisherman's Wharf, Cable Cars, Chinatown">
-      <div class="card-icon">🌉</div>
-      <div class="card-title">San Francisco</div>
-      <div class="card-text">Dias 23–24 · Golden Gate, Alcatraz, Fisherman's Wharf, Cable Cars</div>
-      <a href="https://www.sftravel.org/" target="_blank" class="card-link">SF Travel →</a>
-    </div>
-    <div class="card" data-tip="Redwood: árvores de 100m de altura!&#10;Portland: food trucks, Powell's Books&#10;Seattle: Space Needle, Pike Place Market&#10;Clima: 12–20°C&#10;Estrada: US-101 / I-5 Norte&#10;Hotel Seattle: The Edgewater">
-      <div class="card-icon">🌲</div>
-      <div class="card-title">Redwood, Portland & Seattle</div>
-      <div class="card-text">Dias 25–30 · Sequoias gigantes, Portland, Space Needle, Pike Place</div>
-      <a href="https://www.visitseattle.org/" target="_blank" class="card-link">Visit Seattle →</a>
-    </div>
-  </div>
-
-  <!-- Mapa Google Maps -->
-  <div class="page-title" style="margin-top:8px;"><i class="fas fa-map"></i> Mapa da Rota Completa</div>
-  <div class="cards" style="grid-template-columns:1fr;">
-    <div class="card" style="padding:14px;">
-      <div class="card-text" style="margin-bottom:12px;">Visualize o trajeto completo no Google Maps — clique para abrir a navegação:</div>
-      <div style="display:flex;flex-wrap:wrap;gap:8px;">
-        <a href="https://maps.google.com/maps/dir/New+York/Philadelphia/Washington+DC/Chicago" target="_blank" class="btn btn-primary" style="font-size:11px;padding:8px 14px;"><i class="fas fa-route"></i> NY → Chicago</a>
-        <a href="https://maps.google.com/maps/dir/Chicago/Springfield+IL/St+Louis/Tulsa/Amarillo/Albuquerque" target="_blank" class="btn btn-primary" style="font-size:11px;padding:8px 14px;"><i class="fas fa-road"></i> Rota 66</a>
-        <a href="https://maps.google.com/maps/dir/Albuquerque/Las+Vegas+NV/Santa+Monica" target="_blank" class="btn btn-primary" style="font-size:11px;padding:8px 14px;"><i class="fas fa-route"></i> Albuquerque → LA</a>
-        <a href="https://maps.google.com/maps/dir/Santa+Monica/Big+Sur/San+Francisco/Redwood+National+Park/Portland/Seattle" target="_blank" class="btn btn-primary" style="font-size:11px;padding:8px 14px;"><i class="fas fa-route"></i> Califórnia → Seattle</a>
-      </div>
-    </div>
-  </div>
+  <h2>🗺️ Roteiro de 30 Dias</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Dia</th>
+        <th>Cidade</th>
+        <th>Km</th>
+        <th>Atividades</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr onclick="showModal('dia-1-5')">
+        <td>1-5</td>
+        <td>🍁 Quebec & Montreal</td>
+        <td>-</td>
+        <td>Chegada, exploração, Niagara</td>
+      </tr>
+      <tr onclick="showModal('dia-6-8')">
+        <td>6-8</td>
+        <td>🗽 New York</td>
+        <td>-</td>
+        <td>Central Park, Times Square, MoMA</td>
+      </tr>
+      <tr onclick="showModal('dia-9-10')">
+        <td>9-10</td>
+        <td>🏛️ Philadelphia & DC</td>
+        <td>150</td>
+        <td>Liberty Bell, Smithsonian (grátis)</td>
+      </tr>
+      <tr onclick="showModal('dia-11-13')">
+        <td>11-13</td>
+        <td>🌬️ Chicago</td>
+        <td>1.270</td>
+        <td>Cloud Gate, Millennium Park</td>
+      </tr>
+      <tr onclick="showModal('dia-14-20')">
+        <td>14-20</td>
+        <td>🛣️ Rota 66</td>
+        <td>1.800</td>
+        <td>Cadillac Ranch, Springfield, Albuquerque</td>
+      </tr>
+      <tr onclick="showModal('dia-21-23')">
+        <td>21-23</td>
+        <td>🎰 Las Vegas</td>
+        <td>600</td>
+        <td>The Strip, Cirque du Soleil, Grand Canyon</td>
+      </tr>
+      <tr onclick="showModal('dia-24-26')">
+        <td>24-26</td>
+        <td>🏞️ Yosemite & Sequoias</td>
+        <td>400</td>
+        <td>Half Dome, El Capitan, Glacier Point</td>
+      </tr>
+      <tr onclick="showModal('dia-27-30')">
+        <td>27-30</td>
+        <td>🌉 San Francisco</td>
+        <td>-</td>
+        <td>Golden Gate, Alcatraz, Cable Cars</td>
+      </tr>
+    </tbody>
+  </table>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     PÁGINA: CUSTOS
-═══════════════════════════════════════════ -->
+<!-- PÁGINA: CUSTOS -->
 <div class="page" id="page-custos">
-  <div class="page-title"><i class="fas fa-dollar-sign"></i> Análise de Custos</div>
-
-  <!-- Dashboard Interativo Unificado -->
-  <div style="background:linear-gradient(135deg,#6BA3D4,#9FD4B5);border-radius:12px;padding:16px 20px;display:flex;align-items:center;gap:14px;margin-bottom:20px;color:#fff;cursor:pointer;transition:opacity .2s;" onclick="showDashboardModal()">
-    <div style="font-size:32px;flex-shrink:0;">📊</div>
-    <div style="flex:1;">
-      <h3 style="font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;margin-bottom:3px;color:#fff;">Dashboard Interativo</h3>
-      <p style="font-size:11px;opacity:.8;color:#fff;">Gráficos, tabelas, simulador de câmbio e muito mais — tudo em uma página</p>
+  <h2>💰 Análise de Custos</h2>
+  <button class="btn" onclick="window.open('dashboard.html', '_blank')">📊 Abrir Dashboard Interativo</button>
+  
+  <div class="grid">
+    <div class="card" onclick="showModal('custo-hospedagem')">
+      <h3>🏨 Hospedagem</h3>
+      <p>USD $4.200 (31% do orçamento)</p>
+      <p style="font-size: 12px; color: #999;">25 noites · $90-280/noite</p>
     </div>
-    <div style="margin-left:auto;font-size:20px;opacity:.7;color:#fff;"><i class="fas fa-arrow-right"></i></div>
-  </div>
-
-  <!-- Modal do Dashboard -->
-  <div id="dashboardModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;padding:10px;">
-    <div style="background:#fff;border-radius:12px;width:100%;height:100%;max-width:1200px;margin:0 auto;display:flex;flex-direction:column;box-shadow:0 10px 40px rgba(0,0,0,.3);">
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid #e8eaed;">
-        <h2 style="font-family:'Montserrat',sans-serif;font-size:16px;font-weight:800;color:#2c3e50;">📊 Dashboard Interativo da Viagem</h2>
-        <button onclick="closeDashboardModal()" style="background:none;border:none;font-size:28px;cursor:pointer;color:#bdc3c7;transition:color .2s;" onmouseover="this.style.color='#e74c3c'" onmouseout="this.style.color='#bdc3c7';">×</button>
-      </div>
-      <iframe id="dashboardFrame" src="dashboard.html" style="flex:1;border:none;border-radius:0;"></iframe>
+    <div class="card" onclick="showModal('custo-aluguel')">
+      <h3>🚗 Aluguel + Seguro</h3>
+      <p>USD $3.500 (27% do orçamento)</p>
+      <p style="font-size: 12px; color: #999;">SUV compacto · 25 dias</p>
     </div>
-  </div>
-
-  <!-- KPIs de custo -->
-  <div class="kpi-grid">
-    <div class="kpi" data-tip="Hospedagem: USD $4.000&#10;25 noites · média $160/noite&#10;Big Sur: $350/noite&#10;Las Vegas: $200/noite&#10;Rota 66: $90/noite&#10;NY: $280/noite">
-      <div class="kpi-val">$4k</div><div class="kpi-lbl">Hospedagem</div>
+    <div class="card" onclick="showModal('custo-alimentacao')">
+      <h3>🍽️ Alimentação</h3>
+      <p>USD $2.400 (18% do orçamento)</p>
+      <p style="font-size: 12px; color: #999;">30 dias · ~$80/dia</p>
     </div>
-    <div class="kpi s" data-tip="Combustível: USD $1.300&#10;3.850 km total&#10;Carro: ~9L/100km&#10;Gasolina: ~$3,80/galão&#10;Inclui pedágios estimados">
-      <div class="kpi-val">$1.3k</div><div class="kpi-lbl">Combustível</div>
+    <div class="card" onclick="showModal('custo-combustivel')">
+      <h3>⛽ Combustível</h3>
+      <p>USD $1.500 (10% do orçamento)</p>
+      <p style="font-size: 12px; color: #999;">4.200 km · ~9 km/litro</p>
     </div>
-    <div class="kpi g" data-tip="Alimentação: USD $2.400&#10;30 dias · média $80/dia&#10;Café: $15–25&#10;Almoço: $20–35&#10;Jantar: $40–80&#10;Gorjeta: 18–20%">
-      <div class="kpi-val">$2.4k</div><div class="kpi-lbl">Alimentação</div>
+    <div class="card" onclick="showModal('custo-atividades')">
+      <h3>🎫 Atividades</h3>
+      <p>USD $1.300 (9% do orçamento)</p>
+      <p style="font-size: 12px; color: #999;">Ingressos e tours</p>
     </div>
-    <div class="kpi y" data-tip="Atividades: USD $1.200&#10;Alcatraz: $45/pessoa&#10;Cirque du Soleil: $120&#10;Space Needle: $35&#10;Grand Canyon tour: $200&#10;Museus Smithsonian: GRÁTIS">
-      <div class="kpi-val">$1.2k</div><div class="kpi-lbl">Atividades</div>
-    </div>
-    <div class="kpi p" data-tip="Aluguel de carro: USD $2.000&#10;25 dias · $80/dia&#10;Seguro completo: $1.500&#10;Total: USD $3.500&#10;Recomendado: Hertz ou Avis&#10;Categoria: SUV ou Sedan">
-      <div class="kpi-val">$3.5k</div><div class="kpi-lbl">Aluguel+Seguro</div>
-    </div>
-  </div>
-
-  <!-- Cards de custo detalhados -->
-  <div class="cards">
-    <div class="cost-card" data-tip="25 noites de hospedagem&#10;NY (3n): $280/n = $840&#10;Chicago (3n): $180/n = $540&#10;Rota 66 (7n): $90/n = $630&#10;Las Vegas (3n): $200/n = $600&#10;Big Sur (3n): $350/n = $1.050&#10;SF (2n): $220/n = $440&#10;Seattle (3n): $160/n = $480">
-      <div class="cost-header"><div class="cost-dot" style="background:#6BA3D4;"></div><div class="cost-name">Hospedagem</div></div>
-      <div class="cost-amount">USD $4.000</div>
-      <div class="cost-pct">31% do orçamento · 25 noites</div>
-      <div class="cost-bar-track"><div class="cost-bar-fill" style="width:31%;background:#6BA3D4;"></div></div>
-    </div>
-    <div class="cost-card" data-tip="Aluguel de carro (25 dias):&#10;$80/dia × 25 = $2.000&#10;Seguro completo: $1.500&#10;Total: $3.500&#10;Recomendado: Hertz Gold&#10;ou Avis Preferred&#10;Categoria: SUV compacto">
-      <div class="cost-header"><div class="cost-dot" style="background:#D4A5D4;"></div><div class="cost-name">Aluguel + Seguro</div></div>
-      <div class="cost-amount">USD $3.500</div>
-      <div class="cost-pct">27% do orçamento · 25 dias</div>
-      <div class="cost-bar-track"><div class="cost-bar-fill" style="width:27%;background:#D4A5D4;"></div></div>
-    </div>
-    <div class="cost-card" data-tip="30 dias de alimentação&#10;Café da manhã: $15–25/dia&#10;Almoço: $20–35/dia&#10;Jantar: $40–80/dia&#10;Média: $80/dia × 30 = $2.400&#10;Gorjeta obrigatória: 18–20%&#10;Dica: Trader Joe's para lanches">
-      <div class="cost-header"><div class="cost-dot" style="background:#9FD4B5;"></div><div class="cost-name">Alimentação</div></div>
-      <div class="cost-amount">USD $2.400</div>
-      <div class="cost-pct">18% do orçamento · 30 dias</div>
-      <div class="cost-bar-track"><div class="cost-bar-fill" style="width:18%;background:#9FD4B5;"></div></div>
-    </div>
-    <div class="cost-card" data-tip="Combustível: 3.850 km&#10;Consumo médio: 9L/100km&#10;Total: ~346 litros&#10;Preço médio: $3,80/galão&#10;= $3,80/3,78L = $1,00/L&#10;Total combustível: $1.300&#10;Inclui pedágios estimados">
-      <div class="cost-header"><div class="cost-dot" style="background:#F4A9A8;"></div><div class="cost-name">Combustível</div></div>
-      <div class="cost-amount">USD $1.300</div>
-      <div class="cost-pct">10% do orçamento · 3.850 km</div>
-      <div class="cost-bar-track"><div class="cost-bar-fill" style="width:10%;background:#F4A9A8;"></div></div>
-    </div>
-    <div class="cost-card" data-tip="Atividades e ingressos:&#10;Alcatraz: $45/pessoa&#10;Cirque du Soleil: $120&#10;Space Needle: $35/pessoa&#10;Grand Canyon helicóptero: $200&#10;Museus Smithsonian: GRÁTIS&#10;Central Park: GRÁTIS&#10;America the Beautiful Pass: $80">
-      <div class="cost-header"><div class="cost-dot" style="background:#FFE5B4;"></div><div class="cost-name">Atividades & Ingressos</div></div>
-      <div class="cost-amount">USD $1.200</div>
-      <div class="cost-pct">9% do orçamento · 30 dias</div>
-      <div class="cost-bar-track"><div class="cost-bar-fill" style="width:9%;background:#FFE5B4;"></div></div>
-    </div>
-    <div class="cost-card" data-tip="Margem de segurança: 10%&#10;Sobre o total base de $12.400&#10;= USD $1.240 de reserva&#10;Orçamento disponível: $20.000&#10;Total com margem: $13.640&#10;💰 Folga: USD $6.360&#10;Para upgrades e imprevistos">
-      <div class="cost-header"><div class="cost-dot" style="background:#2C3E50;"></div><div class="cost-name">Margem de Segurança (10%)</div></div>
-      <div class="cost-amount">USD $1.240</div>
-      <div class="cost-pct">Reserva estratégica · Folga: $6.360</div>
-      <div class="cost-bar-track"><div class="cost-bar-fill" style="width:9%;background:#2C3E50;"></div></div>
-    </div>
-  </div>
-
-  <!-- Simulador câmbio -->
-  <div class="chart-wrap">
-    <h3>💱 Simulador de Câmbio</h3>
-    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px;">
-      <label style="font-size:12px;color:var(--mid);font-weight:600;">Taxa USD/BRL:</label>
-      <input type="range" id="taxaSlider" min="4.5" max="7.0" step="0.05" value="5.20" style="flex:1;min-width:120px;">
-      <span id="taxaVal" style="font-family:'Montserrat',sans-serif;font-size:14px;font-weight:800;color:var(--dark);">R$ 5,20</span>
-    </div>
-    <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);">
-      <div class="kpi g"><div class="kpi-val" id="brlBase">R$64k</div><div class="kpi-lbl">Base BRL</div></div>
-      <div class="kpi s"><div class="kpi-val" id="brlMargem">R$71k</div><div class="kpi-lbl">Com Margem</div></div>
-      <div class="kpi p"><div class="kpi-val" id="brlTotal">R$104k</div><div class="kpi-lbl">Orçamento Total</div></div>
+    <div class="card" onclick="showModal('custo-margem')">
+      <h3>📈 Margem de Segurança</h3>
+      <p>USD $8.100 (10% do orçamento)</p>
+      <p style="font-size: 12px; color: #999;">Folga e upgrades</p>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     PÁGINA: CONSULTOR
-═══════════════════════════════════════════ -->
-<div class="page" id="page-consultor">
-  <div class="page-title"><i class="fas fa-lightbulb"></i> Consultor da Viagem</div>
-
-  <div class="alert"><strong>⚠️ Big Sur:</strong> Reserve hotel com <strong>3+ meses de antecedência</strong> — esgota muito rápido em setembro.</div>
-  <div class="alert"><strong>⚠️ Alcatraz:</strong> Compre ingressos online com <strong>2+ semanas</strong> de antecedência em <a href="https://www.alcatrazcruises.com/" target="_blank" style="color:var(--salmon);">alcatrazcruises.com</a></div>
-  <div class="alert"><strong>⚠️ Las Vegas:</strong> Reserve shows (Cirque du Soleil) com <strong>1+ mês</strong> de antecedência.</div>
-
-  <div class="cards">
-    <div class="card" data-tip="Adicionar 5–10 dias permite:&#10;· Explorar Sedona (Red Rocks)&#10;· Monument Valley (Navajo)&#10;· Antelope Canyon (slot canyon)&#10;· Custo adicional: USD $3–4k&#10;· Ritmo muito mais relaxado">
-      <div class="card-icon">⚡</div>
-      <div class="card-title">Estender para 35–40 Dias</div>
-      <div class="card-text">Adicionar Sedona, Monument Valley e Antelope Canyon. +USD $3–4k</div>
-      <a href="https://visitsedona.com/" target="_blank" class="card-link">Visit Sedona →</a>
+<!-- PÁGINA: ESTRATÉGIAS & CONSULTOR -->
+<div class="page" id="page-estrategia">
+  <h2>⚡ Estratégias Alternativas & Consultor</h2>
+  
+  <h3 style="margin-top: 30px;">📊 Comparativo de Cenários</h3>
+  <div class="grid">
+    <div class="card" onclick="showModal('cenario-30')">
+      <h3>📍 30 Dias (Atual)</h3>
+      <p><strong>Duração:</strong> 30 dias</p>
+      <p><strong>Distância:</strong> 4.200 km</p>
+      <p><strong>Orçamento:</strong> USD $22.000</p>
+      <p><strong>Cidades:</strong> 13</p>
+      <p style="font-size: 12px; color: #999; margin-top: 10px;">Ritmo moderado. Ideal para ver o máximo em 30 dias.</p>
     </div>
-    <div class="card" data-tip="Economize USD $2–3k:&#10;· Smithsonian: GRÁTIS (5 museus)&#10;· America the Beautiful Pass: $80&#10;· Trader Joe's para lanches&#10;· Happy hour em restaurantes&#10;· Airbnb em cidades menores&#10;· Combustível: app GasBuddy">
-      <div class="card-icon">💰</div>
-      <div class="card-title">Otimizar Orçamento</div>
-      <div class="card-text">Economize USD $2–3k sem comprometer qualidade com estas dicas</div>
-      <a href="https://www.gasBuddy.com/" target="_blank" class="card-link">GasBuddy →</a>
+    <div class="card" onclick="showModal('cenario-40')">
+      <h3>📍 40 Dias (+10)</h3>
+      <p><strong>Duração:</strong> 40 dias</p>
+      <p><strong>Distância:</strong> 5.500 km</p>
+      <p><strong>Orçamento:</strong> USD $28.000</p>
+      <p><strong>Cidades:</strong> 16</p>
+      <p style="font-size: 12px; color: #999; margin-top: 10px;">Adiciona Sedona, Monument Valley, Antelope Canyon.</p>
     </div>
-    <div class="card" data-tip="Experiências premium recomendadas:&#10;· Helicóptero Grand Canyon: $200&#10;· Sunset Cruise SF: $85&#10;· Whale watching Monterey: $60&#10;· Napa Valley wine tour: $150&#10;· Spa em Big Sur: $200&#10;Total estimado: $695">
-      <div class="card-icon">💎</div>
-      <div class="card-title">Experiências Premium</div>
-      <div class="card-text">Helicóptero Grand Canyon, Sunset Cruise SF, Whale Watching. +USD $700</div>
-      <a href="https://www.viator.com/" target="_blank" class="card-link">Viator →</a>
-    </div>
-    <div class="card" data-tip="Sedona, Arizona:&#10;· Red Rocks, Cathedral Rock&#10;· Vórtices energéticos&#10;· Trilhas espetaculares&#10;· Hotel: Enchantment Resort&#10;· Custo: $250–350/noite&#10;· Clima: 28°C em setembro">
-      <div class="card-icon">🌄</div>
-      <div class="card-title">Sedona, Arizona</div>
-      <div class="card-text">Red Rocks, Cathedral Rock. IMPRESCINDÍVEL! USD $250–300/noite</div>
-      <a href="https://visitsedona.com/" target="_blank" class="card-link">Visit Sedona →</a>
-    </div>
-    <div class="card" data-tip="Monument Valley, Utah/Arizona:&#10;· Paisagem mais icônica do Oeste&#10;· Navajo Nation Tribal Park&#10;· Tour guiado obrigatório&#10;· The View Hotel: dentro do parque&#10;· Custo: $180/noite&#10;· Pôr do sol: imperdível">
-      <div class="card-icon">🏜️</div>
-      <div class="card-title">Monument Valley</div>
-      <div class="card-text">Paisagem mais icônica do Oeste americano. Tour guiado Navajo</div>
-      <a href="https://navajonationparks.org/" target="_blank" class="card-link">Navajo Parks →</a>
-    </div>
-    <div class="card" data-tip="Antelope Canyon, Arizona:&#10;· Slot canyon mais fotografado do mundo&#10;· Luz solar entra às 11h–13h&#10;· Tour obrigatório com guia Navajo&#10;· Upper Canyon: $80/pessoa&#10;· Reserve com 3+ semanas&#10;· Próximo a Page, AZ">
-      <div class="card-icon">🏜️</div>
-      <div class="card-title">Antelope Canyon</div>
-      <div class="card-text">Slot canyon mais fotografado do mundo. Tour guiado Navajo. $80/pessoa</div>
-      <a href="https://www.antelopecanyon.com/" target="_blank" class="card-link">Antelope Canyon →</a>
+    <div class="card" onclick="showModal('cenario-60')">
+      <h3>📍 60 Dias (+30)</h3>
+      <p><strong>Duração:</strong> 60 dias</p>
+      <p><strong>Distância:</strong> 7.200 km</p>
+      <p><strong>Orçamento:</strong> USD $35.000</p>
+      <p><strong>Cidades:</strong> 20</p>
+      <p style="font-size: 12px; color: #999; margin-top: 10px;">Ritmo lento. Inclui Parques Nacionais e experiências premium.</p>
     </div>
   </div>
-
-  <!-- Links de aluguel de carro -->
-  <div class="page-title" style="margin-top:8px;"><i class="fas fa-car"></i> Aluguel de Carro</div>
-  <div class="cards">
-    <div class="card">
-      <div class="card-icon">🚗</div>
-      <div class="card-title">Hertz (Recomendado)</div>
-      <div class="card-text">Gold Plus Rewards · SUV compacto · Retirada JFK, devolução SEA-TAC</div>
-      <a href="https://www.hertz.com/" target="_blank" class="card-link">Hertz.com →</a>
+  
+  <h3 style="margin-top: 30px;">💡 Consultor da Viagem</h3>
+  <div class="grid">
+    <div class="card" onclick="showModal('consultor-big-sur')">
+      <h3>⚠️ Big Sur</h3>
+      <p>Reserve hotel com <strong>3+ meses de antecedência</strong> — esgota muito rápido em setembro.</p>
     </div>
-    <div class="card">
-      <div class="card-icon">🚗</div>
-      <div class="card-title">Avis Preferred</div>
-      <div class="card-text">Preferred Plus · Sedan ou SUV · Sem taxa de devolução em outra cidade</div>
-      <a href="https://www.avis.com/" target="_blank" class="card-link">Avis.com →</a>
+    <div class="card" onclick="showModal('consultor-alcatraz')">
+      <h3>⚠️ Alcatraz</h3>
+      <p>Compre ingressos online com <strong>2+ semanas</strong> de antecedência em alcatrazcruises.com</p>
     </div>
-    <div class="card">
-      <div class="card-icon">🚗</div>
-      <div class="card-title">Enterprise</div>
-      <div class="card-text">Enterprise Plus · Boa relação custo-benefício · Ampla rede de postos</div>
-      <a href="https://www.enterprise.com/" target="_blank" class="card-link">Enterprise.com →</a>
-    </div>
-    <div class="card">
-      <div class="card-icon">🔍</div>
-      <div class="card-title">Comparar Preços</div>
-      <div class="card-text">Compare todas as locadoras em um só lugar. Economize até 40%</div>
-      <a href="https://www.kayak.com/cars" target="_blank" class="card-link">Kayak Cars →</a>
+    <div class="card" onclick="showModal('consultor-vegas')">
+      <h3>⚠️ Las Vegas</h3>
+      <p>Reserve shows (Cirque du Soleil) com <strong>1+ mês</strong> de antecedência.</p>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     PÁGINA: ESTRATÉGIAS
-═══════════════════════════════════════════ -->
-<div class="page" id="page-estrategias">
-  <div class="page-title"><i class="fas fa-chess"></i> Estratégias Alternativas</div>
-
-  <div class="tabs">
-    <button class="tab active" data-tab="s30">30 Dias (Atual)</button>
-    <button class="tab" data-tab="s40">40 Dias (+10)</button>
-    <button class="tab" data-tab="s60">60 Dias (+30)</button>
-  </div>
-
-  <!-- 30 DIAS -->
-  <div class="tab-content active" id="s30">
-    <div class="scenario">
-      <h3>📍 Cenário 1: 30 Dias — Roteiro Atual</h3>
-      <div class="kpi-grid">
-        <div class="kpi" data-tip="30 dias · 04 Set → 03 Out 2026"><div class="kpi-val">30</div><div class="kpi-lbl">Dias</div></div>
-        <div class="kpi s" data-tip="3.850 km totais&#10;NY → Seattle via Rota 66"><div class="kpi-val">3.850</div><div class="kpi-lbl">Km</div></div>
-        <div class="kpi g" data-tip="USD $22k com margem 10%&#10;Base: $20.000"><div class="kpi-val">$22k</div><div class="kpi-lbl">Orçamento</div></div>
-        <div class="kpi y" data-tip="11 cidades principais"><div class="kpi-val">11</div><div class="kpi-lbl">Cidades</div></div>
-      </div>
-      <div class="scenario-item"><strong>Roteiro:</strong> NY → Philadelphia → DC → Chicago → Rota 66 → Las Vegas → Big Sur → San Francisco → Redwood → Portland → Seattle</div>
-      <div class="scenario-item"><strong>Ritmo:</strong> Moderado — 3 dias por cidade grande, 1–2 dias em cidades menores</div>
-      <div class="scenario-item"><strong>Ideal para:</strong> Quem quer ver o máximo em 30 dias com orçamento controlado</div>
-    </div>
-  </div>
-
-  <!-- 40 DIAS -->
-  <div class="tab-content" id="s40">
-    <div class="scenario">
-      <h3>📍 Cenário 2: 40 Dias — Rota 66 em Detalhes ⭐ RECOMENDADO</h3>
-      <div class="kpi-grid">
-        <div class="kpi s" data-tip="40 dias · Set–Out 2026"><div class="kpi-val">40</div><div class="kpi-lbl">Dias</div></div>
-        <div class="kpi s" data-tip="5.200 km totais&#10;+1.350 km vs cenário 30d"><div class="kpi-val">5.200</div><div class="kpi-lbl">Km</div></div>
-        <div class="kpi s" data-tip="USD $28k total&#10;+$6k vs cenário 30d"><div class="kpi-val">$28k</div><div class="kpi-lbl">Orçamento</div></div>
-        <div class="kpi s" data-tip="12 cidades principais&#10;+1 vs cenário 30d"><div class="kpi-val">12</div><div class="kpi-lbl">Cidades</div></div>
-      </div>
-      <div class="scenario-item"><strong>🚗 Chicago → St. Louis:</strong> Adicionar <strong>Springfield, Illinois</strong> — Abraham Lincoln Presidential Library, Rota 66 clássica. +1 dia, +USD $250</div>
-      <div class="scenario-item"><strong>🚗 St. Louis → Las Vegas:</strong> Adicionar <strong>Tulsa, Oklahoma</strong> — murais históricos da Rota 66, Woody Guthrie Center. +1 dia, +USD $200</div>
-      <div class="scenario-item"><strong>🚗 Las Vegas → Santa Mônica:</strong> Adicionar <strong>Barstow, California</strong> — Rota 66 final, Wigwam Motel, atmosfera vintage. +0,5 dias</div>
-      <div class="scenario-item"><strong>🚗 Santa Mônica → San Francisco:</strong> Adicionar <strong>San Luis Obispo</strong> — vinícolas, paisagem costeira, Hearst Castle. +1 dia, +USD $300</div>
-      <div class="scenario-item"><strong>🚗 San Francisco → Seattle:</strong> Adicionar <strong>Crater Lake, Oregon</strong> — lago mais puro dos EUA, cor azul impossível. +1,5 dias, +USD $400</div>
-      <div class="scenario-item" style="background:rgba(107,163,212,.1);"><strong>💡 Por que recomendamos:</strong> Você adiciona apenas 10 dias e USD $6k, mas ganha um ritmo muito mais relaxado, explora a Rota 66 em profundidade e inclui paisagens únicas que o cenário de 30 dias não permite.</div>
-    </div>
-  </div>
-
-  <!-- 60 DIAS -->
-  <div class="tab-content" id="s60">
-    <div class="scenario">
-      <h3>📍 Cenário 3: 60 Dias — Explorador Total</h3>
-      <div class="kpi-grid">
-        <div class="kpi g" data-tip="60 dias · Set–Nov 2026"><div class="kpi-val">60</div><div class="kpi-lbl">Dias</div></div>
-        <div class="kpi g" data-tip="7.500 km totais&#10;+3.650 km vs cenário 30d"><div class="kpi-val">7.500</div><div class="kpi-lbl">Km</div></div>
-        <div class="kpi g" data-tip="USD $40k total&#10;+$18k vs cenário 30d"><div class="kpi-val">$40k</div><div class="kpi-lbl">Orçamento</div></div>
-        <div class="kpi g" data-tip="18 cidades principais&#10;+7 vs cenário 30d"><div class="kpi-val">18</div><div class="kpi-lbl">Cidades</div></div>
-      </div>
-      <div class="scenario-item"><strong>🌄 Adição 1 — Sedona, Arizona:</strong> Red Rocks, Cathedral Rock, vórtices energéticos. 3 dias, +USD $900</div>
-      <div class="scenario-item"><strong>🏜️ Adição 2 — Monument Valley:</strong> Paisagem mais icônica do Oeste, tour Navajo. 2 dias, +USD $600</div>
-      <div class="scenario-item"><strong>🏜️ Adição 3 — Antelope Canyon:</strong> Slot canyon mais fotografado do mundo. 1 dia, +USD $300</div>
-      <div class="scenario-item"><strong>🏔️ Adição 4 — Grand Canyon Sul:</strong> Exploração completa (não só tour de helicóptero). 2 dias, +USD $500</div>
-      <div class="scenario-item"><strong>🌲 Adição 5 — Zion & Bryce Canyon:</strong> Parques nacionais de tirar o fôlego. 3 dias, +USD $700</div>
-      <div class="scenario-item"><strong>🌊 Adição 6 — Bend, Oregon:</strong> Smith Rock, Cascade Lakes, cervejarias artesanais. 2 dias, +USD $500</div>
-      <div class="scenario-item"><strong>🌊 Adição 7 — Cannon Beach, Oregon:</strong> Haystack Rock, praia mais bonita do noroeste. 1 dia, +USD $200</div>
-      <div class="scenario-item" style="background:rgba(159,212,181,.15);"><strong>💡 Ideal para:</strong> Quem tem flexibilidade de tempo e quer uma experiência completa dos EUA, incluindo os parques nacionais do sudoeste — que são absolutamente extraordinários.</div>
-    </div>
-  </div>
-
-  <!-- Tabela comparativa -->
-  <div class="chart-wrap" style="margin-top:8px;">
-    <h3>Comparativo dos 3 Cenários</h3>
-    <canvas id="chartCenarios" style="max-height:220px;"></canvas>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════
-     PÁGINA: DICAS
-═══════════════════════════════════════════ -->
+<!-- PÁGINA: DICAS -->
 <div class="page" id="page-dicas">
-  <div class="page-title"><i class="fas fa-check-circle"></i> Dicas Essenciais</div>
-
-  <div class="dica-card">
-    <h4>📋 3 Meses Antes</h4>
-    <p>Reserve Big Sur (esgota rápido!), compre seguro de viagem internacional, notifique seu banco sobre a viagem, verifique validade do passaporte (mín. 6 meses), reserve Alcatraz online, reserve Cirque du Soleil Las Vegas.</p>
+  <h2>💡 Dicas Essenciais</h2>
+  
+  <div class="card">
+    <h3>📋 3 Meses Antes</h3>
+    <p>Reserve Big Sur, compre seguro de viagem, notifique seu banco, verifique passaporte (6+ meses), reserve Alcatraz, reserve Cirque du Soleil.</p>
   </div>
-  <div class="dica-card">
-    <h4>📱 1 Mês Antes</h4>
-    <p>Ative eSIM para os EUA (recomendado: T-Mobile ou AT&T), baixe Google Maps offline para cada estado, reserve restaurantes especiais, confirme todos os hotéis, baixe app GasBuddy para combustível mais barato.</p>
+  
+  <div class="card">
+    <h3>📱 1 Mês Antes</h3>
+    <p>Ative eSIM (T-Mobile/AT&T), baixe Google Maps offline, reserve restaurantes, confirme hotéis, baixe GasBuddy.</p>
   </div>
-  <div class="dica-card">
-    <h4>🚗 Na Estrada</h4>
-    <p>Mantenha o tanque sempre acima de 1/4 (postos escassos na Rota 66), respeite limites de velocidade, dirija devagar em Big Sur (curvas perigosas), confirme reservas com 24h de antecedência, carregue água sempre.</p>
+  
+  <div class="card">
+    <h3>🚗 Na Estrada</h3>
+    <p>Mantenha tanque acima de 1/4, respeite limites de velocidade, dirija devagar em Big Sur, confirme reservas com 24h.</p>
   </div>
-  <div class="dica-card">
-    <h4>💰 Economia Inteligente</h4>
-    <p>Museus Smithsonian em DC são gratuitos (5 museus!), America the Beautiful Pass $80 dá acesso a todos os parques nacionais, happy hour em restaurantes (17h–19h), Trader Joe's para lanches e bebidas, gorjeta padrão 18–20%.</p>
+  
+  <div class="card">
+    <h3>💰 Economia Inteligente</h3>
+    <p>Smithsonian em DC é grátis! America the Beautiful Pass ($80) dá acesso a todos os parques. Happy hour 17h-19h.</p>
   </div>
-  <div class="dica-card">
-    <h4>📸 Melhores Fotos</h4>
-    <p>Golden Gate: amanhecer (névoa dramática), Big Sur: pôr do sol nos mirantes, Las Vegas: após as 22h, Route 66: entardecer com luz dourada, Redwood: meio-dia (luz penetra pelas árvores), Seattle: dia claro com Monte Rainier ao fundo.</p>
+  
+  <div class="card">
+    <h3>📸 Melhores Fotos</h3>
+    <p>Golden Gate: amanhecer. Big Sur: pôr do sol. Las Vegas: após 22h. Route 66: entardecer com luz dourada.</p>
   </div>
-  <div class="dica-card">
-    <h4>🌡️ Clima & Roupas</h4>
-    <p>NY/Chicago: 15–25°C (casaco leve), Deserto/Las Vegas: 28–38°C (protetor solar FPS 50+), Big Sur/SF: 13–20°C (casaco impermeável), Seattle: 12–18°C (chuva possível). Leve camadas — a variação é grande!</p>
-  </div>
-  <div class="dica-card">
-    <h4>📄 Documentos Essenciais</h4>
-    <p>Passaporte válido (6+ meses), ESTA (autorização eletrônica, $21, solicite com 72h), CNH internacional, seguro viagem com cobertura médica mínima USD $100k, cartão de crédito sem IOF (Nubank, C6, Wise), cópia digital de todos os documentos.</p>
-  </div>
-  <div class="dica-card">
-    <h4>🏨 Reservas Críticas</h4>
-    <p>Big Sur (3+ meses antes), Alcatraz SF (2+ semanas), Cirque du Soleil LV (1+ mês), Grand Canyon Helicopter (1+ semana), Napa Valley wineries (2+ semanas), restaurantes estrelados em NY e SF (1+ mês).</p>
+  
+  <div class="card">
+    <h3>🌡️ Clima & Roupas</h3>
+    <p>NY/Chicago: 15-25°C. Deserto: 28-38°C (protetor solar FPS 50+). SF: 13-20°C (casaco impermeável). Leve camadas!</p>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     JAVASCRIPT
-═══════════════════════════════════════════ -->
+<!-- PÁGINA: PREVIEW -->
+<div class="page" id="page-preview">
+  <h2>🎬 Preview Cinematográfico</h2>
+  <p>22 slides sincronizados com narração profissional de 4 min 46 seg</p>
+  <button class="btn" onclick="window.open('preview.html', '_blank')">Assistir Agora</button>
+</div>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
 <script>
-/* ── SIDEBAR ── */
-const ham = document.getElementById('ham');
-const sidebar = document.getElementById('sidebar');
-const overlay = document.getElementById('overlay');
+// ═══════════════════════════════════════════
+// NAVEGAÇÃO
+// ═══════════════════════════════════════════
 
-ham.addEventListener('click', () => {
-  sidebar.classList.toggle('open');
-  overlay.classList.toggle('show');
-});
-overlay.addEventListener('click', () => {
-  sidebar.classList.remove('open');
-  overlay.classList.remove('show');
-});
-
-/* ── NAVEGAÇÃO SPA ── */
-function showPage(id) {
+function showPage(pageId) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.sb-nav a').forEach(a => a.classList.remove('active'));
-  const pg = document.getElementById('page-' + id);
-  if (pg) {
-    pg.classList.add('active');
-    pg.scrollTop = 0;
-  }
-  const lnk = document.querySelector(`.sb-nav a[data-page="${id}"]`);
-  if (lnk) lnk.classList.add('active');
-  sidebar.classList.remove('open');
-  overlay.classList.remove('show');
-  // Inicializar charts se necessário
-  if (id === 'dashboard') initDashCharts();
-  if (id === 'custos') initCambio();
-  if (id === 'estrategias') initCenariosChart();
+  document.getElementById('page-' + pageId).classList.add('active');
+  closeSidebar();
+  window.scrollTo(0, 0);
 }
 
-// Links do sidebar
-document.querySelectorAll('.sb-nav a[data-page]').forEach(a => {
-  a.addEventListener('click', e => { e.preventDefault(); showPage(a.dataset.page); });
+function goHome() {
+  showPage('inicio');
+}
+
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
+}
+
+document.getElementById('ham').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('open');
 });
 
-// Botões internos
-document.querySelectorAll('a[data-page], .nav-btn[data-page]').forEach(a => {
-  a.addEventListener('click', e => { e.preventDefault(); showPage(a.dataset.page); });
+// ═══════════════════════════════════════════
+// MODAL
+// ═══════════════════════════════════════════
+
+const modalContent = {
+  'kpi-30dias': '<h3>📅 30 Dias Completos</h3><p>De 4 de setembro a 3 de outubro de 2026.</p><p><strong>Ritmo:</strong> Moderado com 3 dias em cidades grandes e 1-2 dias em cidades menores.</p>',
+  'kpi-4200km': '<h3>🛣️ 4.200 Quilômetros</h3><p>Distância total percorrida durante toda a viagem.</p><p><strong>Consumo:</strong> ~9 km/litro (SUV) = 467 litros = USD $1.500</p>',
+  'kpi-13cidades': '<h3>🏙️ 13 Cidades Visitadas</h3><p>Quebec, Montreal, New York, Philadelphia, DC, Chicago, Springfield, Tulsa, Amarillo, Albuquerque, Las Vegas, Yosemite, San Francisco</p>',
+  'kpi-22k': '<h3>💰 Orçamento Total: USD $22.000</h3><p>Equivalente a R$ 110.000 com taxa 5.0</p><p><strong>Breakdown:</strong><br>Hospedagem: $4.200<br>Aluguel+Seguro: $3.500<br>Alimentação: $2.400<br>Combustível: $1.500<br>Atividades: $1.300<br>Margem: $8.100</p>',
+  
+  'dia-1-5': '<h3>🍁 Dias 1-5: Quebec & Montreal</h3><p><strong>Atividades:</strong> Chegada, exploração da cidade, Niagara Falls, museus.</p><p><strong>Hospedagem:</strong> $150/noite = $750</p><p><strong>Clima:</strong> 10-15°C (casaco leve)</p>',
+  'dia-6-8': '<h3>🗽 Dias 6-8: New York</h3><p><strong>Atividades:</strong> Central Park, Times Square, MoMA, Estátua da Liberdade, Brooklyn Bridge.</p><p><strong>Hospedagem:</strong> The Standard High Line, $280/noite = $840</p>',
+  'dia-9-10': '<h3>🏛️ Dias 9-10: Philadelphia & DC</h3><p><strong>Atividades:</strong> Liberty Bell, Smithsonian (GRÁTIS!), Lincoln Memorial, Capitol.</p><p><strong>Hospedagem:</strong> $200/noite = $400</p>',
+  'dia-11-13': '<h3>🌬️ Dias 11-13: Chicago</h3><p><strong>Atividades:</strong> Cloud Gate, Millennium Park, Lago Michigan, deep dish pizza.</p><p><strong>Hospedagem:</strong> The Peninsula, $220/noite = $660</p><p><strong>Km de NY:</strong> 1.270 km</p>',
+  'dia-14-20': '<h3>🛣️ Dias 14-20: Rota 66</h3><p><strong>Paradas:</strong> Springfield, Tulsa, Amarillo, Cadillac Ranch, Albuquerque.</p><p><strong>Hospedagem:</strong> $90/noite = $630</p><p><strong>Distância:</strong> 1.800 km</p>',
+  'dia-21-23': '<h3>🎰 Dias 21-23: Las Vegas</h3><p><strong>Atividades:</strong> The Strip, Bellagio, Cirque du Soleil, Grand Canyon tour.</p><p><strong>Hospedagem:</strong> $200/noite = $600</p><p><strong>Km de Albuquerque:</strong> 600 km</p>',
+  'dia-24-26': '<h3>🏞️ Dias 24-26: Yosemite & Sequoias</h3><p><strong>Atividades:</strong> Half Dome, El Capitan, Glacier Point, Vernal Falls, caminhadas.</p><p><strong>Hospedagem:</strong> Lodge variados, $120/noite = $360</p><p><strong>Km de Vegas:</strong> 400 km</p>',
+  'dia-27-30': '<h3>🌉 Dias 27-30: San Francisco</h3><p><strong>Atividades:</strong> Golden Gate, Alcatraz, Cable Cars, Fisherman\'s Wharf, Chinatown.</p><p><strong>Hospedagem:</strong> Fairmont Heritage, $280/noite = $1.120</p>',
+  
+  'custo-hospedagem': '<h3>🏨 Hospedagem: USD $4.200</h3><table><tr><td>Quebec/Montreal</td><td>5 noites</td><td>$150/noite</td><td>$750</td></tr><tr><td>New York</td><td>3 noites</td><td>$280/noite</td><td>$840</td></tr><tr><td>Philadelphia/DC</td><td>2 noites</td><td>$200/noite</td><td>$400</td></tr><tr><td>Chicago</td><td>3 noites</td><td>$220/noite</td><td>$660</td></tr><tr><td>Rota 66</td><td>7 noites</td><td>$90/noite</td><td>$630</td></tr><tr><td>Las Vegas</td><td>3 noites</td><td>$200/noite</td><td>$600</td></tr><tr><td>Yosemite</td><td>3 noites</td><td>$120/noite</td><td>$360</td></tr><tr><td>San Francisco</td><td>4 noites</td><td>$280/noite</td><td>$1.120</td></tr></table>',
+  'custo-aluguel': '<h3>🚗 Aluguel + Seguro: USD $3.500</h3><p><strong>Veículo:</strong> SUV compacto (Hertz Gold Plus)</p><p><strong>Período:</strong> 25 dias</p><p><strong>Retirada:</strong> JFK (New York)</p><p><strong>Devolução:</strong> San Francisco</p><p><strong>Custo:</strong> $140/dia = $3.500</p><p><strong>Seguro:</strong> Incluído</p>',
+  'custo-alimentacao': '<h3>🍽️ Alimentação: USD $2.400</h3><p><strong>Período:</strong> 30 dias</p><p><strong>Média:</strong> $80/dia</p><p><strong>Breakdown:</strong><br>Café: $15-25<br>Almoço: $20-35<br>Jantar: $40-80<br>Gorjeta: 18-20%</p><p><strong>Dica:</strong> Trader Joe\'s para lanches e bebidas!</p>',
+  'custo-combustivel': '<h3>⛽ Combustível: USD $1.500</h3><p><strong>Distância:</strong> 4.200 km</p><p><strong>Consumo:</strong> ~9 km/litro</p><p><strong>Litros:</strong> 467 litros</p><p><strong>Preço médio:</strong> USD $3.50/galão</p><p><strong>Dica:</strong> Use GasBuddy para encontrar postos mais baratos!</p>',
+  'custo-atividades': '<h3>🎫 Atividades: USD $1.300</h3><p><strong>Ingressos:</strong><br>Alcatraz: $40<br>Cirque du Soleil: $120<br>Grand Canyon: $35<br>Yosemite: $35<br>Museus: $200<br>Diversos: $900</p>',
+  'custo-margem': '<h3>📈 Margem de Segurança: USD $8.100</h3><p><strong>Folga:</strong> 10% do orçamento</p><p><strong>Uso:</strong> Upgrades, emergências, experiências extras</p><p><strong>Recomendação:</strong> Não gastar tudo! Guardar para emergências.</p>',
+  
+  'cenario-30': '<h3>📍 Cenário 30 Dias (Atual)</h3><p><strong>Duração:</strong> 30 dias</p><p><strong>Distância:</strong> 4.200 km</p><p><strong>Orçamento:</strong> USD $22.000</p><p><strong>Cidades:</strong> 13</p><p><strong>Ritmo:</strong> Moderado</p><p><strong>Ideal para:</strong> Quem quer ver o máximo em 30 dias com orçamento controlado.</p><p><strong>Vantagens:</strong> Menos cansaço, mais economia, ritmo agradável.</p>',
+  'cenario-40': '<h3>📍 Cenário 40 Dias (+10)</h3><p><strong>Duração:</strong> 40 dias</p><p><strong>Distância:</strong> 5.500 km</p><p><strong>Orçamento:</strong> USD $28.000</p><p><strong>Cidades:</strong> 16</p><p><strong>Adições:</strong> Sedona, Monument Valley, Antelope Canyon</p><p><strong>Ideal para:</strong> Quem quer explorar mais parques e paisagens.</p><p><strong>Custo adicional:</strong> +USD $6.000</p>',
+  'cenario-60': '<h3>📍 Cenário 60 Dias (+30)</h3><p><strong>Duração:</strong> 60 dias</p><p><strong>Distância:</strong> 7.200 km</p><p><strong>Orçamento:</strong> USD $35.000</p><p><strong>Cidades:</strong> 20</p><p><strong>Ritmo:</strong> Lento e relaxado</p><p><strong>Adições:</strong> Todos os parques nacionais, experiências premium (helicóptero, etc)</p><p><strong>Ideal para:</strong> Quem tem mais tempo e quer aproveitar ao máximo.</p>',
+  
+  'consultor-big-sur': '<h3>⚠️ Big Sur - Reserva Crítica</h3><p><strong>Problema:</strong> Hotéis esgotam MUITO rápido em setembro.</p><p><strong>Ação:</strong> Reserve com 3+ meses de antecedência.</p><p><strong>Alternativa:</strong> Carmel-by-the-Sea (próximo, mais disponibilidade)</p><p><strong>Custo:</strong> $250-350/noite</p>',
+  'consultor-alcatraz': '<h3>⚠️ Alcatraz - Ingressos Online</h3><p><strong>Problema:</strong> Ingressos vendem rápido.</p><p><strong>Ação:</strong> Compre com 2+ semanas em alcatrazcruises.com</p><p><strong>Custo:</strong> $40/pessoa</p><p><strong>Horários:</strong> Manhã (melhor luz) ou entardecer</p>',
+  'consultor-vegas': '<h3>⚠️ Las Vegas - Shows</h3><p><strong>Problema:</strong> Cirque du Soleil esgota rápido.</p><p><strong>Ação:</strong> Reserve com 1+ mês em cirquedusoleil.com</p><p><strong>Custo:</strong> $120-180/pessoa</p><p><strong>Recomendação:</strong> "O" é o melhor show!</p>'
+};
+
+function showModal(id) {
+  document.getElementById('modal-body').innerHTML = modalContent[id] || '<p>Conteúdo não encontrado</p>';
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+}
+
+document.getElementById('modal').addEventListener('click', (e) => {
+  if (e.target.id === 'modal') closeModal();
 });
 
-/* ── TABS ESTRATÉGIAS ── */
-document.querySelectorAll('.tab').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const tab = btn.dataset.tab;
-    document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById(tab).classList.add('active');
-  });
-});
+// ═══════════════════════════════════════════
+// CHATBOT
+// ═══════════════════════════════════════════
 
-/* ── CHARTS ── */
-let dashInit = false, cenariosInit = false;
-
-function initDashCharts() {
-  if (dashInit) return;
-  dashInit = true;
-
-  const colors = ['#6BA3D4','#D4A5D4','#9FD4B5','#F4A9A8','#FFE5B4'];
-
-  new Chart(document.getElementById('chartDash'), {
-    type: 'doughnut',
-    data: {
-      labels: ['Hospedagem','Aluguel+Seguro','Alimentação','Combustível','Atividades'],
-      datasets: [{ data: [4000,3500,2400,1300,1200], backgroundColor: colors, borderColor:'#fff', borderWidth:3 }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: {
-        legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 12 } },
-        tooltip: {
-          callbacks: {
-            label: ctx => {
-              const v = ctx.parsed;
-              const total = ctx.dataset.data.reduce((a,b)=>a+b,0);
-              return ` USD $${v.toLocaleString()} (${Math.round(v/total*100)}%)`;
-            }
-          }
-        }
-      }
-    }
-  });
-
-  new Chart(document.getElementById('chartKm'), {
-    type: 'bar',
-    data: {
-      labels: ['NY→Chicago','Rota 66','→Las Vegas','→Santa Mônica','→SF','→Seattle'],
-      datasets: [{ label: 'Km', data: [1270,1200,450,200,600,780], backgroundColor: colors, borderRadius: 6 }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: { callbacks: { label: ctx => ` ${ctx.parsed.y} km` } }
-      },
-      scales: { y: { beginAtZero: true, ticks: { callback: v => v+'km' } } }
-    }
-  });
-}
-
-function initCenariosChart() {
-  if (cenariosInit) return;
-  cenariosInit = true;
-  new Chart(document.getElementById('chartCenarios'), {
-    type: 'bar',
-    data: {
-      labels: ['30 Dias','40 Dias','60 Dias'],
-      datasets: [
-        { label: 'Orçamento (USD)', data: [22000,28000,40000], backgroundColor: ['#6BA3D4','#F4A9A8','#9FD4B5'], borderRadius: 8 }
-      ]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: { callbacks: { label: ctx => ` USD $${ctx.parsed.y.toLocaleString()}` } }
-      },
-      scales: { y: { beginAtZero: true, ticks: { callback: v => '$'+v/1000+'k' } } }
-    }
-  });
-}
-
-/* ── MODAL DASHBOARD ── */
-function showDashboardModal() {
-  document.getElementById('dashboardModal').style.display = 'flex';
-  document.body.style.overflow = 'hidden';
-}
-
-function closeDashboardModal() {
-  document.getElementById('dashboardModal').style.display = 'none';
-  document.body.style.overflow = 'auto';
-}
-
-document.getElementById('dashboardModal')?.addEventListener('click', function(e) {
-  if (e.target === this) closeDashboardModal();
-});
-
-/* ── SIMULADOR CÂMBIO ── */
-function initCambio() {
-  const slider = document.getElementById('taxaSlider');
-  if (!slider) return;
-  function update() {
-    const taxa = parseFloat(slider.value);
-    document.getElementById('taxaVal').textContent = 'R$ ' + taxa.toFixed(2);
-    document.getElementById('brlBase').textContent   = 'R$' + Math.round(12400*taxa/1000)+'k';
-    document.getElementById('brlMargem').textContent = 'R$' + Math.round(13640*taxa/1000)+'k';
-    document.getElementById('brlTotal').textContent  = 'R$' + Math.round(20000*taxa/1000)+'k';
-  }
-  slider.addEventListener('input', update);
-  update();
-}
-</script>
-</body>
-</html>
-
-/* ── CHATBOT IA ── */
 function toggleChatbot() {
   const widget = document.getElementById('chatbot-widget');
   widget.classList.toggle('open');
@@ -1001,19 +571,19 @@ function handleChatInput(event) {
   }
 }
 
-async function sendChatMessage() {
+function sendChatMessage() {
   const input = document.getElementById('chatbot-input');
   const message = input.value.trim();
   
   if (!message) return;
   
-  // Adicionar mensagem do usuario
   addChatMessage(message, 'user');
   input.value = '';
   
-  // Chamar IA para responder
-  const response = await getChatbotResponse(message);
-  addChatMessage(response, 'bot');
+  setTimeout(() => {
+    const response = getChatbotResponse(message);
+    addChatMessage(response, 'bot');
+  }, 500);
 }
 
 function addChatMessage(text, sender) {
@@ -1025,44 +595,44 @@ function addChatMessage(text, sender) {
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
 
-async function getChatbotResponse(userMessage) {
-  const lowerMessage = userMessage.toLowerCase();
+function getChatbotResponse(userMessage) {
+  const msg = userMessage.toLowerCase();
   
-  // Perguntas sobre custos
-  if (lowerMessage.includes('custo') || lowerMessage.includes('orcamento') || lowerMessage.includes('preco')) {
-    return '💰 ORCAMENTO TOTAL: USD $22.000 (R$ 110.000 com taxa 5.0)\n\nBREAKDOWN:\n🏨 Hospedagem: $4.200 (25 noites, $90-280/noite)\n🚗 Aluguel+Seguro: $3.500 (SUV 25 dias)\n🍽️ Alimentacao: $2.400 (30 dias, ~$80/dia)\n⛽ Combustivel: $1.500 (4.200 km)\n🎫 Atividades: $1.300 (ingressos e tours)\n📈 Margem: $8.100 (folga e upgrades)\n\nQuer detalhes de alguma categoria?';
+  if (msg.includes('custo') || msg.includes('orcamento') || msg.includes('preco')) {
+    return '💰 Orçamento total: USD $22.000 (R$ 110.000 com taxa 5.0)\n\nBreakdown:\n🏨 Hospedagem: $4.200\n🚗 Aluguel+Seguro: $3.500\n🍽️ Alimentação: $2.400\n⛽ Combustível: $1.500\n🎫 Atividades: $1.300\n📈 Margem: $8.100\n\nQuer detalhes de alguma categoria?';
   }
   
-  // Perguntas sobre roteiro
-  if (lowerMessage.includes('roteiro') || lowerMessage.includes('dias') || lowerMessage.includes('cidades')) {
-    return '🗺️ ROTEIRO DE 30 DIAS:\n\n🍁 Dias 1-5: Quebec & Montreal\n🗽 Dias 6-8: New York\n🏛️ Dias 9-10: Philadelphia & DC\n🌬️ Dias 11-13: Chicago\n🛣️ Dias 14-20: Rota 66\n🎰 Dias 21-23: Las Vegas\n🏞️ Dias 24-26: Yosemite & Sequoias\n🌉 Dias 27-30: San Francisco\n\nTotal: 13 cidades, 4.200 km. Quer detalhes de alguma fase?';
+  if (msg.includes('roteiro') || msg.includes('dias') || msg.includes('cidades')) {
+    return '🗺️ Roteiro de 30 dias:\n\n🍁 Dias 1-5: Quebec & Montreal\n🗽 Dias 6-8: New York\n🏛️ Dias 9-10: Philadelphia & DC\n🌬️ Dias 11-13: Chicago\n🛣️ Dias 14-20: Rota 66\n🎰 Dias 21-23: Las Vegas\n🏞️ Dias 24-26: Yosemite & Sequoias\n🌉 Dias 27-30: San Francisco\n\nTotal: 13 cidades, 4.200 km';
   }
   
-  // Perguntas sobre hoteis
-  if (lowerMessage.includes('hotel') || lowerMessage.includes('hospedagem') || lowerMessage.includes('acomodacao')) {
-    return '🏨 HOSPEDAGEM POR CATEGORIA:\n\n⭐⭐⭐⭐⭐ (5 ESTRELAS):\n- New York: The Standard High Line ($280/noite)\n- San Francisco: Fairmont Heritage ($280/noite)\n\n⭐⭐⭐⭐ (4 ESTRELAS):\n- Chicago: The Peninsula ($220/noite)\n- Philadelphia/DC: Watergate Hotel ($200/noite)\n\n⭐⭐⭐ (3 ESTRELAS):\n- Rota 66: Hospedagem historica ($90/noite)\n- Yosemite: Lodge variados ($120/noite)\n\nQual cidade te interessa?';
+  if (msg.includes('hotel') || msg.includes('hospedagem') || msg.includes('acomodacao')) {
+    return '🏨 Hospedagem por categoria:\n\n⭐⭐⭐⭐⭐ 5 ESTRELAS:\n- New York: The Standard ($280/noite)\n- San Francisco: Fairmont ($280/noite)\n\n⭐⭐⭐⭐ 4 ESTRELAS:\n- Chicago: The Peninsula ($220/noite)\n- Philadelphia/DC: Watergate ($200/noite)\n\n⭐⭐⭐ 3 ESTRELAS:\n- Rota 66: Hospedagem histórica ($90/noite)\n- Yosemite: Lodge ($120/noite)';
   }
   
-  // Perguntas sobre atividades
-  if (lowerMessage.includes('atividade') || lowerMessage.includes('o que fazer') || lowerMessage.includes('atracoes')) {
-    return '🎫 PRINCIPAIS ATIVIDADES:\n\n🗽 NEW YORK: Central Park, Times Square, MoMA, Estátua da Liberdade\n🏛️ DC: Smithsonian (GRATIS!), Lincoln Memorial, Capitol\n🌬️ CHICAGO: Cloud Gate, Millennium Park, Lago Michigan\n🛣️ ROTA 66: Cadillac Ranch, murais historicos, Springfield\n🎰 LAS VEGAS: Cirque du Soleil, Grand Canyon tour, The Strip\n🏞️ YOSEMITE: Half Dome, El Capitan, Glacier Point, Vernal Falls\n🌉 SAN FRANCISCO: Alcatraz, Golden Gate, Cable Cars, Fishermans Wharf\n\nTotal: $1.300 em ingressos. Qual te interessa?';
+  if (msg.includes('atividade') || msg.includes('o que fazer') || msg.includes('atracoes')) {
+    return '🎫 Principais atividades:\n\n🗽 NEW YORK: Central Park, Times Square, MoMA, Estátua\n🏛️ DC: Smithsonian (GRÁTIS!), Lincoln Memorial\n🌬️ CHICAGO: Cloud Gate, Millennium Park\n🛣️ ROTA 66: Cadillac Ranch, Springfield\n🎰 LAS VEGAS: Cirque du Soleil, Grand Canyon\n🏞️ YOSEMITE: Half Dome, El Capitan\n🌉 SAN FRANCISCO: Alcatraz, Golden Gate\n\nTotal: $1.300 em ingressos';
   }
   
-  // Perguntas sobre combustivel
-  if (lowerMessage.includes('combustivel') || lowerMessage.includes('gasolina') || lowerMessage.includes('km')) {
-    return '⛽ COMBUSTIVEL E DISTANCIA:\n\nDistancia total: 4.200 km\nConsumo: ~9 km/litro (SUV)\nLitros necessarios: ~467 litros\nPreco medio: USD $3.50/galao\nCusto total: USD $1.500\n\n💡 DICAS:\n- Use GasBuddy para encontrar postos mais baratos\n- Mantenha tanque acima de 1/4 (postos escassos na Rota 66)\n- Velocidade constante economiza combustivel';
+  if (msg.includes('combustivel') || msg.includes('gasolina') || msg.includes('km')) {
+    return '⛽ Combustível:\n\nDistância total: 4.200 km\nConsumo: ~9 km/litro (SUV)\nLitros necessários: ~467 litros\nPreço médio: USD $3.50/galão\nCusto total: USD $1.500\n\n💡 Dicas:\n- Use GasBuddy para postos mais baratos\n- Mantenha tanque acima de 1/4\n- Velocidade constante economiza combustível';
   }
   
-  // Perguntas sobre cambio
-  if (lowerMessage.includes('cambio') || lowerMessage.includes('real') || lowerMessage.includes('brl')) {
-    return '💱 CAMBIO USD/BRL:\n\nTaxa atual: ~5.0\nUSD $22.000 = R$ 110.000\n\nSIMULADOR:\n- Taxa 4.5: R$ 99.000\n- Taxa 5.0: R$ 110.000\n- Taxa 5.5: R$ 121.000\n- Taxa 6.0: R$ 132.000\n\nUse o simulador interativo no dashboard para calcular com outras taxas!';
+  if (msg.includes('cambio') || msg.includes('real') || msg.includes('brl')) {
+    return '💱 Câmbio USD/BRL:\n\nTaxa atual: ~5.0\nUSD $22.000 = R$ 110.000\n\nSimulador:\n- Taxa 4.5: R$ 99.000\n- Taxa 5.0: R$ 110.000\n- Taxa 5.5: R$ 121.000\n- Taxa 6.0: R$ 132.000\n\nUse o dashboard para simular outras taxas!';
   }
   
-  // Perguntas sobre duracao
-  if (lowerMessage.includes('quanto tempo') || lowerMessage.includes('duracao') || lowerMessage.includes('dura')) {
-    return '⏱️ DURACAO DA VIAGEM:\n\nData: 4 de setembro a 3 de outubro de 2026\nTotal: 30 dias\nRitmo: Moderado\n\n- Cidades grandes: 3 dias (NY, SF, Chicago)\n- Cidades medias: 2 dias (Vegas, DC)\n- Cidades pequenas: 1 dia (Springfield, Tulsa)\n- Parques: 3 dias (Yosemite)\n\nPerfeitamente balanceado para aproveitar sem pressa!';
+  if (msg.includes('quanto tempo') || msg.includes('duracao') || msg.includes('dura')) {
+    return '⏱️ Duração:\n\nData: 4 de setembro a 3 de outubro de 2026\nTotal: 30 dias\nRitmo: Moderado\n\n- Cidades grandes: 3 dias (NY, SF, Chicago)\n- Cidades médias: 2 dias (Vegas, DC)\n- Cidades pequenas: 1 dia\n- Parques: 3 dias (Yosemite)\n\nPerfeitamente balanceado!';
   }
   
-  // Resposta padrao
-  return '🚗 ASSISTENTE DE VIAGEM - DESCOBRINDO A AMERICA\n\nSou seu assistente especializado nesta jornada de 30 dias pelos EUA e Canada!\n\nPosso ajudar com:\n💰 Custos e orcamento\n🗺️ Roteiro e cidades\n🏨 Hoteis e hospedagem\n🎫 Atividades e atracacoes\n⛽ Combustivel e km\n💱 Cambio USD/BRL\n🚗 Aluguel de carro\n📍 Dicas de viagem\n🌡️ Clima e roupas\n📸 Melhores fotos\n\nO que voce gostaria de saber? 😊';
+  return '🚗 Sou seu assistente de viagem!\n\nPosso ajudar com:\n💰 Custos e orçamento\n🗺️ Roteiro e cidades\n🏨 Hotéis e hospedagem\n🎫 Atividades\n⛽ Combustível e km\n💱 Câmbio\n🚗 Aluguel de carro\n📍 Dicas de viagem\n\nO que você gostaria de saber? 😊';
 }
+
+// Inicializar
+console.log('✅ Página carregada com sucesso!');
+console.log('✅ Chatbot pronto para usar!');
+</script>
+
+</body>
+</html>
